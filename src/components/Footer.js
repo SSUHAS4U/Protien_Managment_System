@@ -11,8 +11,8 @@ export default function Footer() {
           color: 'white', // Change text color to white
           padding: '20px 0',
           width: '100%',
-          borderTopLeftRadius: '20px', // Add border radius to the top section
-          borderTopRightRadius: '20px',
+          // borderTopLeftRadius: '20px', // Add border radius to the top section
+          // borderTopRightRadius: '20px',
           // Removed box shadow
         }}
       >

@@ -2,10 +2,6 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -14,9 +10,16 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
 import CardMedia from '@mui/material/CardMedia';
 import img from '../images/heart.png';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
+import Snackbar from '@mui/material/Snackbar'; // For showing success/error messages
+import Alert from '@mui/material/Alert'; // For success/error alerts
 
+// Updated color theme to sky blue
 const skyBlueTheme = createTheme({
   palette: {
     primary: {
@@ -41,13 +44,6 @@ const skyBlueTheme = createTheme({
           '&:hover': {
             backgroundColor: '#0095e8', // Darker Blue on hover
           },
-        },
-      },
-    },
-    MuiLink: {
-      styleOverrides: {
-        root: {
-          color: '#00bfff', // Sky Blue
         },
       },
     },
@@ -77,58 +73,77 @@ const skyBlueTheme = createTheme({
   },
 });
 
-const navbarTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#00bfff', // Sky Blue
-    },
-    text: {
-      primary: '#000', // Black text color
-    },
-    background: {
-      default: '#fff', // White background for navbar
-    },
-  },
-});
-
 export default function SignIn() {
+  const [formData, setFormData] = React.useState({ email: '', password: '' });
+  const [errors, setErrors] = React.useState({});
+  const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: '' });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', severity: '' });
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    }
+    return newErrors;
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setSnackbar({ open: true, message: 'Please fix the errors', severity: 'error' });
+    } 
   };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
+  };
+
+  React.useEffect(() => {
+    // Apply overflow-x: hidden to the body when the component mounts
+    document.body.style.overflowX = 'hidden';
+    
+    // Cleanup the style when the component unmounts
+    return () => {
+      document.body.style.overflowX = 'auto';
+    };
+  }, []);
 
   return (
     <ThemeProvider theme={skyBlueTheme}>
-      <div style={{ overflowX: 'hidden' }}> {/* Add overflowX hidden */}
-        <ThemeProvider theme={navbarTheme}>
-          <Navbar />
-        </ThemeProvider>
+      <div style={{ overflowX: 'hidden', width: '100vw' }}> {/* Apply full width */}
+        <Navbar />
 
         {/* Circles on the left bottom corner */}
         <div style={{ position: 'absolute', bottom: '0', left: '0', zIndex: '-1', top: '-50px' }}>
-          {/* First Circle (Left) */}
           <div style={{
             width: '300px',
             height: '300px',
             backgroundColor: 'skyblue',
             borderRadius: '50%',
             position: 'absolute',
-            left: '-150px', // Half of the width to position it partially outside the page
+            left: '-150px',
             bottom: '50px',
             zIndex: '-1',
           }} />
-          {/* Second Circle (Left) */}
           <div style={{
             width: '400px',
             height: '400px',
             backgroundColor: 'skyblue',
             borderRadius: '50%',
             position: 'absolute',
-            left: '-200px', // Slightly larger and more to the left
+            left: '-200px',
             top: '100px',
             bottom: '250px',
             zIndex: '-1',
@@ -137,7 +152,6 @@ export default function SignIn() {
 
         {/* Circles on the right bottom corner */}
         <div style={{ position: 'absolute', bottom: '0', right: '0', zIndex: '-1', top: '0' }}>
-          {/* First Circle (Right) */}
           <div style={{
             width: '300px',
             height: '300px',
@@ -149,7 +163,6 @@ export default function SignIn() {
             zIndex: '-1',
             clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
           }} />
-          {/* Second Circle (Right) */}
           <div style={{
             width: '400px',
             height: '400px',
@@ -165,31 +178,27 @@ export default function SignIn() {
         </div>
 
         <div style={{ minHeight: 'calc(100vh - 100px)', paddingBottom: '10px', marginTop: '100px' }}>
-          <Container component="main" maxWidth="lg"> {/* Use lg to accommodate the larger card */}
+          <Container component="main" maxWidth="lg">
             <CssBaseline />
             <Card 
               sx={{ 
                 boxShadow: 3, 
                 borderRadius: 2, 
                 display: 'flex', 
-                height: '500px', // Increase card height
+                height: '500px',
+                maxWidth: '900px',
                 transition: 'transform 0.3s, box-shadow 0.3s',
+                marginLeft: '140px',
                 '&:hover': {
-                  transform: 'scale(1.05)', // Enlarge on hover
-                  boxShadow: '0px 4px 20px skyblue', // Sky blue box shadow on hover
+                  transform: 'scale(1.05)',
+                  boxShadow: '0px 4px 20px skyblue',
                 }
               }}
             >
               <Grid container>
                 <Grid item xs={6} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 3 }}>
                   <CardContent>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                      }}
-                    >
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <Typography component="h1" variant="h5" color="primary">
                         Sign In
                       </Typography>
@@ -203,6 +212,10 @@ export default function SignIn() {
                           name="email"
                           autoComplete="email"
                           autoFocus
+                          value={formData.email}
+                          onChange={handleChange}
+                          error={!!errors.email}
+                          helperText={errors.email}
                         />
                         <TextField
                           margin="normal"
@@ -213,6 +226,10 @@ export default function SignIn() {
                           type="password"
                           id="password"
                           autoComplete="current-password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          error={!!errors.password}
+                          helperText={errors.password}
                         />
                         <FormControlLabel
                           control={<Checkbox value="remember" color="primary" />}
@@ -245,9 +262,9 @@ export default function SignIn() {
                 <Grid item xs={6}>
                   <CardMedia
                     component="img"
-                    image={img} // Replace with your image path
+                    image={img}
                     alt="Sign In Image"
-                    sx={{ objectFit: 'cover', height: '100%' }} // Adjust height as needed
+                    sx={{ objectFit: 'cover', height: '100%' }}
                   />
                 </Grid>
               </Grid>
@@ -256,6 +273,13 @@ export default function SignIn() {
         </div>
         <Footer />
       </div>
+
+      {/* Snackbar for success and error messages */}
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }
