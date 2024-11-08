@@ -23,28 +23,33 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { styled } from '@mui/material/styles';
 import { MenuItem } from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  width: '100%', // Ensure full width
-  marginTop: theme.spacing(2), // Add margin to match other fields
-  '& .MuiInputBase-root': {
-    color: '#000', // Ensure text color consistency
-  },
-  '& .MuiInputLabel-root': {
-    color: '#000', // Ensure label color consistency
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: '#000', // Ensure border color consistency
-    },
-    '&:hover fieldset': {
-      borderColor: '#000', // Hover effect
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#000', // Focused state color
-    },
-  },
-}));
+
+// const StyledTextField = styled(TextField)(({ theme }) => ({
+//   width: '100%', // Ensure full width
+//   marginTop: theme.spacing(2), // Add margin to match other fields
+//   '& .MuiInputBase-root': {
+//     color: '#000', // Ensure text color consistency
+//   },
+//   '& .MuiInputLabel-root': {
+//     color: '#000', // Ensure label color consistency
+//   },
+//   '& .MuiOutlinedInput-root': {
+//     '& fieldset': {
+//       borderColor: '#000', // Ensure border color consistency
+//     },
+//     '&:hover fieldset': {
+//       borderColor: '#000', // Hover effect
+//     },
+//     '&.Mui-focused fieldset': {
+//       borderColor: '#000', // Focused state color
+//     },
+//   },
+// }));
 
 // Custom styling for the DatePicker component
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
@@ -144,11 +149,20 @@ export default function SignUp() {
     heightInches: '',
     weight: '',
   });
-
   const [errors, setErrors] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+  
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -160,27 +174,37 @@ export default function SignUp() {
 
   const handleDateChange = (date) => {
     setFormData({ ...formData, birthDate: date });
+    if (date) {
+      setErrors((prevErrors) => ({ ...prevErrors, birthDate: '' })); // Clear error if date is selected
+    }
   };
 
   const validate = () => {
     let tempErrors = {};
-    tempErrors.Name = formData.Name ? "" : "Name is required.";
-    tempErrors.email = /\S+@\S+\.\S+/.test(formData.email) ? "" : "Email is not valid.";
-    tempErrors.password = formData.password.length >= 8 ? "" : "Password must be at least 8 characters long.";
-    tempErrors.confirmPassword = formData.password === formData.confirmPassword ? "" : "Passwords do not match.";
-    tempErrors.gender = formData.gender ? "" : "Gender is required.";
-    tempErrors.birthDate = formData.birthDate ? "" : "Birth Date is required.";
-    tempErrors.heightFeet = formData.heightFeet ? "" : "Height (Feet) is required.";
-    tempErrors.heightInches = formData.heightInches ? "" : "Height (Inches) is required.";
-    tempErrors.weight = formData.weight ? "" : "Weight is required.";
-
-    setErrors({ ...tempErrors });
-    return Object.values(tempErrors).every(x => x === "");
+  
+    // Other field validations remain the same
+    if (!formData.Name) tempErrors.Name = "Name is required.";
+    if (!formData.email) {
+      tempErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        tempErrors.email = "Email is not valid.";
+    }
+    if (formData.password.length < 8) tempErrors.password = "Password must be at least 8 characters long.";
+    if (formData.password !== formData.confirmPassword) tempErrors.confirmPassword = "Passwords do not match.";
+    if (!formData.confirmPassword) tempErrors.confirmPassword = "Confirm Password is required.";
+    if (!formData.gender) tempErrors.gender = "Gender is required.";
+    if (!formData.birthDate) {
+      tempErrors.birthDate = "Birth Date is required.";
+    }
+    if (!formData.heightFeet) tempErrors.heightFeet = "Height (Feet) is required.";
+    if (!formData.heightInches) tempErrors.heightInches = "Height (Inches) is required.";
+    if (!formData.weight) tempErrors.weight = "Weight is required.";
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validate()) {
       setSnackbarMessage("Please fix the errors before submitting.");
       setSnackbarSeverity('error');
@@ -189,7 +213,17 @@ export default function SignUp() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/user', {
+      // Check if the user already exists
+      const existingUserResponse = await axios.get(`http://localhost:8080/users/check-email?email=${formData.email}`);
+      if (existingUserResponse.data.exists) {
+        setSnackbarMessage("User already exists.");
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+        return;
+      }
+
+      // Register the user
+      const response = await axios.post('http://localhost:8080/users', {
         name: formData.Name,
         email: formData.email,
         password: formData.password,
@@ -198,7 +232,7 @@ export default function SignUp() {
         heightFeet: formData.heightFeet,
         heightInches: formData.heightInches,
         weight: formData.weight,
-      });      
+      });
       console.log('User registered successfully:', response.data);
       setSnackbarMessage("User registered successfully!");
       setSnackbarSeverity('success');
@@ -375,25 +409,49 @@ export default function SignUp() {
                     fullWidth
                     label="Password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleChange}
                     required
                     margin="normal"
                     error={!!errors.password}
                     helperText={errors.password}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleClickShowPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                   <TextField
                     fullWidth
                     label="Confirm Password"
                     name="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
                     margin="normal"
                     error={!!errors.confirmPassword}
                     helperText={errors.confirmPassword}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleClickShowConfirmPassword}
+                            edge="end"
+                          >
+                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={1}>
@@ -413,6 +471,8 @@ export default function SignUp() {
                     name="gender"
                     value={formData.gender}
                     onChange={handleChange}
+                    error={!!errors.gender}
+                    helperText={errors.gender}
                     required
                     SelectProps={{
                       MenuProps: {
@@ -448,21 +508,24 @@ export default function SignUp() {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <StyledDatePicker
-                      label="Birth Date*"
-                      value={formData.birthDate}
-                      onChange={handleDateChange}
-                      renderInput={(params) => (
-                        <StyledTextField
-                          {...params}
-                          required
-                          error={!!errors.birthDate}
-                          helperText={errors.birthDate}
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <StyledDatePicker
+                    label="Birth Date*"
+                    value={formData.birthDate}
+                    onChange={handleDateChange}
+                    maxDate={new Date()}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        margin="normal"
+                        required
+                        error={!!errors.birthDate}
+                        helperText={errors.birthDate}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
                   </Grid>
                     <Grid item xs={6}>
                       <TextField
@@ -472,7 +535,7 @@ export default function SignUp() {
                         value={formData.heightFeet}
                         onChange={handleChange}
                         required
-                        margin="normal"
+                        margin="dense"
                         error={!!errors.heightFeet}
                         helperText={errors.heightFeet}
                       />
@@ -485,7 +548,7 @@ export default function SignUp() {
                         value={formData.heightInches}
                         onChange={handleChange}
                         required
-                        margin="normal"
+                        margin="dense"
                         error={!!errors.heightInches}
                         helperText={errors.heightInches}
                       />
@@ -493,12 +556,12 @@ export default function SignUp() {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Weight"
+                        label="Weight(kg)"
                         name="weight"
                         value={formData.weight}
                         onChange={handleChange}
                         required
-                        margin="normal"
+                        margin="dense"
                         error={!!errors.weight}
                         helperText={errors.weight}
                       />

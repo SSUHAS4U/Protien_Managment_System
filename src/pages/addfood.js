@@ -163,7 +163,7 @@ export default function AddFood() {
   };
 
   const handleFood = () => {
-    navigate('/food');
+    navigate('/addfood');
   };
 
   const handleDiary = () => {

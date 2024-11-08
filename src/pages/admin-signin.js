@@ -12,7 +12,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import CardMedia from '@mui/material/CardMedia';
-import img from '../images/admin.png';
+import img from '../images/bowl.png';
 import Snackbar from '@mui/material/Snackbar'; // For showing success/error messages
 import Alert from '@mui/material/Alert'; // For success/error alerts
 
@@ -185,7 +185,7 @@ export default function AdminSignIn() {
                 transition: 'transform 0.3s, box-shadow 0.3s',
                 marginLeft:'40px',
                 height: '500px',  // Increased height
-                maxWidth: '900px', // Set a maximum width for larger screens
+                maxWidth: '1000px', // Set a maximum width for larger screens
                 '&:hover': {
                   transform: 'scale(1.05)',
                   boxShadow: '0px 4px 20px skyblue',

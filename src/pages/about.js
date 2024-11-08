@@ -9,6 +9,7 @@ const AboutUs = () => {
     return (
         <div style={styles.container}>
             <Navbar />
+
             <div 
                 style={isHovered ? { ...styles.aboutContainer, ...styles.hover } : styles.aboutContainer}
                 onMouseEnter={() => setIsHovered(true)}
