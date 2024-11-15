@@ -38,11 +38,11 @@ export default function Footer() {
                     Sign Up
                   </a>
                 </li>
-                <li style={{ marginRight: '20px' }}>
+                {/* <li style={{ marginRight: '20px' }}>
                   <a href="/help" style={linkStyle}>
                     Help
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a href="/terms" style={linkStyle}>
                     Terms of Service

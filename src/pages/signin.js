@@ -18,8 +18,8 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Snackbar from '@mui/material/Snackbar'; // For showing success/error messages
 import Alert from '@mui/material/Alert'; // For success/error alerts
+import { useNavigate } from 'react-router-dom';
 
-// Updated color theme to sky blue
 const skyBlueTheme = createTheme({
   palette: {
     primary: {
@@ -77,6 +77,7 @@ export default function SignIn() {
   const [formData, setFormData] = React.useState({ email: '', password: '' });
   const [errors, setErrors] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: '' });
+  const navigate = useNavigate(); // To navigate to dashboard after successful login
 
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', severity: '' });
@@ -95,13 +96,39 @@ export default function SignIn() {
     return newErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setSnackbar({ open: true, message: 'Please fix the errors', severity: 'error' });
-    } 
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+
+      if (response.ok) {
+        // Create a session with an authToken or user data
+        sessionStorage.setItem('authToken', result.token); // Assuming the backend sends a token on successful login
+        sessionStorage.setItem('email', formData.email); // Store the email in session storage
+        sessionStorage.setItem('user', JSON.stringify(result.user)); // Store full user data in session storage
+        
+        // Navigate to dashboard
+        navigate('/Dashboard');
+      } else {
+        setSnackbar({ open: true, message: result.message, severity: 'error' });
+      }
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Error logging in, please try again later.', severity: 'error' });
+    }
   };
 
   const handleChange = (event) => {
@@ -111,10 +138,7 @@ export default function SignIn() {
   };
 
   React.useEffect(() => {
-    // Apply overflow-x: hidden to the body when the component mounts
     document.body.style.overflowX = 'hidden';
-    
-    // Cleanup the style when the component unmounts
     return () => {
       document.body.style.overflowX = 'auto';
     };
@@ -122,7 +146,7 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={skyBlueTheme}>
-      <div style={{ overflowX: 'hidden', width: '100vw' }}> {/* Apply full width */}
+      <div style={{ overflowX: 'hidden', width: '100vw' }}>
         <Navbar />
 
         {/* Circles on the left bottom corner */}
@@ -161,7 +185,7 @@ export default function SignIn() {
             position: 'absolute',
             bottom: '50px',
             zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
+            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
           }} />
           <div style={{
             width: '400px',
@@ -173,18 +197,18 @@ export default function SignIn() {
             right: '-200px',
             top: '60px',
             zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
+            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
           }} />
         </div>
 
         <div style={{ minHeight: 'calc(100vh - 100px)', paddingBottom: '10px', marginTop: '100px' }}>
           <Container component="main" maxWidth="lg">
             <CssBaseline />
-            <Card 
-              sx={{ 
-                boxShadow: 3, 
-                borderRadius: 2, 
-                display: 'flex', 
+            <Card
+              sx={{
+                boxShadow: 3,
+                borderRadius: 2,
+                display: 'flex',
                 height: '500px',
                 maxWidth: '900px',
                 transition: 'transform 0.3s, box-shadow 0.3s',
@@ -216,6 +240,7 @@ export default function SignIn() {
                           onChange={handleChange}
                           error={!!errors.email}
                           helperText={errors.email}
+                          sx={{ backgroundColor: 'white', borderRadius: '10px' }}
                         />
                         <TextField
                           margin="normal"
@@ -230,6 +255,7 @@ export default function SignIn() {
                           onChange={handleChange}
                           error={!!errors.password}
                           helperText={errors.password}
+                          sx={{ backgroundColor: 'white', borderRadius: '10px' }}
                         />
                         <FormControlLabel
                           control={<Checkbox value="remember" color="primary" />}
@@ -250,7 +276,7 @@ export default function SignIn() {
                             </Link>
                           </Grid>
                           <Grid item>
-                            <Link href="/signup" variant="body2">
+                            <Link href="#" variant="body2">
                               {"Don't have an account? Sign Up"}
                             </Link>
                           </Grid>
@@ -262,24 +288,24 @@ export default function SignIn() {
                 <Grid item xs={6}>
                   <CardMedia
                     component="img"
+                    alt="sign-in"
+                    height="100%"
                     image={img}
-                    alt="Sign In Image"
-                    sx={{ objectFit: 'cover', height: '100%' }}
                   />
                 </Grid>
               </Grid>
             </Card>
           </Container>
         </div>
+
+        <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+
         <Footer />
       </div>
-
-      {/* Snackbar for success and error messages */}
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </ThemeProvider>
   );
 }

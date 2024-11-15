@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -26,6 +26,7 @@ import { Grid, Card, CardMedia, CardContent, Button } from '@mui/material';
 import img1 from '../images/chicken.png';
 import img2 from '../images/veg.png';
 import img3 from '../images/salamon.png';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
@@ -153,9 +154,34 @@ export default function AddFood() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    const email = sessionStorage.getItem('email');
+    const authToken = sessionStorage.getItem('authToken');
+
+    if (!authToken || !email) {
+      navigate('/'); // Redirect to login if no token or email
+    } else {
+      axios.get(`http://localhost:8080/users?email=${email}`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      })
+        .then(response => {
+          if (response.data.user && response.data.user.name) {
+            sessionStorage.setItem('userName', response.data.user.name); // Store name in session
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching user data:', error.response ? error.response.data : error.message);
+        });
+    }
+  }, [navigate]);
+
+
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    navigate('/');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userName');
+    navigate('/'); // Redirect to login page after logout
   };
 
   const handleDashboard = () => {

@@ -144,22 +144,24 @@ export default function SignUp() {
     password: '',
     confirmPassword: '',
     gender: '',
-    birthDate: null,
+    birthDate: '', // Set birthDate as an empty string initially
     heightFeet: '',
     heightInches: '',
     weight: '',
   });
+
   const [errors, setErrors] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  
+
   const handleClickShowConfirmPassword = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
@@ -174,20 +176,18 @@ export default function SignUp() {
 
   const handleDateChange = (date) => {
     setFormData({ ...formData, birthDate: date });
-    if (date) {
-      setErrors((prevErrors) => ({ ...prevErrors, birthDate: '' })); // Clear error if date is selected
+    if (date && !isNaN(new Date(date).getTime())) {
+      setErrors((prevErrors) => ({ ...prevErrors, birthDate: '' })); // Clear error if date format is valid
     }
   };
-
   const validate = () => {
     let tempErrors = {};
-  
-    // Other field validations remain the same
+    setFormSubmitted(true); // Mark form as submitted
     if (!formData.Name) tempErrors.Name = "Name is required.";
     if (!formData.email) {
       tempErrors.email = "Email is required.";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        tempErrors.email = "Email is not valid.";
+      tempErrors.email = "Email is not valid.";
     }
     if (formData.password.length < 8) tempErrors.password = "Password must be at least 8 characters long.";
     if (formData.password !== formData.confirmPassword) tempErrors.confirmPassword = "Passwords do not match.";
@@ -195,6 +195,11 @@ export default function SignUp() {
     if (!formData.gender) tempErrors.gender = "Gender is required.";
     if (!formData.birthDate) {
       tempErrors.birthDate = "Birth Date is required.";
+    } else {
+      const date = new Date(formData.birthDate);
+      if (isNaN(date.getTime()) || date.toString() === "Invalid Date") {
+        tempErrors.birthDate = "Birth Date is in incorrect format.";
+      }
     }
     if (!formData.heightFeet) tempErrors.heightFeet = "Height (Feet) is required.";
     if (!formData.heightInches) tempErrors.heightInches = "Height (Inches) is required.";
@@ -213,7 +218,6 @@ export default function SignUp() {
     }
 
     try {
-      // Check if the user already exists
       const existingUserResponse = await axios.get(`http://localhost:8080/users/check-email?email=${formData.email}`);
       if (existingUserResponse.data.exists) {
         setSnackbarMessage("User already exists.");
@@ -222,7 +226,6 @@ export default function SignUp() {
         return;
       }
 
-      // Register the user
       const response = await axios.post('http://localhost:8080/users', {
         name: formData.Name,
         email: formData.email,
@@ -245,7 +248,7 @@ export default function SignUp() {
         password: '',
         confirmPassword: '',
         gender: '',
-        birthDate: null,
+        birthDate: '', // Reset birthDate to an empty string
         heightFeet: '',
         heightInches: '',
         weight: '',
@@ -508,11 +511,13 @@ export default function SignUp() {
                   </Grid>
 
                   <Grid item xs={12}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <StyledDatePicker
+                    
                     label="Birth Date*"
-                    value={formData.birthDate}
-                    onChange={handleDateChange}
+                    name="birthDate"
+                    value={formData.birthDate || null}
+                    onChange={(date) => handleDateChange(date)}
                     maxDate={new Date()}
                     renderInput={(params) => (
                       <TextField
@@ -520,12 +525,12 @@ export default function SignUp() {
                         fullWidth
                         margin="normal"
                         required
-                        error={!!errors.birthDate}
-                        helperText={errors.birthDate}
+                        error={formSubmitted && !!errors.birthDate} // Only show error if form is submitted and there's an error
+                        helperText={formSubmitted && errors.birthDate ? errors.birthDate : "MM/DD/YYYY"}
                       />
                     )}
                   />
-                </LocalizationProvider>
+                  </LocalizationProvider>
                   </Grid>
                     <Grid item xs={6}>
                       <TextField

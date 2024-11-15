@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import React, {useEffect,useState } from 'react';
+import { styled, useTheme  } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -24,6 +24,8 @@ import { Card, CardContent } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle'; // Add this line
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import axios from 'axios';
+
 
 const drawerWidth = 240;
 
@@ -110,6 +112,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [userName, setName] = useState('');
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -120,11 +123,37 @@ export default function MiniDrawer() {
     setOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    navigate('/');
-  };
+  useEffect(() => {
+    const email = sessionStorage.getItem('email');
+    const authToken = sessionStorage.getItem('authToken');
 
+    if (!authToken || !email) {
+      navigate('/'); // Redirect to login if no token or email
+    } else {
+      axios.get(`http://localhost:8080/users?email=${email}`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      })
+        .then(response => {
+          if (response.data.user && response.data.user.name) {
+            setName(response.data.user.name); // Set the name
+            sessionStorage.setItem('userName', response.data.user.name); // Store name in session
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching user data:', error.response ? error.response.data : error.message);
+        });
+    }
+  }, [navigate]);
+
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userName');
+    navigate('/'); // Redirect to login page after logout
+  };
+  
   const handleDashboard = () => {
     navigate('/dashboard');
   };
@@ -169,7 +198,10 @@ export default function MiniDrawer() {
             Dashboard
           </Typography>
           {/* Logout Button in the Right Corner */}
-          <Box sx={{ marginLeft: 'auto' }}>
+          <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+            <Typography variant="body1" sx={{ color: 'black', marginRight: 2 }}>
+              Welcome, {userName}
+            </Typography>
             <IconButton color="inherit" onClick={handleLogout}>
               <LogoutIcon sx={{ color: 'black' }} />
             </IconButton>
