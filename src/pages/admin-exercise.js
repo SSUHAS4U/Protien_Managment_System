@@ -13,15 +13,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 
-const Add = () => {
+const AddExercise = () => {
   const [formData, setFormData] = useState({
     name: '',
     image: null,
-    description: '',
     energy: '',
-    protein: '',
     fat: '',
     netCarbs: '',
+    protein: '',
   });
 
   const navigate = useNavigate();
@@ -83,35 +82,33 @@ const Add = () => {
     const data = new FormData();
     data.append('name', formData.name);
     data.append('image', formData.image);
-    data.append('description', formData.description);
     data.append('energy', formData.energy);
-    data.append('protein', formData.protein);
     data.append('fat', formData.fat);
     data.append('netCarbs', formData.netCarbs);
+    data.append('protein', formData.protein);
 
     try {
-      const response = await axios.post('http://localhost:8080/food', data, {
+      const response = await axios.post('http://localhost:8080/exercise', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.status === 200) {
-        setSnackbar({ open: true, message: 'Product added successfully!', severity: 'success' });
+        setSnackbar({ open: true, message: 'Exercise added successfully!', severity: 'success' });
         setFormData({
           name: '',
           image: null,
-          description: '',
           energy: '',
-          protein: '',
           fat: '',
           netCarbs: '',
+          protein: '',
         });
       }
     } catch (error) {
       setSnackbar({
         open: true,
-        message: 'Failed to add product. Please try again.',
+        message: 'Failed to add exercise. Please try again.',
         severity: 'error',
       });
     }
@@ -139,7 +136,7 @@ const Add = () => {
               },
             }}
           >
-            Add New Food Item
+            Add New Exercise
           </Typography>
         </Box>
 
@@ -163,7 +160,7 @@ const Add = () => {
               <form onSubmit={handleSubmit}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                   <TextField
-                    label="Name"
+                    label="Exercise Name"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
@@ -191,17 +188,7 @@ const Add = () => {
                     </Typography>
                   )}
                   <TextField
-                    label="Description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    fullWidth
-                    required
-                    multiline
-                    rows={3}
-                  />
-                  <TextField
-                    label="Energy (kcal)"
+                    label="Energy Required(kcal)"
                     name="energy"
                     value={formData.energy}
                     onChange={handleInputChange}
@@ -210,16 +197,7 @@ const Add = () => {
                     type="number"
                   />
                   <TextField
-                    label="Protein (g)"
-                    name="protein"
-                    value={formData.protein}
-                    onChange={handleInputChange}
-                    fullWidth
-                    required
-                    type="number"
-                  />
-                  <TextField
-                    label="Fat (g)"
+                    label="Fat Burned(g)"
                     name="fat"
                     value={formData.fat}
                     onChange={handleInputChange}
@@ -228,9 +206,18 @@ const Add = () => {
                     type="number"
                   />
                   <TextField
-                    label="Net Carbs (g)"
+                    label="Net Carbs Burned (g)"
                     name="netCarbs"
                     value={formData.netCarbs}
+                    onChange={handleInputChange}
+                    fullWidth
+                    required
+                    type="number"
+                  />
+                  <TextField
+                    label="Protein Burned (g)"
+                    name="protein"
+                    value={formData.protein}
                     onChange={handleInputChange}
                     fullWidth
                     required
@@ -268,4 +255,4 @@ const Add = () => {
   );
 };
 
-export default Add;
+export default AddExercise;

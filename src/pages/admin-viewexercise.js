@@ -49,7 +49,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/food/all'); // Adjust this URL as per your backend API
+        const response = await axios.get('http://localhost:8080/exercise/all'); // Adjust this URL as per your backend API
         setFoodItems(response.data);
         setFilteredFoodItems(response.data); // Initially set filtered items to all food items
       } catch (error) {
@@ -98,7 +98,6 @@ const Admin = () => {
     try {
       const formData = new FormData();
       formData.append('name', editForm.name);
-      formData.append('description', editForm.description);
       formData.append('energy', editForm.energy);
       formData.append('protein', editForm.protein);
       formData.append('fat', editForm.fat);
@@ -109,7 +108,7 @@ const Admin = () => {
         formData.append('image', editForm.image);
       }
 
-      await axios.put(`http://localhost:8080/food/${editForm.name}`, formData, {
+      await axios.put(`http://localhost:8080/exercise/${editForm.name}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -117,7 +116,7 @@ const Admin = () => {
       window.location.reload();
       setErrorMessage('');
       setEditForm(null); // Reset the form
-      const updatedFoodItems = await axios.get('http://localhost:8080/food/all');
+      const updatedFoodItems = await axios.get('http://localhost:8080/exercise/all');
       setFoodItems(updatedFoodItems.data);
       setOpenEdit(false);
     } catch (error) {
@@ -133,7 +132,7 @@ const Admin = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/food/${itemToDelete.name}`);
+      await axios.delete(`http://localhost:8080/exercise/${itemToDelete.name}`);
       const updatedFoodItems = foodItems.filter(item => item.name !== itemToDelete.name);
       setFoodItems(updatedFoodItems);
       setOpenDelete(false);
@@ -152,7 +151,7 @@ const Admin = () => {
 
     try {
       // Fetch food items based on the search query
-      const response = await axios.get(`http://localhost:8080/food/search?name=${query}`);
+      const response = await axios.get(`http://localhost:8080/exercise/search?name=${query}`);
       setFilteredFoodItems(response.data); // Update the filtered items based on the search result
     } catch (error) {
       console.error('Error fetching food items:', error);
@@ -170,7 +169,7 @@ const Admin = () => {
       <Navbar handleLogout={handleLogout} />
       <main style={{ padding: '2rem' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-          <Typography variant="h2">Welcome to Admin Dashboard</Typography>
+          <Typography variant="h2">View all Exercises</Typography>
         </Box>
         {/* Success/Error Messages */}
         {successMessage && (
@@ -193,26 +192,12 @@ const Admin = () => {
         )}
         {/* Edit Form Dialog */}
         <Dialog open={openEdit} onClose={handleCancelEdit}>
-          <DialogTitle>Edit Food Item</DialogTitle>
+          <DialogTitle>Edit exercises</DialogTitle>
           <DialogContent>
             <TextField
               label="Name"
               value={editForm?.name || ''}
               onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-              fullWidth
-              margin="normal"
-              sx={{
-                '& .MuiInputBase-input': {
-                  color: '#000', // Default text color
-                  '&:focus': { color: '#0099cc' }, // Sky-blue color when focused
-                },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
-              }}
-            />
-            <TextField
-              label="Description"
-              value={editForm?.description || ''}
-              onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
               fullWidth
               margin="normal"
               sx={{
@@ -338,7 +323,7 @@ const Admin = () => {
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogContent>
             <Typography>
-              Are you sure you want to delete the food item: {itemToDelete?.name}?
+              Are you sure you want to delete the exercise: {itemToDelete?.name}?
             </Typography>
           </DialogContent>
           <DialogActions sx={{ gap: 2 }}>
@@ -377,7 +362,7 @@ const Admin = () => {
           </DialogActions>
         </Dialog>
         <TextField
-          label="Search Food Items"
+          label="Search Exercises"
           variant="outlined"
           value={searchQuery}
           onChange={handleSearch}
@@ -462,29 +447,17 @@ const Admin = () => {
                         >
                           {item.name}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            marginBottom: 0.5,
-                            wordBreak: 'break-word', // Ensures long words break into new lines
-                            whiteSpace: 'normal',
-                            color: '#333',
-                          }}
-                        >
-                          <strong>Description:</strong> {item.description}
+                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
+                          <strong>Energy Required:</strong> {item.energy} kcal
                         </Typography>
                         <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Energy:</strong> {item.energy} kcal
+                          <strong>Protein Burned:</strong> {item.protein} grams
                         </Typography>
                         <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Protein:</strong> {item.protein} grams
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Fat:</strong> {item.fat} grams
+                          <strong>Fat Burned:</strong> {item.fat} grams
                         </Typography>
                         <Typography variant="body2" sx={{ color: '#333', marginBottom: 0 }}>
-                          <strong>Net Carbs:</strong> {item.netCarbs} grams
+                          <strong>Net Carbs Burned:</strong> {item.netCarbs} grams
                         </Typography>
                       </CardContent>
                     </Box>
@@ -562,7 +535,6 @@ const Admin = () => {
             size="large"
           />
         </Box>
-
       </main>
     </div>
   );

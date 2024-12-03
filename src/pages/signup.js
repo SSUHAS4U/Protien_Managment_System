@@ -9,19 +9,18 @@ import {
   Typography,
   Card,
   Grid,
-  Divider,
   createTheme,
   ThemeProvider,
-  Snackbar,        
+  Snackbar,
   Alert,
 } from '@mui/material';
 import Navbar from '../components/Navbar'; // Adjust the path based on your folder structure
 import Footer from '../components/Footer'; // Adjust the path based on your folder structure
 import axios from 'axios';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { styled } from '@mui/material/styles';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+// import { styled } from '@mui/material/styles';
 import { MenuItem } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
@@ -52,26 +51,26 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // }));
 
 // Custom styling for the DatePicker component
-const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-  width: '100%', // Ensure full width
-  '& .MuiInputBase-root': {
-    color: '#000', // Text color
-  },
-  '& .MuiInputLabel-root': {
-    color: '#000', // Label color
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: '#000', // Border color
-    },
-    '&:hover fieldset': {
-      borderColor: '#000', // Border color on hover
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#000', // Border color on focus
-    },
-  },
-}));
+// const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
+//   width: '100%', // Ensure full width
+//   '& .MuiInputBase-root': {
+//     color: '#000', // Text color
+//   },
+//   '& .MuiInputLabel-root': {
+//     color: '#000', // Label color
+//   },
+//   '& .MuiOutlinedInput-root': {
+//     '& fieldset': {
+//       borderColor: '#000', // Border color
+//     },
+//     '&:hover fieldset': {
+//       borderColor: '#000', // Border color on hover
+//     },
+//     '&.Mui-focused fieldset': {
+//       borderColor: '#000', // Border color on focus
+//     },
+//   },
+// }));
 
 // Theme with sky blue palette
 const skyBlueTheme = createTheme({
@@ -174,12 +173,38 @@ export default function SignUp() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleDateChange = (date) => {
-    setFormData({ ...formData, birthDate: date });
-    if (date && !isNaN(new Date(date).getTime())) {
-      setErrors((prevErrors) => ({ ...prevErrors, birthDate: '' })); // Clear error if date format is valid
+  const handleDateChange = (dateString) => {
+    // Convert the date string to a Date object
+    const date = dateString ? new Date(dateString) : null;
+  
+    // Format the date string as needed (e.g., keep YYYY-MM-DD or transform it)
+    const formattedDate = date && !isNaN(date.getTime()) ? dateString : null;
+  
+    // Update the state with the formatted date
+    setFormData({ ...formData, birthDate: formattedDate });
+  
+    // Validate the date and update errors
+    if (date && !isNaN(date.getTime())) {
+      // Clear error if the date is valid
+      setErrors((prevErrors) => ({ ...prevErrors, birthDate: "" }));
+    } else {
+      // Set error for invalid date
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        birthDate: "Invalid date format",
+      }));
     }
   };
+  
+
+  // const formatDate = (date) => {
+  //   if (!date) return "";
+  //   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month starts from 0
+  //   const day = date.getDate().toString().padStart(2, "0"); // Day of the month
+  //   const year = date.getFullYear(); // Full year
+  //   return `${day}/${month}/${year}`; // Return in DD/MM/YYYY format
+  // };
+
   const validate = () => {
     let tempErrors = {};
     setFormSubmitted(true); // Mark form as submitted
@@ -265,7 +290,7 @@ export default function SignUp() {
     const bodyStyle = document.body.style;
     bodyStyle.overflowX = 'hidden';
     bodyStyle.overflowY = 'scroll';
-    
+
     return () => {
       bodyStyle.overflowX = 'unset';
       bodyStyle.overflowY = 'unset';
@@ -289,59 +314,59 @@ export default function SignUp() {
       </Snackbar>
       {/* Circles on the left bottom corner */}
       <div style={{ position: 'absolute', bottom: '0', left: '0', zIndex: '-1', top: '-50px' }}>
-          {/* First Circle (Left) */}
-          <div style={{
-            width: '300px',
-            height: '300px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: '-150px', // Half of the width to position it partially outside the page
-            bottom: '50px',
-            zIndex: '-1',
-          }} />
-          {/* Second Circle (Left) */}
-          <div style={{
-            width: '400px',
-            height: '400px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: '-200px', // Slightly larger and more to the left
-            top: '100px',
-            bottom: '250px',
-            zIndex: '-1',
-          }} />
-        </div>
+        {/* First Circle (Left) */}
+        <div style={{
+          width: '300px',
+          height: '300px',
+          backgroundColor: 'skyblue',
+          borderRadius: '50%',
+          position: 'absolute',
+          left: '-150px', // Half of the width to position it partially outside the page
+          bottom: '50px',
+          zIndex: '-1',
+        }} />
+        {/* Second Circle (Left) */}
+        <div style={{
+          width: '400px',
+          height: '400px',
+          backgroundColor: 'skyblue',
+          borderRadius: '50%',
+          position: 'absolute',
+          left: '-200px', // Slightly larger and more to the left
+          top: '100px',
+          bottom: '250px',
+          zIndex: '-1',
+        }} />
+      </div>
 
-        {/* Circles on the right bottom corner */}
-        <div style={{ position: 'absolute', bottom: '0', right: '0', zIndex: '-1', top: '0' }}>
-          {/* First Circle (Right) */}
-          <div style={{
-            width: '300px',
-            height: '300px',
-            backgroundColor: 'skyblue',
-            right: '-150px',
-            borderRadius: '50%',
-            position: 'absolute',
-            bottom: '50px',
-            zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
-          }} />
-          {/* Second Circle (Right) */}
-          <div style={{
-            width: '400px',
-            height: '400px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            bottom: '250px',
-            right: '-200px',
-            top: '60px',
-            zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
-          }} />
-        </div>
+      {/* Circles on the right bottom corner */}
+      <div style={{ position: 'absolute', bottom: '0', right: '0', zIndex: '-1', top: '0' }}>
+        {/* First Circle (Right) */}
+        <div style={{
+          width: '300px',
+          height: '300px',
+          backgroundColor: 'skyblue',
+          right: '-150px',
+          borderRadius: '50%',
+          position: 'absolute',
+          bottom: '50px',
+          zIndex: '-1',
+          clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
+        }} />
+        {/* Second Circle (Right) */}
+        <div style={{
+          width: '400px',
+          height: '400px',
+          backgroundColor: 'skyblue',
+          borderRadius: '50%',
+          position: 'absolute',
+          bottom: '250px',
+          right: '-200px',
+          top: '60px',
+          zIndex: '-1',
+          clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
+        }} />
+      </div>
       <Container component="main" maxWidth="md"
         sx={{
           display: 'flex',
@@ -382,7 +407,8 @@ export default function SignUp() {
             </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={5}>
+                <Grid item xs={12} sm={6}>
+                  {/* Left Side: Create a Free Account */}
                   <Typography component="h2" variant="h6" color="primary">
                     Create a Free Account
                   </Typography>
@@ -422,10 +448,7 @@ export default function SignUp() {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton
-                            onClick={handleClickShowPassword}
-                            edge="end"
-                          >
+                          <IconButton onClick={handleClickShowPassword} edge="end">
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
@@ -446,10 +469,7 @@ export default function SignUp() {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton
-                            onClick={handleClickShowConfirmPassword}
-                            edge="end"
-                          >
+                          <IconButton onClick={handleClickShowConfirmPassword} edge="end">
                             {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
@@ -457,81 +477,82 @@ export default function SignUp() {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={1}>
-                  <Divider orientation="vertical" flexItem sx={{ height: '100%' }} />
-                </Grid>
-                <Grid item xs={12} sm={5}>
-                <Typography component="h2" variant="h6" color="primary">
+
+                {/* Adjust the divider and proportions */}
+                <Grid item xs={12} sm={6}>
+                  <Typography component="h2" variant="h6" color="primary">
                     Personal Details
-                </Typography>
-
+                  </Typography>
                   <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                  <FormControl fullWidth margin="normal">
-                  <TextField
-                    select
-                    label="Gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    error={!!errors.gender}
-                    helperText={errors.gender}
-                    required
-                    SelectProps={{
-                      MenuProps: {
-                        disableScrollLock: true,  // Prevents scroll lock on the body
-                        anchorOrigin: {
-                          vertical: "bottom",
-                          horizontal: "left",
-                        },
-                        transformOrigin: {
-                          vertical: "top",
-                          horizontal: "left",
-                        },
-                        PaperProps: {
-                          style: {
-                            maxHeight: 48 * 4.5 + 8,  // Set max height for dropdown
-                            alignContent: 'right',
-                            overflowX: 'hidden',
-                            zIndex: 1300,  // Adjust z-index to ensure it's above card but below other overlays
-                          },
-                        },
-                        getContentAnchorEl: null,  // Prevents centering the menu with TextField
-                      },
-                      disablePortal: true,  // Keeps the dropdown within the form's flow instead of attaching to body
-                    }}
-                  >
-                    <MenuItem value="">Select Gender</MenuItem>
-                    <MenuItem value="female">Female</MenuItem>
-                    <MenuItem value="male">Male</MenuItem>
-                    <MenuItem value="other">Other</MenuItem>
-                  </TextField>
-                </FormControl>
-
-                  </Grid>
-
-                  <Grid item xs={12}>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <StyledDatePicker
-                    
-                    label="Birth Date*"
-                    name="birthDate"
-                    value={formData.birthDate || null}
-                    onChange={(date) => handleDateChange(date)}
-                    maxDate={new Date()}
-                    renderInput={(params) => (
+                    <Grid item xs={12}>
+                      <FormControl fullWidth margin="normal">
+                        <TextField
+                          select
+                          label="Gender"
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleChange}
+                          error={!!errors.gender}
+                          helperText={errors.gender}
+                          required
+                          SelectProps={{
+                            MenuProps: {
+                              disableScrollLock: true,  // Prevents scroll lock on the body
+                              anchorOrigin: {
+                                vertical: "bottom",
+                                horizontal: "left",
+                              },
+                              transformOrigin: {
+                                vertical: "top",
+                                horizontal: "left",
+                              },
+                              PaperProps: {
+                                style: {
+                                  maxHeight: 48 * 4.5 + 8,  // Set max height for dropdown
+                                  alignContent: 'right',
+                                  overflowX: 'hidden',
+                                  zIndex: 1300,  // Adjust z-index to ensure it's above card but below other overlays
+                                },
+                              },
+                              getContentAnchorEl: null,  // Prevents centering the menu with TextField
+                            },
+                            disablePortal: true,  // Keeps the dropdown within the form's flow instead of attaching to body
+                          }}
+                        >
+                          <MenuItem value="">Select Gender</MenuItem>
+                          <MenuItem value="female">Female</MenuItem>
+                          <MenuItem value="male">Male</MenuItem>
+                          <MenuItem value="other">Other</MenuItem>
+                        </TextField>
+                      </FormControl>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      style={{ marginTop: -10, marginBottom: 0 }} // Reduces the grid item's top and bottom margins
+                    >
                       <TextField
-                        {...params}
+                        label="Birth Date"
+                        type="date"
                         fullWidth
-                        margin="normal"
+                        margin="dense" // Use "dense" for reduced spacing
                         required
-                        error={formSubmitted && !!errors.birthDate} // Only show error if form is submitted and there's an error
-                        helperText={formSubmitted && errors.birthDate ? errors.birthDate : "MM/DD/YYYY"}
+                        value={formData.birthDate || ''} // Ensure value is either a string or empty
+                        onChange={(e) =>
+                          handleDateChange(e.target.value) // Pass the value directly to the handler
+                        }
+                        InputLabelProps={{
+                          shrink: true, // Keep the label floated
+                        }}
+                        inputProps={{
+                          max: new Date().toISOString().split('T')[0], // Restrict selection to today or earlier
+                        }}
+                        error={formSubmitted && !!errors.birthDate} // Show error state if there's an issue
+                        helperText={formSubmitted && errors.birthDate}
                       />
-                    )}
-                  />
-                  </LocalizationProvider>
-                  </Grid>
+                    </Grid>
+
+
                     <Grid item xs={6}>
                       <TextField
                         fullWidth

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState} from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -15,6 +15,11 @@ import CardMedia from '@mui/material/CardMedia';
 import img from '../images/bowl.png';
 import Snackbar from '@mui/material/Snackbar'; // For showing success/error messages
 import Alert from '@mui/material/Alert'; // For success/error alerts
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // Updated color theme to sky blue
 const skyBlueTheme = createTheme({
@@ -74,6 +79,12 @@ export default function AdminSignIn() {
   const [formData, setFormData] = React.useState({ username: '', password: '' });
   const [errors, setErrors] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: '' });
+  const navigate = useNavigate(); // Initialize navigate
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', severity: '' });
@@ -92,12 +103,40 @@ export default function AdminSignIn() {
     return newErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setSnackbar({ open: true, message: 'Please fix the errors', severity: 'error' });
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+
+      if (response.ok) {
+        // Create a session with admin data
+        sessionStorage.setItem('authToken', result.token); // Assuming the backend sends a token on successful login
+        sessionStorage.setItem('username', formData.username); // Store the username in session storage
+        sessionStorage.setItem('admin', JSON.stringify(result.admin)); // Store admin data if returned
+        
+        setSnackbar({ open: true, message: 'Login successful', severity: 'success' });
+        
+        // Navigate to dashboard
+        navigate('/admin-dashboard');
+      } else {
+        setSnackbar({ open: true, message: result.message, severity: 'error' });
+      }
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Error logging in, please try again later.', severity: 'error' });
     }
   };
 
@@ -187,8 +226,8 @@ export default function AdminSignIn() {
                 height: '500px',  // Increased height
                 maxWidth: '1000px', // Set a maximum width for larger screens
                 '&:hover': {
-                  transform: 'scale(1.05)',
-                  boxShadow: '0px 4px 20px skyblue',
+                  transform: 'scale(1.02)',
+                  boxShadow: '0px 0px 20px 5px rgba(0, 191, 255, 0.5)',
                 }
               }}
             >
@@ -233,18 +272,28 @@ export default function AdminSignIn() {
                           helperText={errors.username}
                         />
                         <TextField
-                          margin="normal"
-                          required
                           fullWidth
-                          name="password"
                           label="Password"
-                          type="password"
-                          id="password"
-                          autoComplete="current-password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
                           value={formData.password}
                           onChange={handleChange}
+                          required
+                          margin="normal"
                           error={!!errors.password}
                           helperText={errors.password}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={handleClickShowPassword}
+                                  edge="end"
+                                >
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                         />
                         <Button
                           type="submit"

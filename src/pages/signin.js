@@ -13,12 +13,14 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import CardMedia from '@mui/material/CardMedia';
 import img from '../images/heart.png';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Snackbar from '@mui/material/Snackbar'; // For showing success/error messages
 import Alert from '@mui/material/Alert'; // For success/error alerts
 import { useNavigate } from 'react-router-dom';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 
 const skyBlueTheme = createTheme({
   palette: {
@@ -74,14 +76,32 @@ const skyBlueTheme = createTheme({
 });
 
 export default function SignIn() {
-  const [formData, setFormData] = React.useState({ email: '', password: '' });
+  const [formData, setFormData] = React.useState({ email: '', password: '', enteredCaptcha: '' });
   const [errors, setErrors] = React.useState({});
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: '' });
-  const navigate = useNavigate(); // To navigate to dashboard after successful login
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [captcha, setCaptcha] = React.useState('');
+  const navigate = useNavigate();
 
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: '', severity: '' });
+  const handleCloseSnackbar = () => setSnackbar({ open: false, message: '', severity: '' });
+
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+  // Fetch Captcha from Backend
+  const generateCaptcha = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/captcha/generate');
+      const data = await response.json();
+      setCaptcha(data.captcha);
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Error generating captcha', severity: 'error' });
+    }
   };
+
+  // Initialize Captcha on Component Mount
+  React.useEffect(() => {
+    generateCaptcha();
+  }, []);
 
   const validate = () => {
     const newErrors = {};
@@ -93,6 +113,11 @@ export default function SignIn() {
     if (!formData.password) {
       newErrors.password = 'Password is required';
     }
+    if (!formData.enteredCaptcha) {
+      newErrors.captcha = 'Enter the captcha';
+    } else if (formData.enteredCaptcha !== captcha) {
+      newErrors.captcha = 'Captcha is incorrect';
+    }    
     return newErrors;
   };
 
@@ -108,20 +133,14 @@ export default function SignIn() {
     try {
       const response = await fetch('http://localhost:8080/users/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email, password: formData.password }),
       });
       const result = await response.json();
 
       if (response.ok) {
-        // Create a session with an authToken or user data
-        sessionStorage.setItem('authToken', result.token); // Assuming the backend sends a token on successful login
-        sessionStorage.setItem('email', formData.email); // Store the email in session storage
-        sessionStorage.setItem('user', JSON.stringify(result.user)); // Store full user data in session storage
-        
-        // Navigate to dashboard
+        sessionStorage.setItem('authToken', result.token);
+        sessionStorage.setItem('email', formData.email);
         navigate('/Dashboard');
       } else {
         setSnackbar({ open: true, message: result.message, severity: 'error' });
@@ -209,13 +228,13 @@ export default function SignIn() {
                 boxShadow: 3,
                 borderRadius: 2,
                 display: 'flex',
-                height: '500px',
+                height: '570px',
                 maxWidth: '900px',
                 transition: 'transform 0.3s, box-shadow 0.3s',
                 marginLeft: '140px',
                 '&:hover': {
-                  transform: 'scale(1.05)',
-                  boxShadow: '0px 4px 20px skyblue',
+                  transform: 'scale(1.02)',
+                  boxShadow: '0px 0px 20px 5px rgba(0, 191, 255, 0.5)',
                 }
               }}
             >
@@ -243,24 +262,81 @@ export default function SignIn() {
                           sx={{ backgroundColor: 'white', borderRadius: '10px' }}
                         />
                         <TextField
-                          margin="normal"
-                          required
-                          fullWidth
-                          name="password"
-                          label="Password"
-                          type="password"
-                          id="password"
-                          autoComplete="current-password"
-                          value={formData.password}
-                          onChange={handleChange}
-                          error={!!errors.password}
-                          helperText={errors.password}
-                          sx={{ backgroundColor: 'white', borderRadius: '10px' }}
-                        />
-                        <FormControlLabel
-                          control={<Checkbox value="remember" color="primary" />}
-                          label="Remember me"
-                        />
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={!!errors.password}
+                        helperText={errors.password}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={togglePasswordVisibility}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                        <Box display="flex" flexDirection="column" alignItems="center" mt={2} sx={{ width: '100%' }}>
+                          <Box display="flex" alignItems="center" sx={{ width: '100%' }}>
+                            <Typography 
+                              sx={{
+                                display: 'inline-block',
+                                padding: '10px',
+                                backgroundColor: '#e0f7ff', // Light sky blue background
+                                color: '#007acc', // Darker sky blue text
+                                fontWeight: 'bold',
+                                borderRadius: '5px',
+                                border: '1px solid #007acc',
+                                fontSize: '18px',
+                                letterSpacing: '2px',
+                                marginRight: '10px', // Spacing between captcha and button
+                                textAlign: 'center',
+                                flex: '1', // Allow captcha to take up available space
+                              }}
+                            >
+                              {captcha}
+                            </Typography>
+                            <Button
+                              onClick={generateCaptcha}
+                              variant="contained"
+                              sx={{
+                                backgroundColor: '#00bfff',
+                                color: '#fff',
+                                '&:hover': {
+                                  backgroundColor: '#007acc',
+                                },
+                              }}
+                            >
+                              Refresh Captcha
+                            </Button>
+                          </Box>
+                          <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="enteredCaptcha"
+                            label="Enter Captcha"
+                            value={formData.enteredCaptcha}
+                            onChange={handleChange}
+                            error={!!errors.captcha}
+                            helperText={errors.captcha}
+                            sx={{
+                              backgroundColor: 'white',
+                              borderRadius: '10px',
+                              mt: 2, // Add spacing above the TextField
+                            }}
+                          />
+                        </Box>
                         <Button
                           type="submit"
                           fullWidth
@@ -276,7 +352,7 @@ export default function SignIn() {
                             </Link>
                           </Grid>
                           <Grid item>
-                            <Link href="#" variant="body2">
+                            <Link href="/signup" variant="body2">
                               {"Don't have an account? Sign Up"}
                             </Link>
                           </Grid>

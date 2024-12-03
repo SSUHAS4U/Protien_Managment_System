@@ -21,7 +21,7 @@ import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { Grid, Card, CardMedia, CardContent, Button, Pagination ,Snackbar,Alert} from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Button, Pagination, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import StatisticsIcon from '@mui/icons-material/QueryStats';
 import AddExerciseIcon from '@mui/icons-material/FitnessCenter';
@@ -114,11 +114,20 @@ export default function AddFood() {
   const [page, setPage] = useState(1);
   const [openStats, setOpenStats] = useState(false);
   const itemsPerPage = 3; // Show 3 items per page
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    severity: 'success', // success or error
+    message: ''
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/food/all'); // Adjust this URL as per your backend API
+        const response = await axios.get('http://localhost:8080/exercise/all'); // Adjust this URL as per your backend API
         setFoodItems(response.data);
         setFilteredFoodItems(response.data); // Initially set filtered items to all food items
       } catch (error) {
@@ -135,7 +144,77 @@ export default function AddFood() {
     setButtonClicked(!buttonClicked);
   };
 
+  const handleAddExercise = async (item) => {
+    // Retrieve the email from session storage
+    const email = sessionStorage.getItem('email');
 
+    if (!email) {
+      console.error('Email not found in session. Please log in again.');
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: 'Email not found. Please log in again.'
+      });
+      return;
+    }
+
+    // Create the exercise diary entry object
+    const exerciseDiaryEntry = {
+      name: item.name,        // Name of the exercise
+      energy: item.energy,    // Energy burned in kcal
+      protein: item.protein,  // Protein in grams
+      fat: item.fat,          // Fat in grams
+      netCarbs: item.netCarbs // Net Carbs in grams
+    };
+
+    // Validate the Name field (ensure it is not empty)
+    if (!exerciseDiaryEntry.name || exerciseDiaryEntry.name.trim() === '') {
+      console.error('Name cannot be null or empty');
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: 'Name cannot be null or empty.'
+      });
+      return;
+    }
+
+    try {
+      // Send the exercise diary entry to the server via POST request
+      const response = await axios.post(
+        'http://localhost:8080/exercisediary/add',
+        exerciseDiaryEntry, // The data to send to the backend
+        {
+          headers: {
+            email, // Include the email in the headers
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Show success message if exercise added successfully
+        setSnackbar({
+          open: true,
+          severity: 'success',
+          message: 'Exercise added successfully!'
+        });
+      } else {
+        console.error('Failed to add exercise:', response.data);
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Failed to add exercise. Please try again.'
+        });
+      }
+    } catch (error) {
+      // Handle any errors from the request
+      console.error('Error adding exercise:', error.response ? error.response.data : error.message);
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: `Error: ${error.response ? error.response.data : error.message}`
+      });
+    }
+  };
 
   const handlePageChange = (event, value) => {
     setPage(value); // Change the current page
@@ -149,7 +228,7 @@ export default function AddFood() {
 
     try {
       // Fetch food items based on the search query
-      const response = await axios.get(`http://localhost:8080/food/search?name=${query}`);
+      const response = await axios.get(`http://localhost:8080/exercise/search?name=${query}`);
       setFilteredFoodItems(response.data); // Update the filtered items based on the search result
     } catch (error) {
       console.error('Error fetching food items:', error);
@@ -195,97 +274,20 @@ export default function AddFood() {
     window.location.reload();
   };
 
-  const handleAddFood = async (item) => {
-    // Retrieve the email from session storage
-    const email = sessionStorage.getItem('email');
-
-    if (!email) {
-      console.error('Email not found in session. Please log in again.');
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: 'Email not found. Please log in again.'
-      });
-      return;
-    }
-
-    // Create the exercise diary entry object
-    const exerciseDiaryEntry = {
-      name: item.name,        // Name of the exercise
-      energy: item.energy,    // Energy burned in kcal
-      protein: item.protein,  // Protein in grams
-      fat: item.fat,          // Fat in grams
-      netCarbs: item.netCarbs // Net Carbs in grams
-    };
-
-    // Validate the Name field (ensure it is not empty)
-    if (!exerciseDiaryEntry.name || exerciseDiaryEntry.name.trim() === '') {
-      console.error('Name cannot be null or empty');
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: 'Name cannot be null or empty.'
-      });
-      return;
-    }
-
-    try {
-      // Send the exercise diary entry to the server via POST request
-      const response = await axios.post(
-        'http://localhost:8080/fooddiary/add',
-        exerciseDiaryEntry, // The data to send to the backend
-        {
-          headers: {
-            email, // Include the email in the headers
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        // Show success message if exercise added successfully
-        setSnackbar({
-          open: true,
-          severity: 'success',
-          message: 'Food Item added successfully!'
-        });
-      } else {
-        console.error('Failed to add Food Item:', response.data);
-        setSnackbar({
-          open: true,
-          severity: 'error',
-          message: 'Failed to Food Item. Please try again.'
-        });
-      }
-    } catch (error) {
-      // Handle any errors from the request
-      console.error('Error adding exercise:', error.response ? error.response.data : error.message);
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: `Error: ${error.response ? error.response.data : error.message}`
-      });
-    }
-  };
-
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    severity: 'success', // success or error
-    message: ''
-  });
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-  
-
-
-
   const handleDashboard = () => {
     navigate('/dashboard');
   };
 
   const handleFood = () => {
     navigate('/addfood');
+  };
+
+  const handleExercise = () => {
+    navigate('/addexercise');
+  };
+
+  const handleAccount = () => {
+    navigate('/account');
   };
 
   const handleFoodStats = () => {
@@ -299,14 +301,6 @@ export default function AddFood() {
   };
   const toggleStatsDropdown = () => {
     setOpenStats(!openStats); // Toggle dropdown visibility
-  };
-
-  const handleExercise = () => {
-    navigate('/addexercise');
-  };
-
-  const handleAccount = () => {
-    navigate('/account');
   };
 
   return (
@@ -324,7 +318,7 @@ export default function AddFood() {
             <MenuIcon sx={{ color: 'black', fontSize: '32px' }} />
           </IconButton>
           <Typography variant="h6" noWrap component="div" color="black">
-            Add Food
+            Add Exercise
           </Typography>
           {/* Logout Button in the Right Corner */}
           <Box sx={{ marginLeft: 'auto' }}>
@@ -452,7 +446,7 @@ export default function AddFood() {
           }}
         >
           <TextField
-            label="Search Food Items"
+            label="Search Exercises"
             variant="outlined"
             value={searchQuery}
             onChange={handleSearch}
@@ -541,30 +535,18 @@ export default function AddFood() {
                       >
                         {item.name}
                       </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          marginBottom: 0.5,
-                          wordBreak: 'break-word',
-                          whiteSpace: 'normal',
-                          color: '#333',
-                        }}
-                      >
-                        <strong>Description:</strong> {item.description}
-                      </Typography>
                       <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>Energy:</strong> {item.energy} kcal
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>Protein:</strong> {item.protein} grams
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>Fat:</strong> {item.fat} grams
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>Net Carbs:</strong> {item.netCarbs} grams
-                      </Typography>
+                          <strong>Energy Required:</strong> {item.energy} kcal
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
+                          <strong>Protein Burned:</strong> {item.protein} grams
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
+                          <strong>Fat Burned:</strong> {item.fat} grams
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0 }}>
+                          <strong>Net Carbs Burned:</strong> {item.netCarbs} grams
+                        </Typography>
                     </CardContent>
                   </Box>
                   <Box
@@ -581,7 +563,7 @@ export default function AddFood() {
                       variant="contained"
                       size="medium"
                       startIcon={<AddIcon />}
-                      onClick={() => handleAddFood(item)}
+                      onClick={() => handleAddExercise(item)}
                       sx={{
                         width: '120px',
                         backgroundColor: '#00bfff',
@@ -594,7 +576,6 @@ export default function AddFood() {
                     >
                       Add
                     </Button>
-
                   </Box>
                 </Card>
               </Grid>
@@ -625,8 +606,9 @@ export default function AddFood() {
             size="large"
           />
         </Box>
-                {/* Snackbar for displaying messages */}
-                <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+
+        {/* Snackbar for displaying messages */}
+        <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
           <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
             {snackbar.message}
           </Alert>

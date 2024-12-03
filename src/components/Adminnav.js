@@ -4,16 +4,19 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu'; // Three-line menu icon
-import AddIcon from '@mui/icons-material/Add'; // "+" icon
-import ExitToAppIcon from '@mui/icons-material/ExitToApp'; // Exit icon
+import MenuIcon from '@mui/icons-material/Menu';
+import AddIcon from '@mui/icons-material/Add';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import PeopleIcon from '@mui/icons-material/People'; // Icon for View All Users
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from 'react-router-dom'; // For redirection
+import { useNavigate } from 'react-router-dom';
 
-export default function ButtonAppBar() {
+export default function ButtonAppBar({ handleLogout }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const navigate = useNavigate(); // Using React Router's useNavigate hook for redirection
+  const navigate = useNavigate();
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,37 +28,53 @@ export default function ButtonAppBar() {
 
   const handleFoodClick = () => {
     setAnchorEl(null);
-    navigate('/admin-addfood'); // Redirect to the "admin-addfood" route
+    navigate('/admin-addfood');
+  };
+
+  const handleExerciseClick = () => {
+    setAnchorEl(null);
+    navigate('/admin-exercise');
+  };
+
+  const handleViewExercisesClick = () => {
+    setAnchorEl(null);
+    navigate('/admin-viewexercise');
+  };
+
+  const handleViewUsersClick = () => {
+    setAnchorEl(null);
+    navigate('/admin-viewusers');
+    window.location.reload();
   };
 
   const handleLogoutClick = () => {
     setAnchorEl(null);
-    navigate('/'); // Redirect to the homepage on logout
+    handleLogout();
   };
 
   return (
-    <Box >
+    <Box sx={{ width: '100%', overflowX: 'hidden' }}>
       <AppBar
         position="static"
         sx={{
-          backgroundColor: '#ffffff', // Set background color to white
-          color: '#333333', // Dark text color for contrast
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
-          width: '100%', // Ensure full width
-          transition: 'background-color 0.3s ease', // Smooth transition for background
+          backgroundColor: '#ffffff',
+          color: '#333333',
+          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
+          width: '100%',
+          maxWidth: '100vw',
+          margin: '0 auto',
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between' }}> {/* Space items evenly */}
-          {/* Logo and home link */}
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box
             sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-            onClick={() => window.location.href = '/admin-dashboard'}
+            onClick={() => navigate('/admin-dashboard')}
           >
             <Typography
               variant="h6"
               component="div"
               sx={{
-                color: '#00bfff', // Sky blue color
+                color: '#00bfff',
                 fontWeight: 'bold',
                 fontSize: '1.5rem',
               }}
@@ -64,7 +83,6 @@ export default function ButtonAppBar() {
             </Typography>
           </Box>
 
-          {/* Three-line Menu Icon */}
           <IconButton
             edge="start"
             color="inherit"
@@ -72,13 +90,12 @@ export default function ButtonAppBar() {
             onClick={handleMenuClick}
             sx={{
               marginRight: 2,
-              color: '#00bfff', // Sky blue color for the menu icon
+              color: '#00bfff',
             }}
           >
             <MenuIcon />
           </IconButton>
 
-          {/* Dropdown Menu */}
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -97,45 +114,99 @@ export default function ButtonAppBar() {
               '& .MuiMenuItem-root': {
                 transition: 'background-color 0.3s ease',
                 '&:hover': {
-                  backgroundColor: '#f0f0f0', // Light gray on hover
-                  borderRadius: '8px', // Rounded corners on hover
+                  backgroundColor: '#f0f0f0',
+                  borderRadius: '8px',
                 },
               },
             }}
           >
-            {/* "Food" Menu Item with "+" Icon */}
-            <MenuItem onClick={handleFoodClick} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography sx={{ marginRight: '8px' }}>Food</Typography>
+            <MenuItem onClick={handleFoodClick} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ mr: 2 }}>Add Food</Typography>
               <Box
                 sx={{
-                  backgroundColor: '#00bfff', // Sky blue background
-                  borderRadius: '50%', // Circle shape
-                  width: '30px', // Adjust size of the circle
+                  ml: 'auto',
+                  backgroundColor: '#00bfff',
+                  borderRadius: '50%',
+                  width: '30px',
                   height: '30px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center', // Center "+" icon
+                  justifyContent: 'center',
                 }}
               >
-                <AddIcon sx={{ color: '#ffffff', fontSize: '20px' }} /> {/* White "+" icon */}
+                <AddIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
               </Box>
             </MenuItem>
 
-            {/* "Logout" Menu Item with Exit Icon */}
-            <MenuItem onClick={handleLogoutClick} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography sx={{ marginRight: '8px' }}>Logout</Typography>
+            <MenuItem onClick={handleExerciseClick} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ mr: 2 }}>Add Exercise</Typography>
               <Box
                 sx={{
-                  backgroundColor: '#ff4d4d', // Red background for logout
-                  borderRadius: '50%', // Circle shape
-                  width: '30px', // Adjust size of the circle
+                  ml: 'auto',
+                  backgroundColor: '#00bfff', // Sky blue color
+                  borderRadius: '50%',
+                  width: '30px',
                   height: '30px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center', // Center "exit" icon
+                  justifyContent: 'center',
                 }}
               >
-                <ExitToAppIcon sx={{ color: '#ffffff', fontSize: '20px' }} /> {/* White "exit" icon */}
+                <FitnessCenterIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
+              </Box>
+            </MenuItem>
+
+            <MenuItem onClick={handleViewExercisesClick} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ mr: 2 }}>View Exercises</Typography>
+              <Box
+                sx={{
+                  ml: 'auto',
+                  backgroundColor: '#00bfff',
+                  borderRadius: '50%',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <SportsMartialArtsIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
+              </Box>
+            </MenuItem>
+
+            <MenuItem onClick={handleViewUsersClick} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ mr: 2 }}>View All Users</Typography>
+              <Box
+                sx={{
+                  ml: 'auto',
+                  backgroundColor: '#00bfff',
+                  borderRadius: '50%',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <PeopleIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
+              </Box>
+            </MenuItem>
+
+            <MenuItem onClick={handleLogoutClick} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ mr: 2 }}>Logout</Typography>
+              <Box
+                sx={{
+                  ml: 'auto',
+                  backgroundColor: '#ff4d4d',
+                  borderRadius: '50%',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ExitToAppIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
               </Box>
             </MenuItem>
           </Menu>

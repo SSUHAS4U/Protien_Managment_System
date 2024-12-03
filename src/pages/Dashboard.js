@@ -1,5 +1,5 @@
-import React, {useEffect,useState } from 'react';
-import { styled, useTheme  } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
+import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -17,14 +17,21 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import BookIcon from '@mui/icons-material/Book';
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Card, CardContent } from '@mui/material';
+import StatisticsIcon from '@mui/icons-material/QueryStats';
+import AddExerciseIcon from '@mui/icons-material/FitnessCenter';
 import { useNavigate } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle'; // Add this line
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import axios from 'axios';
+import { Card, CardContent, Avatar } from '@mui/material';
+import img1 from '../images/pic2.jpg';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food Stats
+import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
 
 
 const drawerWidth = 240;
@@ -99,21 +106,165 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   })
 );
 
-const StyledCard = styled(Card)(({ theme }) => ({
-  width: '100%',
-  height: '100%',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  '&:hover': {
-    transform: 'scale(1.02)',
-    boxShadow: '0 4px 20px rgba(135, 206, 235, 0.7)',
-  },
-}));
-
 export default function MiniDrawer() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const [userName, setName] = useState('');
+  const [openStats, setOpenStats] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [userName, setName] = useState("");
+  const [userData, setUserData] = useState({
+    email: "",
+    weight: "",
+    heightFeet: "",
+    heightInches: "",
+    gender: "",
+    birthDate: "",
+    bio: "",
+  });
+  const [profilePic, setProfilePic] = useState(""); // Store Base64 profile picture
+  const [stats, setStats] = useState(null); // For stats section
+  const [exerciseStats, setExerciseStats] = useState(null); // For exercise stats
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const email = sessionStorage.getItem("email");
+    const authToken = sessionStorage.getItem("authToken");
+
+    if (!authToken || !email) {
+      navigate("/"); // Redirect to login if no token or email
+    } else {
+      // Fetch user details
+      axios
+        .get(`http://localhost:8080/users?email=${email}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
+        .then((response) => {
+          if (response.data.user) {
+            setName(response.data.user.name);
+            setUserData({
+              email: response.data.user.email,
+              weight: response.data.user.weight,
+              heightFeet: response.data.user.heightFeet,
+              heightInches: response.data.user.heightInches,
+              gender: response.data.user.gender,
+              birthDate: response.data.user.birthDate,
+              bio: response.data.user.bio,
+            });
+            sessionStorage.setItem("userName", response.data.user.name);
+
+            // Fetch profile image if it exists
+            axios
+              .get(`http://localhost:8080/imageconverter/${email}`, {
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                },
+              })
+              .then((imageResponse) => {
+                if (imageResponse.data.image) {
+                  setProfilePic(imageResponse.data.image); // Set Base64 image
+                }
+              })
+              .catch((imageError) => {
+                console.warn(
+                  "Profile image not found:",
+                  imageError.response?.data.message || imageError.message
+                );
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(
+            "Error fetching user data:",
+            error.response ? error.response.data : error.message
+          );
+        });
+
+      // Fetch stats
+      const fetchStats = async () => {
+        try {
+          const statsResponse = await axios.get(
+            `http://localhost:8080/fooddiary/foodstats`, // Updated endpoint
+            { headers: { email } } // Pass only the email in headers
+          );
+          setStats(statsResponse.data || {}); // Set an empty object if response is null or undefined
+        } catch (statsError) {
+          console.error("Error fetching stats:", statsError);
+          setStats({}); // Handle error by setting an empty object
+        }
+      };
+
+      fetchStats(); // Fetch stats immediately
+
+
+      // Fetch exercise stats
+      const fetchExerciseStats = async () => {
+        try {
+          const statsResponse = await axios.get(
+            `http://localhost:8080/exercisediary/exercisestats`, // Updated endpoint for exercise stats
+            { headers: { email } } // Pass only the email in headers
+          );
+          setExerciseStats(statsResponse.data || {}); // Set an empty object if response is null or undefined
+        } catch (statsError) {
+          console.error("Error fetching exercise stats:", statsError);
+          setExerciseStats({}); // Handle error by setting an empty object
+        }
+      };
+
+      fetchExerciseStats(); // Fetch exercise stats immediately
+    }
+  }, [navigate]);
+
+  // Prepare chart data
+  const chartData = {
+    labels: ["Total Energy", "Total Protein", "Total Fat", "Total Net Carbs"],
+    datasets: [
+      {
+        data: [
+          stats?.totalEnergy || 0,
+          stats?.totalProtein || 0,
+          stats?.totalFat || 0,
+          stats?.totalNetCarbs || 0,
+        ],
+        backgroundColor: ["#4CAF50", "#2196F3", "#FFC107", "#FF5722"],
+        hoverBackgroundColor: ["#66BB6A", "#42A5F5", "#FFD54F", "#FF7043"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Prepare chart data for exercise stats
+  const exerciseChartData = {
+    labels: ["Total Energy", "Total Protein", "Total Fat", "Total Net Carbs"],
+    datasets: [
+      {
+        data: [
+          exerciseStats?.totalEnergy || 0, // Use exercise stats values
+          exerciseStats?.totalProtein || 0,
+          exerciseStats?.totalFat || 0,
+          exerciseStats?.totalNetCarbs || 0,
+        ],
+        backgroundColor: ["#4CAF50", "#2196F3", "#FFC107", "#FF5722"], // Colors for each stat
+        hoverBackgroundColor: ["#66BB6A", "#42A5F5", "#FFD54F", "#FF7043"], // Hover colors
+        borderWidth: 1,
+      },
+    ],
+  };
+  // Register the required components
+  ChartJS.register(ArcElement, Tooltip, Legend);
+
+
+
+  const formatToDDMMYYYY = (dateString) => {
+    const date = new Date(dateString);
+    if (isNaN(date)) return "Invalid Date"; // Handle invalid dates gracefully
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -123,37 +274,14 @@ export default function MiniDrawer() {
     setOpen(false);
   };
 
-  useEffect(() => {
-    const email = sessionStorage.getItem('email');
-    const authToken = sessionStorage.getItem('authToken');
-
-    if (!authToken || !email) {
-      navigate('/'); // Redirect to login if no token or email
-    } else {
-      axios.get(`http://localhost:8080/users?email=${email}`, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-        },
-      })
-        .then(response => {
-          if (response.data.user && response.data.user.name) {
-            setName(response.data.user.name); // Set the name
-            sessionStorage.setItem('userName', response.data.user.name); // Store name in session
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching user data:', error.response ? error.response.data : error.message);
-        });
-    }
-  }, [navigate]);
-
 
   const handleLogout = () => {
     sessionStorage.removeItem('authToken');
     sessionStorage.removeItem('userName');
     navigate('/'); // Redirect to login page after logout
+    window.location.reload();
   };
-  
+
   const handleDashboard = () => {
     navigate('/dashboard');
   };
@@ -162,23 +290,28 @@ export default function MiniDrawer() {
     navigate('/addfood');
   };
 
-  const handleDiary = () => {
-    navigate('/diary');
+  const handleExercise = () => {
+    navigate('/addexercise');
   };
 
   const handleAccount = () => {
     navigate('/account');
   };
 
-  // Hardcoded graph data for demonstration
-  const data = [
-    { name: 'Jan', weight: 65, height: 170 },
-    { name: 'Feb', weight: 68, height: 172 },
-    { name: 'Mar', weight: 70, height: 174 },
-    { name: 'Apr', weight: 72, height: 176 },
-    { name: 'May', weight: 75, height: 178 },
-    { name: 'Jun', weight: 77, height: 180 },
-  ];
+  const handleFoodStats = () => {
+    navigate('/foodstats');
+    window.location.reload();
+  };
+
+  const handleExerciseStats = () => {
+    navigate('/exercisestats');
+    window.location.reload();
+  };
+
+  const toggleStatsDropdown = () => {
+    setOpenStats(!openStats); // Toggle dropdown visibility
+  };
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -237,7 +370,7 @@ export default function MiniDrawer() {
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary="Dashboard" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding sx={{ display: 'block' }}>
@@ -245,70 +378,339 @@ export default function MiniDrawer() {
                 <ListItemIcon>
                   <AddIcon />
                 </ListItemIcon>
-                <ListItemText primary="Food" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary="Food" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={handleDiary}>
+              <ListItemButton onClick={handleExercise}>
                 <ListItemIcon>
-                  <BookIcon />
+                  <AddExerciseIcon />
                 </ListItemIcon>
-                <ListItemText primary="Diary" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
+
+            {/* Statistics with dropdown for Food Stats and Exercise Stats */}
             <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton onClick={handleAccount}>
-              <ListItemIcon>
-                <AccountCircle /> {/* Updated this line */}
-              </ListItemIcon>
-              <ListItemText primary="Account" sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
+              <ListItemButton onClick={toggleStatsDropdown}>
+                <ListItemIcon>
+                  <StatisticsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Statistics" sx={{ opacity: 1 }} />
+                <ExpandMoreIcon sx={{ transform: openStats ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }} />
+              </ListItemButton>
+
+              {/* Dropdown for Food Stats and Exercise Stats */}
+              {openStats && (
+                <List component="div" disablePadding>
+                  <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton onClick={handleFoodStats}>
+                      <ListItemIcon>
+                        <LocalDiningIcon /> {/* Food Stats icon */}
+                      </ListItemIcon>
+                      <ListItemText primary="Food Stats" sx={{ opacity: 1 }} />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton onClick={handleExerciseStats}>
+                      <ListItemIcon>
+                        <SportsMartialArtsIcon /> {/* Exercise Stats icon */}
+                      </ListItemIcon>
+                      <ListItemText primary="Exercise Stats" sx={{ opacity: 1 }} />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              )}
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton onClick={handleAccount}>
+                <ListItemIcon>
+                  <AccountCircle />
+                </ListItemIcon>
+                <ListItemText primary="Account" sx={{ opacity: 1 }} />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, height: '100vh' }}>
+
+
+      {/* main content  */}
+      <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: '64px' }}>
         <DrawerHeader />
+        <Card
+          sx={{
+            maxWidth: '100%',
+            margin: 'auto',
+            position: 'relative',
+            backgroundColor: '#f9f9f9',
+            borderRadius: '16px',
+            padding: '24px',
+            marginTop: '-40px',
+            boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+            '&:hover': {
+              transform: 'scale(1.01)',
+              boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+            },
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
+          }}
+        >
 
-        {/* Main Content with Two Separate Graphs */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {/* Weight Graph */}
-          <StyledCard>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Weight Progress
+          {/* Profile Top Section with Background Image */}
+          <Box
+            sx={{
+              width: '100%',
+              height: '200px',
+              backgroundImage: `url(${img1})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              borderRadius: '8px',
+              display: 'flex',
+              justifyContent: 'left',
+              alignItems: 'center',
+              position: 'relative',
+            }}
+          >
+            {/* Profile Picture with White Circular Background */}
+            <Avatar
+              src={profilePic || "default-profile-pic.jpg"} // Fallback to a default image
+              alt="Profile"
+              sx={{
+                width: '170px',
+                height: '170px',
+                borderRadius: '50%',
+                border: '4px solid #fff', // Optional: border for better visibility
+                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                left: '10px',
+              }}
+            />
+          </Box>
+          {/* Profile Details Section */}
+          <CardContent
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'left', // Align content to the left for details
+              width: '100%',
+            }}
+          >
+            {/* User Info */}
+            <Box sx={{ width: '100%' }}>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                {userName}
               </Typography>
-              <ResponsiveContainer width="90%" height={200}>
-                <BarChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="weight" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </StyledCard>
+              <Typography variant="body2" sx={{ fontWeight: 'bold', marginBottom: '12px' }}>
+                Email: {userData.email}
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 'bold', marginBottom: '12px' }}>
+                Bio: {userData.bio}
+              </Typography>
 
-          {/* Height Graph */}
-          <StyledCard>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Height Progress
-              </Typography>
-              <ResponsiveContainer width="90%" height={200}>
-                <BarChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="height" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </StyledCard>
+              <Box sx={{ display: 'flex', justifyContent: 'left', width: '100%' }}>
+
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                  Gender: {userData.gender}
+                </Typography>
+                {/* Divider */}
+                <Box
+                  sx={{
+                    width: '1px',
+                    height: '16px',
+                    backgroundColor: '#ccc',
+                    marginX: 1,
+                  }}
+                />
+
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                  DOB: {userData.birthDate ? formatToDDMMYYYY(userData.birthDate) : 'N/A'}
+                </Typography>
+
+
+                {/* Divider */}
+                <Box
+                  sx={{
+                    width: '1px',
+                    height: '16px',
+                    backgroundColor: '#ccc',
+                    marginX: 1,
+                  }}
+                />
+
+                {/* Weight */}
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                  Weight: {userData.weight} kg
+                </Typography>
+
+                {/* Divider */}
+                <Box
+                  sx={{
+                    width: '1px',
+                    height: '16px',
+                    backgroundColor: '#ccc',
+                    marginX: 1,
+                  }}
+                />
+
+                {/* Height Feet */}
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                  HeightFeet: {userData.heightFeet} cm
+                </Typography>
+
+                {/* Divider */}
+                <Box
+                  sx={{
+                    width: '1px',
+                    height: '16px',
+                    backgroundColor: '#ccc',
+                    marginX: 1,
+                  }}
+                />
+
+                {/* Height Inches */}
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold' }}>
+                  HeightInches: {userData.heightInches} in
+                </Typography>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+        {/* statistics */}
+        <Box
+          sx={{
+            display: 'flex', // Flexbox to display cards side by side
+            justifyContent: 'space-between', // Ensure cards are spaced out evenly
+            gap: '20px', // Adds space between the cards
+            marginTop: "50px",
+          }}
+        >
+          {/* Nutritional Breakdown Card */}
+          <Card
+            sx={{
+              padding: "24px",
+              borderRadius: "16px",
+              backgroundColor: "#f9f9f9",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "48%", // Adjusted width for better spacing
+              boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+              '&:hover': {
+                transform: 'scale(1.02)', // Slightly increased scale for hover effect
+                boxShadow: '0px 8px 20px rgba(0, 191, 255, 0.5)', // Enhanced sky blue box shadow
+              },
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
+            }}
+          >
+            <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+              Nutritional Breakdown
+            </Typography>
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Doughnut
+                data={chartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: true,
+                }}
+              />
+              <Box
+                sx={{
+                  bottom: "8px",
+                  right: "16px",
+                  backgroundColor: "rgba(255, 255, 255, 0.8)", // Slightly more transparent for better visibility
+                  padding: "12px",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow for popup effect
+                }}
+              >
+                <Typography variant="body2" sx={{ fontWeight: "bold", marginBottom: "4px" }}>
+                  Total Energy: {chartData.datasets[0].data[0]} kcal
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: "bold", marginBottom: "4px" }}>
+                  Protein: {chartData.datasets[0].data[1]} g
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: "bold", marginBottom: "4px" }}>
+                  Fat: {chartData.datasets[0].data[2]} g
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                  Net Carbs: {chartData.datasets[0].data[3]} g
+                </Typography>
+              </Box>
+            </Box>
+          </Card>
+
+          {/* Exercise Breakdown Card */}
+          <Card
+            sx={{
+              padding: "24px",
+              borderRadius: "16px",
+              backgroundColor: "#f9f9f9",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "48%", // Adjusted width for better spacing
+              boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+              '&:hover': {
+                transform: 'scale(1.02)', // Slightly increased scale for hover effect
+                boxShadow: '0px 8px 20px rgba(0, 191, 255, 0.5)', // Enhanced sky blue box shadow
+              },
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
+            }}
+          >
+            <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+              Exercise Breakdown
+            </Typography>
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Doughnut
+                data={exerciseChartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: true,
+                }}
+              />
+              <Box
+                sx={{
+                  // position: "absolute",
+                  bottom: "8px",
+                  right: "16px",
+                  backgroundColor: "rgba(255, 255, 255, 0.8)", // Slightly more transparent for better visibility
+                  padding: "12px",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow for popup effect
+                }}
+              >
+                <Typography variant="body2" sx={{ fontWeight: "bold", marginBottom: "4px" }}>
+                  Total Energy Burned: {exerciseChartData.datasets[0].data[0]} kcal
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: "bold", marginBottom: "4px" }}>
+                  Protein Burned: {exerciseChartData.datasets[0].data[1]} g
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: "bold", marginBottom: "4px" }}>
+                  Fat Burned: {exerciseChartData.datasets[0].data[2]} g
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                  Net Carbs Burned: {exerciseChartData.datasets[0].data[3]} g
+                </Typography>
+              </Box>
+            </Box>
+          </Card>
         </Box>
       </Box>
     </Box>
