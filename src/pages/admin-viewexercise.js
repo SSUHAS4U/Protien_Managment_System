@@ -23,7 +23,7 @@ import axios from 'axios';
 import { Edit, Delete, Search } from '@mui/icons-material'; // Import icons
 
 
-const Admin = () => {
+const ExerciseDashboard = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [editForm, setEditForm] = useState(null);
   const [openEdit, setOpenEdit] = useState(false);
@@ -97,34 +97,60 @@ const Admin = () => {
   const handleSubmitEdit = async () => {
     try {
       const formData = new FormData();
-      formData.append('name', editForm.name);
-      formData.append('energy', editForm.energy);
-      formData.append('protein', editForm.protein);
-      formData.append('fat', editForm.fat);
-      formData.append('netCarbs', editForm.netCarbs);
 
-      // Only append image if one is selected and valid
+      // Append fields only if they have values
+      if (editForm.name) formData.append('name', editForm.name);
+      if (editForm.description) formData.append('description', editForm.description);
+      if (editForm.energy) formData.append('energy', editForm.energy);
+      if (editForm.protein) formData.append('protein', editForm.protein);
+      if (editForm.fat) formData.append('fat', editForm.fat);
+      if (editForm.netCarbs) formData.append('netCarbs', editForm.netCarbs);
+
+      // Append image if it is selected and valid
       if (editForm.image && editForm.image.size > 0) {
         formData.append('image', editForm.image);
       }
-
-      await axios.put(`http://localhost:8080/exercise/${editForm.name}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      console.log('Sending PUT request to edit food:', {
+        name: editForm.name,
+        description: editForm.description,
+        energy: editForm.energy,
+        protein: editForm.protein,
+        fat: editForm.fat,
+        netCarbs: editForm.netCarbs,
       });
 
-      setSuccessMessage('Food item updated successfully!');
+      // Make API call to update the food item
+      await axios.put(
+        `http://localhost:8080/exercise/${editForm.id}`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
+
+      // Handle success
+      setSuccessMessage('Exercise updated successfully!');
       window.location.reload();
       setErrorMessage('');
       setEditForm(null); // Reset the form
+      setOpenEdit(false); // Close the edit modal/dialog
+
+      // Fetch updated food items
       const updatedFoodItems = await axios.get('http://localhost:8080/exercise/all');
       setFoodItems(updatedFoodItems.data);
-      setOpenEdit(false);
     } catch (error) {
-      setErrorMessage('Error updating food item. Please try again.');
+      // Handle errors
+      setErrorMessage('Error updating Exercise. Please try again.');
       setSuccessMessage('');
-      console.error("Error updating food item:", error);
+      console.error('Error updating Exercise:', error);
+
+      // Optionally provide more feedback based on error response
+      if (error.response && error.response.data) {
+        console.error('Backend error response:', error.response.data);
+      }
     }
   };
+
   const handleCancelDelete = () => {
     setOpenDelete(false);
     setItemToDelete(null);
@@ -132,7 +158,7 @@ const Admin = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/exercise/${itemToDelete.name}`);
+      await axios.delete(`http://localhost:8080/exercise/${itemToDelete.id}`);
       const updatedFoodItems = foodItems.filter(item => item.name !== itemToDelete.name);
       setFoodItems(updatedFoodItems);
       setOpenDelete(false);
@@ -140,7 +166,7 @@ const Admin = () => {
       setSuccessMessage("Item deleted successfully!"); // Set the success message
       window.location.reload();
     } catch (error) {
-      console.error("Error deleting food item:", error);
+      console.error("Error deleting Exercise:", error);
     }
   };
 
@@ -154,7 +180,7 @@ const Admin = () => {
       const response = await axios.get(`http://localhost:8080/exercise/search?name=${query}`);
       setFilteredFoodItems(response.data); // Update the filtered items based on the search result
     } catch (error) {
-      console.error('Error fetching food items:', error);
+      console.error('Error fetching Exercise:', error);
     }
   };
 
@@ -192,24 +218,24 @@ const Admin = () => {
         )}
         {/* Edit Form Dialog */}
         <Dialog open={openEdit} onClose={handleCancelEdit}>
-          <DialogTitle>Edit exercises</DialogTitle>
+          <DialogTitle>Edit Exercise</DialogTitle>
           <DialogContent>
             <TextField
               label="Name"
               value={editForm?.name || ''}
-              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
               fullWidth
               margin="normal"
+              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
               sx={{
                 '& .MuiInputBase-input': {
-                  color: '#000', // Default text color
-                  '&:focus': { color: '#0099cc' }, // Sky-blue color when focused
+                  color: '#000',
+                  '&:focus': { color: '#0099cc' },
                 },
                 '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
               }}
             />
             <TextField
-              label="Energy"
+              label="Energy Required"
               value={editForm?.energy || ''}
               onChange={(e) => setEditForm({ ...editForm, energy: e.target.value })}
               fullWidth
@@ -223,7 +249,7 @@ const Admin = () => {
               }}
             />
             <TextField
-              label="Protein"
+              label="Burns Protein"
               value={editForm?.protein || ''}
               onChange={(e) => setEditForm({ ...editForm, protein: e.target.value })}
               fullWidth
@@ -237,7 +263,7 @@ const Admin = () => {
               }}
             />
             <TextField
-              label="Fat"
+              label="Burns Fat"
               value={editForm?.fat || ''}
               onChange={(e) => setEditForm({ ...editForm, fat: e.target.value })}
               fullWidth
@@ -251,7 +277,7 @@ const Admin = () => {
               }}
             />
             <TextField
-              label="Net Carbs"
+              label="Burns Net Carbs"
               value={editForm?.netCarbs || ''}
               onChange={(e) => setEditForm({ ...editForm, netCarbs: e.target.value })}
               fullWidth
@@ -323,7 +349,7 @@ const Admin = () => {
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogContent>
             <Typography>
-              Are you sure you want to delete the exercise: {itemToDelete?.name}?
+              Are you sure you want to delete the Exercise: {itemToDelete?.name}?
             </Typography>
           </DialogContent>
           <DialogActions sx={{ gap: 2 }}>
@@ -362,7 +388,7 @@ const Admin = () => {
           </DialogActions>
         </Dialog>
         <TextField
-          label="Search Exercises"
+          label="Search Exercise"
           variant="outlined"
           value={searchQuery}
           onChange={handleSearch}
@@ -451,13 +477,13 @@ const Admin = () => {
                           <strong>Energy Required:</strong> {item.energy} kcal
                         </Typography>
                         <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Protein Burned:</strong> {item.protein} grams
+                          <strong>Burns Protein:</strong> {item.protein} grams
                         </Typography>
                         <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Fat Burned:</strong> {item.fat} grams
+                          <strong>Burns Fat:</strong> {item.fat} grams
                         </Typography>
                         <Typography variant="body2" sx={{ color: '#333', marginBottom: 0 }}>
-                          <strong>Net Carbs Burned:</strong> {item.netCarbs} grams
+                          <strong>Burns Net Carbs:</strong> {item.netCarbs} grams
                         </Typography>
                       </CardContent>
                     </Box>
@@ -512,7 +538,7 @@ const Admin = () => {
               ))
             ) : (
               <Grid item xs={12}>
-                <Typography variant="h6" color="text.secondary">No food items available</Typography>
+                <Typography variant="h6" color="text.secondary">No Exercise available</Typography>
               </Grid>
             )}
           </Grid>
@@ -535,9 +561,10 @@ const Admin = () => {
             size="large"
           />
         </Box>
+
       </main>
     </div>
   );
 };
 
-export default Admin;
+export default ExerciseDashboard;

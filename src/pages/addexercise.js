@@ -21,7 +21,10 @@ import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { Grid, Card, CardMedia, CardContent, Button, Pagination, Snackbar, Alert } from '@mui/material';
+import {
+  Grid, Card, CardMedia, CardContent, Button, Pagination, Snackbar,
+  Alert, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel
+} from '@mui/material';
 import axios from 'axios';
 import StatisticsIcon from '@mui/icons-material/QueryStats';
 import AddExerciseIcon from '@mui/icons-material/FitnessCenter';
@@ -30,6 +33,7 @@ import { Search } from '@mui/icons-material'; // Import icons
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food Stats
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+
 
 
 const drawerWidth = 240;
@@ -104,7 +108,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   })
 );
 
-export default function AddFood() {
+export default function Addexercise() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -113,16 +117,10 @@ export default function AddFood() {
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [openStats, setOpenStats] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false); // Dialog state
   const itemsPerPage = 3; // Show 3 items per page
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    severity: 'success', // success or error
-    message: ''
-  });
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [foodItem, setFoodItem] = useState(null); // Store the selected item
 
   useEffect(() => {
     const fetchFoodItems = async () => {
@@ -131,7 +129,7 @@ export default function AddFood() {
         setFoodItems(response.data);
         setFilteredFoodItems(response.data); // Initially set filtered items to all food items
       } catch (error) {
-        console.error('Error fetching food items:', error);
+        console.error('Error fetching exercise:', error);
       }
     };
 
@@ -144,77 +142,7 @@ export default function AddFood() {
     setButtonClicked(!buttonClicked);
   };
 
-  const handleAddExercise = async (item) => {
-    // Retrieve the email from session storage
-    const email = sessionStorage.getItem('email');
 
-    if (!email) {
-      console.error('Email not found in session. Please log in again.');
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: 'Email not found. Please log in again.'
-      });
-      return;
-    }
-
-    // Create the exercise diary entry object
-    const exerciseDiaryEntry = {
-      name: item.name,        // Name of the exercise
-      energy: item.energy,    // Energy burned in kcal
-      protein: item.protein,  // Protein in grams
-      fat: item.fat,          // Fat in grams
-      netCarbs: item.netCarbs // Net Carbs in grams
-    };
-
-    // Validate the Name field (ensure it is not empty)
-    if (!exerciseDiaryEntry.name || exerciseDiaryEntry.name.trim() === '') {
-      console.error('Name cannot be null or empty');
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: 'Name cannot be null or empty.'
-      });
-      return;
-    }
-
-    try {
-      // Send the exercise diary entry to the server via POST request
-      const response = await axios.post(
-        'http://localhost:8080/exercisediary/add',
-        exerciseDiaryEntry, // The data to send to the backend
-        {
-          headers: {
-            email, // Include the email in the headers
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        // Show success message if exercise added successfully
-        setSnackbar({
-          open: true,
-          severity: 'success',
-          message: 'Exercise added successfully!'
-        });
-      } else {
-        console.error('Failed to add exercise:', response.data);
-        setSnackbar({
-          open: true,
-          severity: 'error',
-          message: 'Failed to add exercise. Please try again.'
-        });
-      }
-    } catch (error) {
-      // Handle any errors from the request
-      console.error('Error adding exercise:', error.response ? error.response.data : error.message);
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: `Error: ${error.response ? error.response.data : error.message}`
-      });
-    }
-  };
 
   const handlePageChange = (event, value) => {
     setPage(value); // Change the current page
@@ -231,7 +159,7 @@ export default function AddFood() {
       const response = await axios.get(`http://localhost:8080/exercise/search?name=${query}`);
       setFilteredFoodItems(response.data); // Update the filtered items based on the search result
     } catch (error) {
-      console.error('Error fetching food items:', error);
+      console.error('Error fetching exercise:', error);
     }
   };
 
@@ -274,20 +202,98 @@ export default function AddFood() {
     window.location.reload();
   };
 
+  const handleAddFood = async (item, category, totalEnergy, totalProtein, totalFat, totalCarbs) => {
+    // Retrieve the email from session storage
+    const email = sessionStorage.getItem('email');
+
+    if (!email) {
+      console.error('Email not found in session. Please log in again.');
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: 'Email not found. Please log in again.'
+      });
+      return;
+    }
+
+    // Create the food diary entry object with the selected category and calculated values
+    const foodDiaryEntry = {
+      name: item.name,         // Name of the food item
+      energy: totalEnergy,     // Total Energy in kcal based on quantity
+      protein: totalProtein,   // Total Protein in grams based on quantity
+      fat: totalFat,           // Total Fat in grams based on quantity
+      netCarbs: totalCarbs,    // Total Net Carbs in grams based on quantity
+      category: category,      // Category of the food item (Breakfast, Lunch, Dinner, Snacks)
+      duration: duration       // The quantity entered by the user
+    };
+
+    // Validate the Name field (ensure it is not empty)
+    if (!foodDiaryEntry.name || foodDiaryEntry.name.trim() === '') {
+      console.error('Name cannot be null or empty');
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: 'Name cannot be null or empty.'
+      });
+      return;
+    }
+
+    try {
+      // Send the food diary entry to the server via POST request
+      const response = await axios.post(
+        'http://localhost:8080/exercisediary/add',
+        foodDiaryEntry, // The data to send to the backend
+        {
+          headers: {
+            email, // Include the email in the headers
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Show success message if food item added successfully
+        setSnackbar({
+          open: true,
+          severity: 'success',
+          message: 'Exercise added successfully!'
+        });
+      } else {
+        console.error('Failed to add Exercise:', response.data);
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: 'Failed to add Exercise. Please try again.'
+        });
+      }
+    } catch (error) {
+      // Handle any errors from the request
+      console.error('Error adding Exercise:', error.response ? error.response.data : error.message);
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: `Error: ${error.response ? error.response.data : error.message}`
+      });
+    }
+  };
+
+
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    severity: 'success', // success or error
+    message: ''
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const handleDashboard = () => {
     navigate('/dashboard');
   };
 
   const handleFood = () => {
     navigate('/addfood');
-  };
-
-  const handleExercise = () => {
-    navigate('/addexercise');
-  };
-
-  const handleAccount = () => {
-    navigate('/account');
   };
 
   const handleFoodStats = () => {
@@ -302,6 +308,54 @@ export default function AddFood() {
   const toggleStatsDropdown = () => {
     setOpenStats(!openStats); // Toggle dropdown visibility
   };
+
+  const handleExercise = () => {
+    navigate('/addexercise');
+  };
+
+  const handleAccount = () => {
+    navigate('/account');
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false); // Close the dialog
+  };
+
+  // Function to handle category selection change
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+  };
+
+  const [duration, setDuration] = useState(1); // Initialize quantity to 1
+
+  // Function to handle the Save button click
+  const handleSave = () => {
+    if (selectedCategory && foodItem && duration > 0) {
+      // Calculate the multiplier based on 30-minute intervals
+      const multiplier = duration / 30;
+  
+      // Adjust the nutritional values based on the multiplier
+      const totalEnergy = foodItem.energy * multiplier;
+      const totalProtein = foodItem.protein * multiplier;
+      const totalFat = foodItem.fat * multiplier;
+      const totalCarbs = foodItem.netCarbs * multiplier;
+  
+      // Call the method to add food with updated values
+      handleAddFood(foodItem, selectedCategory, totalEnergy, totalProtein, totalFat, totalCarbs);
+      setOpenDialog(false); // Close the dialog
+      setSelectedCategory(''); // Reset the selected category
+      setDuration(30); // Reset the duration to default
+    }
+  };
+  
+  // Function to open the pop-up
+  const handleAddFoodClick = (item) => {
+    setFoodItem(item); // Store the selected food item
+    setOpenDialog(true); // Open the pop-up
+  };
+
+
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -351,7 +405,7 @@ export default function AddFood() {
         </DrawerHeader>
         <Divider />
         <Box sx={{ flexGrow: 1 }}>
-        <List>
+          <List>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton onClick={handleDashboard}>
                 <ListItemIcon>
@@ -420,10 +474,7 @@ export default function AddFood() {
           </List>
         </Box>
       </Drawer>
-
-
       {/* main Content */}
-
       {/* Food Cards */}
       <Box
         sx={{
@@ -434,7 +485,6 @@ export default function AddFood() {
           backgroundColor: 'white', // Optional background color for testing
         }}
       >
-
         <Grid
           container
           spacing={4}
@@ -446,7 +496,7 @@ export default function AddFood() {
           }}
         >
           <TextField
-            label="Search Exercises"
+            label="Search Exercise"
             variant="outlined"
             value={searchQuery}
             onChange={handleSearch}
@@ -535,18 +585,30 @@ export default function AddFood() {
                       >
                         {item.name}
                       </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          marginBottom: 0.5,
+                          wordBreak: 'break-word',
+                          whiteSpace: 'normal',
+                          color: '#333',
+                        }}
+                      >
+                        <strong>Description:</strong> {item.description}
+                      </Typography>
                       <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Energy Required:</strong> {item.energy} kcal
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Protein Burned:</strong> {item.protein} grams
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                          <strong>Fat Burned:</strong> {item.fat} grams
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#333', marginBottom: 0 }}>
-                          <strong>Net Carbs Burned:</strong> {item.netCarbs} grams
-                        </Typography>
+                        <strong>Required Energy:</strong> {item.energy} kcal
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
+                        <strong>Burns Protein:</strong> {item.protein} grams
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
+                        <strong>burns Fat:</strong> {item.fat} grams
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
+                        <strong>Burns Net Carbs:</strong> {item.netCarbs} grams
+                      </Typography>
                     </CardContent>
                   </Box>
                   <Box
@@ -559,11 +621,12 @@ export default function AddFood() {
                       padding: 2,
                     }}
                   >
+                    {/* Trigger button */}
                     <Button
                       variant="contained"
                       size="medium"
                       startIcon={<AddIcon />}
-                      onClick={() => handleAddExercise(item)}
+                      onClick={() => handleAddFoodClick(item)} // Open dialog when clicked, passing the item
                       sx={{
                         width: '120px',
                         backgroundColor: '#00bfff',
@@ -576,6 +639,81 @@ export default function AddFood() {
                     >
                       Add
                     </Button>
+                    {/* Pop-up dialog */}
+                    <Dialog open={openDialog} onClose={handleDialogClose} sx={{ borderRadius: '10px' }}>
+                      <DialogTitle sx={{ backgroundColor: '#00bfff', color: 'white', fontWeight: 'bold', textAlign: 'center' }}>
+                        Select Category
+                      </DialogTitle>
+                      <DialogContent sx={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <FormControl fullWidth variant="outlined" sx={{ marginTop: '20px' }}>
+                          <InputLabel>Category</InputLabel>
+                          <Select
+                            value={selectedCategory}
+                            onChange={handleCategoryChange}
+                            label="Category"
+                            sx={{
+                              '& .MuiSelect-root': {
+                                backgroundColor: '#e6f7ff', // Light blue background for the select
+                                borderRadius: '8px',
+                              },
+                              '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#00bfff', // Sky blue border for the select input
+                              },
+                              '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#0099cc', // Darker blue when hovered
+                              },
+                            }}
+                          >
+                            <MenuItem value="Breakfast">Breakfast</MenuItem>
+                            <MenuItem value="Lunch">Lunch</MenuItem>
+                            <MenuItem value="Dinner">Dinner</MenuItem>
+                            <MenuItem value="Snacks">Snacks</MenuItem>
+                          </Select>
+                        </FormControl>
+                        {/* Duration input */}
+                        <TextField
+                          label="Duration (minutes)"
+                          type="number"
+                          value={duration}
+                          onChange={(e) => setDuration(e.target.value)}
+                          placeholder="Enter duration of exercise in minutes"
+                          sx={{
+                            marginTop: '20px',
+                            '& .MuiInputBase-root': {
+                              backgroundColor: '#e6f7ff',
+                              borderRadius: '8px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#00bfff',
+                            },
+                            width: '100%', // Make the TextField take full width
+                            marginBottom: '20px', // Add some spacing below the Duration field
+                          }}
+                        />
+
+                      </DialogContent>
+                      <DialogActions sx={{ padding: '16px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                        <Button onClick={handleDialogClose} color="secondary" sx={{ fontWeight: 'bold', color: '#00bfff' }}>
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleSave} // Trigger save action
+                          color="primary"
+                          sx={{
+                            backgroundColor: '#00bfff',
+                            color: 'white',
+                            '&:hover': { backgroundColor: '#0099cc' },
+                            fontWeight: 'bold',
+                            borderRadius: '20px',
+                            padding: '10px 20px',
+                            width: 'auto', // Let the button maintain its natural width
+                          }}
+                        >
+                          Save
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+
                   </Box>
                 </Card>
               </Grid>
@@ -583,7 +721,7 @@ export default function AddFood() {
           ) : (
             <Grid item xs={12}>
               <Typography variant="h6" color="text.secondary">
-                No food items available
+                No Exercise available
               </Typography>
             </Grid>
           )}
@@ -606,7 +744,6 @@ export default function AddFood() {
             size="large"
           />
         </Box>
-
         {/* Snackbar for displaying messages */}
         <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
           <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>

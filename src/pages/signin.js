@@ -142,6 +142,7 @@ export default function SignIn() {
         sessionStorage.setItem('authToken', result.token);
         sessionStorage.setItem('email', formData.email);
         navigate('/Dashboard');
+        window.location.reload();
       } else {
         setSnackbar({ open: true, message: result.message, severity: 'error' });
       }

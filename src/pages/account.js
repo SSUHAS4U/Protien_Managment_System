@@ -33,6 +33,7 @@ import Alert from '@mui/material/Alert';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food Stats
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+// import { Password } from '@mui/icons-material';
 
 
 const drawerWidth = 240;
@@ -124,6 +125,7 @@ export default function Account() {
     phoneNumber: '',
     address: '',
     bio: '',
+    Password: '',
     profileImage: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
@@ -193,41 +195,106 @@ export default function Account() {
 
   const handleSave = (e) => {
     e.preventDefault();
-    const email = sessionStorage.getItem('email');
-
-    // Create a FormData object to send the data as multipart/form-data
-    const formData = new FormData();
-    // Append user fields to formData
-    formData.append('name', user.name);
-    formData.append('gender', user.gender);
-    formData.append('birthDate', user.birthDate);
-    formData.append('heightFeet', user.heightFeet);
-    formData.append('heightInches', user.heightInches);
-    formData.append('weight', user.weight);
-    formData.append('phoneNumber', user.phoneNumber);
-    formData.append('address', user.address);
-    formData.append('bio', user.bio);
-    // Append the profile image as a blob (if it exists)
-    if (user.profileImage) {
-      formData.append('profileImage', user.profileImage);
+  
+    // Check if passwords match
+    if (user.newPassword !== user.confirmPassword) {
+      setSnackbar({ open: true, message: 'Passwords do not match!', severity: 'error' });
+      return;
     }
-
-    // Make the PUT request with FormData
-    axios
-      .put(`http://localhost:8080/edit/${email}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Set the correct content type for multipart form
-        },
-      })
-      .then((response) => {
-        setSnackbar({ open: true, message: 'User details updated successfully!', severity: 'success' });
-        setUser(response.data); // Update local state with the updated user
-      })
-      .catch((error) => {
-        console.error('Error updating user details:', error);
-        setSnackbar({ open: true, message: 'Failed to update user details.', severity: 'error' });
-      });
+  
+    // Check if the new password is at least 8 characters
+    if (user.newPassword && user.newPassword.length < 8) {
+      setSnackbar({ open: true, message: 'New password must be at least 8 characters long!', severity: 'error' });
+      return;
+    }
+  
+    // First, check if the current password is valid
+    const email = sessionStorage.getItem('email');
+    if (user.Password) {
+      axios
+        .post(`http://localhost:8080/verify-password`, { email, password: user.Password }) // Assume a backend endpoint to verify password
+        .then((response) => {
+          // If current password is correct, proceed with the update
+          const formData = new FormData();
+  
+          // Append user details
+          formData.append('name', user.name);
+          formData.append('gender', user.gender);
+          formData.append('birthDate', user.birthDate);
+          formData.append('heightFeet', user.heightFeet);
+          formData.append('heightInches', user.heightInches);
+          formData.append('weight', user.weight);
+          formData.append('phoneNumber', user.phoneNumber);
+          formData.append('address', user.address);
+          formData.append('bio', user.bio);
+  
+          // Append new password if provided
+          if (user.newPassword) formData.append('newPassword', user.newPassword);
+  
+          // Append profile image if provided
+          if (user.profileImage) {
+            formData.append('profileImage', user.profileImage);
+          }
+  
+          // Send request to update user data
+          axios
+            .put(`http://localhost:8080/edit/${email}`, formData, {
+              headers: { 'Content-Type': 'multipart/form-data' },
+            })
+            .then((response) => {
+              setSnackbar({ open: true, message: 'User details updated successfully!', severity: 'success' });
+              setUser(response.data);  // Update user state with the response
+            })
+            .catch((error) => {
+              console.error('Error updating user details:', error);
+              setSnackbar({ open: true, message: 'Failed to update user details.', severity: 'error' });
+            });
+        })
+        .catch((error) => {
+          // If password is incorrect
+          setSnackbar({ open: true, message: 'Invalid current password', severity: 'error' });
+        });
+    } else {
+      // If no current password is provided, proceed with the update
+      const formData = new FormData();
+  
+      // Append user details
+      formData.append('name', user.name);
+      formData.append('gender', user.gender);
+      formData.append('birthDate', user.birthDate);
+      formData.append('heightFeet', user.heightFeet);
+      formData.append('heightInches', user.heightInches);
+      formData.append('weight', user.weight);
+      formData.append('phoneNumber', user.phoneNumber);
+      formData.append('address', user.address);
+      formData.append('bio', user.bio);
+  
+      // Append new password if provided
+      if (user.newPassword) formData.append('newPassword', user.newPassword);
+  
+      // Append profile image if provided
+      if (user.profileImage) {
+        formData.append('profileImage', user.profileImage);
+      }
+  
+      // Send request to update user data
+      axios
+        .put(`http://localhost:8080/edit/${email}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((response) => {
+          setSnackbar({ open: true, message: 'User details updated successfully!', severity: 'success' });
+          setUser(response.data);  // Update user state with the response
+        })
+        .catch((error) => {
+          console.error('Error updating user details:', error);
+          setSnackbar({ open: true, message: 'Failed to update user details.', severity: 'error' });
+        });
+    }
   };
+  
+
+
 
   const handleCancel = () => {
     window.location.reload(); // Reload the page to reset the form
@@ -317,7 +384,7 @@ export default function Account() {
         </DrawerHeader>
         <Divider />
         <Box sx={{ flexGrow: 1 }}>
-        <List>
+          <List>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton onClick={handleDashboard}>
                 <ListItemIcon>
@@ -619,6 +686,69 @@ export default function Account() {
                 }}
               />
             </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1" sx={{ marginBottom: 1 }}>Current Password</Typography>
+              <TextField
+                fullWidth
+                type="password"
+                variant="outlined"
+                name="Password"
+                value={user.Password || ''}
+                onChange={handleInputChange}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'skyblue', // Border color becomes sky blue on focus
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1" sx={{ marginBottom: 1 }}>New Password</Typography>
+              <TextField
+                fullWidth
+                type="password"
+                variant="outlined"
+                name="newPassword"
+                value={user.newPassword || ''}
+                onChange={handleInputChange}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'skyblue', // Border color becomes sky blue on focus
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1" sx={{ marginBottom: 1 }}>Re-enter New Password</Typography>
+              <TextField
+                fullWidth
+                type="password"
+                variant="outlined"
+                name="confirmPassword"
+                value={user.confirmPassword || ''}
+                onChange={handleInputChange}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'skyblue', // Border color becomes sky blue on focus
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+
+
+
+
+
 
             <Grid item xs={12}>
               <Typography variant="body1" sx={{ marginBottom: 1 }}>Bio</Typography>

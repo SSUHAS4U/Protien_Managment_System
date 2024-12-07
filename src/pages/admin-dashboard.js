@@ -97,35 +97,59 @@ const Admin = () => {
   const handleSubmitEdit = async () => {
     try {
       const formData = new FormData();
-      formData.append('name', editForm.name);
-      formData.append('description', editForm.description);
-      formData.append('energy', editForm.energy);
-      formData.append('protein', editForm.protein);
-      formData.append('fat', editForm.fat);
-      formData.append('netCarbs', editForm.netCarbs);
 
-      // Only append image if one is selected and valid
+      // Append fields only if they have values
+      if (editForm.name) formData.append('name', editForm.name);
+      if (editForm.description) formData.append('description', editForm.description);
+      if (editForm.energy) formData.append('energy', editForm.energy);
+      if (editForm.protein) formData.append('protein', editForm.protein);
+      if (editForm.fat) formData.append('fat', editForm.fat);
+      if (editForm.netCarbs) formData.append('netCarbs', editForm.netCarbs);
+
+      // Append image if it is selected and valid
       if (editForm.image && editForm.image.size > 0) {
         formData.append('image', editForm.image);
       }
-
-      await axios.put(`http://localhost:8080/food/${editForm.name}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      console.log('Sending PUT request to edit food:', {
+        name: editForm.name,
+        description: editForm.description,
+        energy: editForm.energy,
+        protein: editForm.protein,
+        fat: editForm.fat,
+        netCarbs: editForm.netCarbs,
       });
 
+      // Make API call to update the food item
+      await axios.put(
+        `http://localhost:8080/food/${editForm.id}`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
+      // Handle success
       setSuccessMessage('Food item updated successfully!');
       window.location.reload();
       setErrorMessage('');
       setEditForm(null); // Reset the form
+      setOpenEdit(false); // Close the edit modal/dialog
+
+      // Fetch updated food items
       const updatedFoodItems = await axios.get('http://localhost:8080/food/all');
       setFoodItems(updatedFoodItems.data);
-      setOpenEdit(false);
     } catch (error) {
+      // Handle errors
       setErrorMessage('Error updating food item. Please try again.');
       setSuccessMessage('');
-      console.error("Error updating food item:", error);
+      console.error('Error updating food item:', error);
+
+      // Optionally provide more feedback based on error response
+      if (error.response && error.response.data) {
+        console.error('Backend error response:', error.response.data);
+      }
     }
   };
+
   const handleCancelDelete = () => {
     setOpenDelete(false);
     setItemToDelete(null);
@@ -133,7 +157,7 @@ const Admin = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/food/${itemToDelete.name}`);
+      await axios.delete(`http://localhost:8080/food/${itemToDelete.id}`);
       const updatedFoodItems = foodItems.filter(item => item.name !== itemToDelete.name);
       setFoodItems(updatedFoodItems);
       setOpenDelete(false);
@@ -197,8 +221,8 @@ const Admin = () => {
           <DialogContent>
             <TextField
               label="Name"
-              value={editForm?.name || ''}
-              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+              value={editForm?.name || ''} // Controlled value
+              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} // Update the name in state
               fullWidth
               margin="normal"
               sx={{
@@ -209,6 +233,8 @@ const Admin = () => {
                 '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
               }}
             />
+
+
             <TextField
               label="Description"
               value={editForm?.description || ''}

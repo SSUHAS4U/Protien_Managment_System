@@ -31,6 +31,8 @@ import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food 
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 
@@ -212,10 +214,17 @@ export default function MiniDrawer() {
       };
 
       fetchExerciseStats(); // Fetch exercise stats immediately
+
+
+
     }
   }, [navigate]);
 
-  // Prepare chart data
+  const [foodTargetKcal] = useState(10000); // Initial target for food
+  const [exerciseTargetKcal] = useState(10000); // Initial target for exercise
+  const [targetKcal, setTargetKcal] = useState(1500); // Initial target for total burn
+
+  // Prepare chart data for food
   const chartData = {
     labels: ["Total Energy", "Total Protein", "Total Fat", "Total Net Carbs"],
     datasets: [
@@ -250,6 +259,21 @@ export default function MiniDrawer() {
       },
     ],
   };
+
+  // Load target value from localStorage when component mounts
+  useEffect(() => {
+    const storedTarget = localStorage.getItem("targetKcal");
+    if (storedTarget) {
+      setTargetKcal(Number(storedTarget));
+    }
+  }, []);
+
+  // Update target value and save it to localStorage
+  const handleTargetChange = (e) => {
+    const newTarget = Number(e.target.value);
+    setTargetKcal(newTarget);
+    localStorage.setItem("targetKcal", newTarget);
+  };
   // Register the required components
   ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -273,6 +297,10 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+
+
+
 
 
   const handleLogout = () => {
@@ -574,6 +602,220 @@ export default function MiniDrawer() {
             </Box>
           </CardContent>
         </Card>
+        {/* Stats */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "20px",
+            marginTop: "30px",
+            marginBottom: "30px",
+            alignItems: "center",
+          }}
+        >
+          {/* Food Energy Consumed */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30%",
+            }}
+          >
+            <Typography variant="h6" sx={{ marginBottom: "10px", fontWeight: "bold" }}>
+              Energy from Food
+            </Typography>
+            {/* <TextField
+          label="Set Target (kcal)"
+          type="number"
+          value={foodTargetKcal}
+          onChange={(e) => setFoodTargetKcal(Number(e.target.value))}
+          sx={{ marginBottom: "10px" }}
+        /> */}
+            <Box sx={{ position: "relative", width: "150px", height: "150px" }}>
+              {/* Gray background circle */}
+              <CircularProgress
+                variant="determinate"
+                value={100} // Full circle as gray background
+                size={150}
+                thickness={8}
+                sx={{ color: "#d3d3d3" }} // Light gray for the background
+              />
+              <CircularProgress
+                variant="determinate"
+                value={(chartData.datasets[0].data[0] / foodTargetKcal) * 100}
+                size={150}
+                thickness={8}
+                sx={{ color: "#00bfff", position: "absolute", top: 0, left: 0 }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  {chartData.datasets[0].data[0]} kcal
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Consumed
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Exercise Energy Burned */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30%",
+            }}
+          >
+            <Typography variant="h6" sx={{ marginBottom: "10px", fontWeight: "bold" }}>
+              Exercise Energy Burned
+            </Typography>
+            {/* <TextField
+          label="Set Target (kcal)"
+          type="number"
+          value={exerciseTargetKcal}
+          onChange={(e) => setExerciseTargetKcal(Number(e.target.value))}
+          sx={{ marginBottom: "10px" }}
+        /> */}
+            <Box sx={{ position: "relative", width: "150px", height: "150px" }}>
+              {/* Gray background circle */}
+              <CircularProgress
+                variant="determinate"
+                value={100} // Full circle as gray background
+                size={150}
+                thickness={8}
+                sx={{ color: "#d3d3d3" }} // Light gray for the background
+              />
+              <CircularProgress
+                variant="determinate"
+                value={(exerciseChartData.datasets[0].data[0] / exerciseTargetKcal) * 100}
+                size={150}
+                thickness={8}
+                sx={{ color: "#ff6347", position: "absolute", top: 0, left: 0 }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  {exerciseChartData.datasets[0].data[0]} kcal
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Burned
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30%",
+            }}
+          >
+            <Typography variant="h6" sx={{ marginBottom: "10px", fontWeight: "bold" }}>
+              Target Burn
+            </Typography>
+            <Box sx={{ position: "relative", width: "150px", height: "150px" }}>
+              {/* Gray background circle */}
+              <CircularProgress
+                variant="determinate"
+                value={100} // Full circle as gray background
+                size={150}
+                thickness={8}
+                sx={{ color: "#d3d3d3" }} // Light gray for the background
+              />
+              <CircularProgress
+                variant="determinate"
+                value={(exerciseChartData.datasets[0].data[0] / targetKcal) * 100}
+                size={150}
+                thickness={8}
+                sx={{ color: "#32cd32", position: "absolute", top: 0, left: 0 }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  {targetKcal - exerciseChartData.datasets[0].data[0]} kcal
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Remaining
+                </Typography>
+              </Box>
+              {/* Bash style input for setting target */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  bottom: "-30px", // Positioned below the circle
+                  right: "-15px", // Positioned on the right side
+                  width: "120px",
+                  padding: "5px 10px",
+                  color: "#fff", // White text color
+                  borderRadius: "5px",
+                  fontFamily: "'Courier New', monospace", // Terminal-like font
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    marginLeft: "-20px", // Move it to the left by 5px
+                    fontSize: "14px",
+                    color: "black",
+                  }}
+                >
+                  Target:
+                </Typography>
+                <input
+                  type="number"
+                  value={targetKcal}
+                  onChange={handleTargetChange}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      // Handle "Enter" key press (optional logic)
+                      console.log("Target set to:", targetKcal);
+                    }
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "14px",
+                    width: "50px",
+                    outline: "none",
+                    textAlign: "right",
+                  }}
+                />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
         {/* statistics */}
         <Box
           sx={{
@@ -716,3 +958,4 @@ export default function MiniDrawer() {
     </Box>
   );
 }
+
