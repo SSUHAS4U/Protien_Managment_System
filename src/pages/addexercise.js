@@ -33,6 +33,7 @@ import { Search } from '@mui/icons-material'; // Import icons
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food Stats
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 
 
 
@@ -313,6 +314,11 @@ export default function Addexercise() {
     navigate('/addexercise');
   };
 
+  const handleRecommendations = () => {
+    navigate('/Recommendations');
+    window.location.reload();
+  };
+
   const handleAccount = () => {
     navigate('/account');
   };
@@ -326,7 +332,7 @@ export default function Addexercise() {
     setSelectedCategory(event.target.value);
   };
 
-  const [duration, setDuration] = useState(1); // Initialize quantity to 1
+  const [duration, setDuration] = useState(30); // Initialize quantity to 1
 
   // Function to handle the Save button click
   const handleSave = () => {
@@ -428,6 +434,14 @@ export default function Addexercise() {
                   <AddExerciseIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton onClick={handleRecommendations}>
+                <ListItemIcon>
+                  <TipsAndUpdatesIcon />
+                </ListItemIcon>
+                <ListItemText primary="Recommendation" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
 

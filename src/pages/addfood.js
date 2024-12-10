@@ -33,6 +33,7 @@ import { Search } from '@mui/icons-material'; // Import icons
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food Stats
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 
 
 
@@ -317,6 +318,11 @@ export default function AddFood() {
     navigate('/account');
   };
 
+  const handleRecommendations = () => {
+    navigate('/Recommendations');
+    window.location.reload();
+  };
+
   const handleDialogClose = () => {
     setOpenDialog(false); // Close the dialog
   };
@@ -424,6 +430,14 @@ export default function AddFood() {
                   <AddExerciseIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton onClick={handleRecommendations}>
+                <ListItemIcon>
+                  <TipsAndUpdatesIcon />
+                </ListItemIcon>
+                <ListItemText primary="Recommendation" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
 

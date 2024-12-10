@@ -38,6 +38,7 @@ import { faAppleAlt, faHeartbeat, faCarrot, faBiking } from "@fortawesome/free-s
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { Line } from "react-chartjs-2";
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import { Title } from "chart.js";
 import {
   TableContainer,
@@ -390,6 +391,11 @@ export default function ExerciseStatistics() {
     navigate('/account');
   };
 
+  const handleRecommendations = () => {
+    navigate('/Recommendations');
+    window.location.reload();
+  };
+
   const [page, setPage] = useState(0); // Current page
   const rowsPerPage = 2; // Rows per page (fixed to 5)
 
@@ -624,6 +630,14 @@ export default function ExerciseStatistics() {
                   <AddExerciseIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton onClick={handleRecommendations}>
+                <ListItemIcon>
+                  <TipsAndUpdatesIcon />
+                </ListItemIcon>
+                <ListItemText primary="Recommendation" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
 

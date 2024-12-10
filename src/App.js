@@ -19,6 +19,9 @@ const FoodStatistics = lazy(() => import('./pages/foodstats'))
 const ExerciseStatistics = lazy(() => import('./pages/exercisestats'))
 const Exercise = lazy(() => import('./pages/addexercise'))
 const Account = lazy(() => import('./pages/account'))
+const AdminRecom = lazy(() => import('./pages/AdminRecom'))
+const AdminViewRecom = lazy(() => import('./pages/AdminViewRecom'))
+const Recommendations = lazy(() => import('./pages/Recommendations'))
 function App() {
   return (
     <div className="App">
@@ -41,6 +44,9 @@ function App() {
             <Route path="/exercisestats" element={<ExerciseStatistics />} />
             <Route path="/addexercise" element={<Exercise />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/AdminRecom" element={<AdminRecom />} />
+            <Route path="/AdminViewRecom" element={<AdminViewRecom />} />
+            <Route path="/Recommendations" element={<Recommendations />} />
           </Routes>
         </Suspense>
       </div>

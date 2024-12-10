@@ -32,6 +32,7 @@ import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import CircularProgress from '@mui/material/CircularProgress';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 
 
 
@@ -336,6 +337,11 @@ export default function MiniDrawer() {
     window.location.reload();
   };
 
+  const handleRecommendations = () => {
+    navigate('/Recommendations');
+    window.location.reload();
+  };
+
   const toggleStatsDropdown = () => {
     setOpenStats(!openStats); // Toggle dropdown visibility
   };
@@ -415,6 +421,14 @@ export default function MiniDrawer() {
                   <AddExerciseIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton onClick={handleRecommendations}>
+                <ListItemIcon>
+                  <TipsAndUpdatesIcon />
+                </ListItemIcon>
+                <ListItemText primary="Recommendation" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
 

@@ -37,6 +37,7 @@ import { faAppleAlt, faHeartbeat, faCarrot, faBacon } from "@fortawesome/free-so
 // import WaterGlassIcon from "@mui/icons-material/LocalDrink"; // Import MUI icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import { Line } from "react-chartjs-2";
 import { Title } from "chart.js";
 import {
@@ -384,6 +385,10 @@ export default function FoodStatistics() {
   const handleExercise = () => {
     navigate('/addexercise');
   };
+  const handleRecommendations = () => {
+    navigate('/Recommendations');
+    window.location.reload();
+  };
 
   const handleAccount = () => {
     navigate('/account');
@@ -621,6 +626,14 @@ export default function FoodStatistics() {
                   <AddExerciseIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton onClick={handleRecommendations}>
+                <ListItemIcon>
+                  <TipsAndUpdatesIcon />
+                </ListItemIcon>
+                <ListItemText primary="Recommendation" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
 

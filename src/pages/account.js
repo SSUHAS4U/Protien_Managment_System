@@ -33,6 +33,7 @@ import Alert from '@mui/material/Alert';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food Stats
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 // import { Password } from '@mui/icons-material';
 
 
@@ -336,6 +337,11 @@ export default function Account() {
     navigate('/account');
   };
 
+  const handleRecommendations = () => {
+    navigate('/Recommendations');
+    window.location.reload();
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -407,6 +413,14 @@ export default function Account() {
                   <AddExerciseIcon />
                 </ListItemIcon>
                 <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton onClick={handleRecommendations}>
+                <ListItemIcon>
+                  <TipsAndUpdatesIcon />
+                </ListItemIcon>
+                <ListItemText primary="Recommendation" sx={{ opacity: 1 }} />
               </ListItemButton>
             </ListItem>
 

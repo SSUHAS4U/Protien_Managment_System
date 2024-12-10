@@ -12,6 +12,8 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import AssistantIcon from '@mui/icons-material/Assistant';
 import { useNavigate } from 'react-router-dom';
 
 export default function ButtonAppBar({ handleLogout }) {
@@ -24,6 +26,16 @@ export default function ButtonAppBar({ handleLogout }) {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleAddRecomClick = () => {
+    setAnchorEl(null);
+    navigate('/AdminRecom');
+  };
+
+  const handleViewRecomClick = () => {
+    setAnchorEl(null);
+    navigate('/AdminViewRecom');
   };
 
   const handleFoodClick = () => {
@@ -120,6 +132,42 @@ export default function ButtonAppBar({ handleLogout }) {
               },
             }}
           >
+            <MenuItem onClick={handleAddRecomClick} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ mr: 2 }}>Add Recom</Typography>
+              <Box
+                sx={{
+                  ml: 'auto',
+                  backgroundColor: '#00bfff',
+                  borderRadius: '50%',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <TipsAndUpdatesIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
+              </Box>
+            </MenuItem>
+
+            <MenuItem onClick={handleViewRecomClick} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ mr: 2 }}>View Recomm</Typography>
+              <Box
+                sx={{
+                  ml: 'auto',
+                  backgroundColor: '#00bfff',
+                  borderRadius: '50%',
+                  width: '30px',
+                  height: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <AssistantIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
+              </Box>
+            </MenuItem>
+
             <MenuItem onClick={handleFoodClick} sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography sx={{ mr: 2 }}>Add Food</Typography>
               <Box
@@ -143,7 +191,7 @@ export default function ButtonAppBar({ handleLogout }) {
               <Box
                 sx={{
                   ml: 'auto',
-                  backgroundColor: '#00bfff', // Sky blue color
+                  backgroundColor: '#00bfff',
                   borderRadius: '50%',
                   width: '30px',
                   height: '30px',
