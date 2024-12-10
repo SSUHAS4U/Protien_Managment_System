@@ -93,6 +93,7 @@ export default function SignIn() {
       const response = await fetch('https://protienpro-backend-production.up.railway.app/captcha/generate');
       const data = await response.json();
       setCaptcha(data.captcha);
+      
     } catch (error) {
       setSnackbar({ open: true, message: 'Error generating captcha', severity: 'error' });
     }
