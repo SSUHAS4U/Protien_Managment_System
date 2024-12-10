@@ -90,7 +90,7 @@ export default function SignIn() {
   // Fetch Captcha from Backend
   const generateCaptcha = async () => {
     try {
-      const response = await fetch('http://localhost:8080/captcha/generate');
+      const response = await fetch('https://eloquent-mindfulness-production-5c03.up.railway.app/');
       const data = await response.json();
       setCaptcha(data.captcha);
     } catch (error) {
@@ -131,7 +131,7 @@ export default function SignIn() {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/users/login', {
+      const response = await fetch('https://eloquent-mindfulness-production-5c03.up.railway.app/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, password: formData.password }),
