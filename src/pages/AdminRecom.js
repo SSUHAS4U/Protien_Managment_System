@@ -77,7 +77,7 @@ const AdminRecom = () => {
     data.append('nutritionalLevel', formData.nutritionalLevel);
 
     try {
-      const response = await axios.post('http://localhost:8080/recommendation', data, {
+      const response = await axios.post('https://protienpro-backend-production.up.railway.app/recommendation', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

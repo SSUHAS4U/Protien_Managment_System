@@ -46,8 +46,8 @@ const AdminViewRecom = () => {
     const fetchFoodItems = async (nutritionalLevel = null) => {
         try {
             const url = nutritionalLevel
-                ? `http://localhost:8080/recommendation/all?nutritionalLevel=${nutritionalLevel}`
-                : `http://localhost:8080/recommendation/all`;
+                ? `https://protienpro-backend-production.up.railway.app/recommendation/all?nutritionalLevel=${nutritionalLevel}`
+                : `https://protienpro-backend-production.up.railway.app/recommendation/all`;
             const response = await axios.get(url);
             setFoodItems(response.data);
             setFilteredFoodItems(response.data); // Update filtered items
@@ -122,7 +122,7 @@ const AdminViewRecom = () => {
 
             // Make API call to update the food item
             await axios.put(
-                `http://localhost:8080/recommendation/${editForm.id}`,
+                `https://protienpro-backend-production.up.railway.app/recommendation/${editForm.id}`,
                 formData,
                 {
                     headers: { 'Content-Type': 'multipart/form-data' },
@@ -137,7 +137,7 @@ const AdminViewRecom = () => {
             setOpenEdit(false); // Close the edit modal/dialog
 
             // Fetch updated food items
-            const updatedFoodItems = await axios.get('http://localhost:8080/recommendation/all');
+            const updatedFoodItems = await axios.get('https://protienpro-backend-production.up.railway.app/recommendation/all');
             setFoodItems(updatedFoodItems.data);
         } catch (error) {
             // Handle errors
@@ -159,7 +159,7 @@ const AdminViewRecom = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            await axios.delete(`http://localhost:8080/recommendation/${itemToDelete.id}`);
+            await axios.delete(`https://protienpro-backend-production.up.railway.app/recommendation/${itemToDelete.id}`);
             const updatedFoodItems = foodItems.filter(item => item.name !== itemToDelete.name);
             setFoodItems(updatedFoodItems);
             setOpenDelete(false);
