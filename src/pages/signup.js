@@ -243,7 +243,7 @@ export default function SignUp() {
     }
 
     try {
-      const existingUserResponse = await axios.get(`https://eloquent-mindfulness-production-5c03.up.railway.app/users/check-email?email=${formData.email}`);
+      const existingUserResponse = await axios.get(`http://localhost:8080/users/check-email?email=${formData.email}`);
       if (existingUserResponse.data.exists) {
         setSnackbarMessage("User already exists.");
         setSnackbarSeverity('error');
@@ -251,7 +251,7 @@ export default function SignUp() {
         return;
       }
 
-      const response = await axios.post('https://eloquent-mindfulness-production-5c03.up.railway.app/users', {
+      const response = await axios.post('http://localhost:8080/users', {
         name: formData.Name,
         email: formData.email,
         password: formData.password,
