@@ -118,7 +118,7 @@ const AdminUsersPage = () => {
   // Fetch user data from backend
   useEffect(() => {
     axios
-      .get(`https://protienpro-backend-production.up.railway.app/users/all?page=${page}&size=${rowsPerPage}`)
+      .get(`http://localhost:8080/users/all?page=${page}&size=${rowsPerPage}`)
       .then((response) => {
           setUsers(response.data.content); // `content` holds the current page of users
           setTotalUsers(response.data.totalElements); // `totalElements` is the total number of users
@@ -134,7 +134,7 @@ const AdminUsersPage = () => {
     if (!authToken || !username) {
       navigate('/'); // Redirect to home if no auth token or username is found
     } else {
-      axios.get(`https://protienpro-backend-production.up.railway.app/admin?username=${username}`, {
+      axios.get(`http://localhost:8080/admin?username=${username}`, {
         headers: {
           'Authorization': `Bearer ${authToken}`,
         },
@@ -182,7 +182,7 @@ const AdminUsersPage = () => {
   // Handle the update of user details
   const handleUpdateUser = () => {
     axios
-      .put(`https://protienpro-backend-production.up.railway.app/adminedit/${editUser.email}`, editUser)
+      .put(`http://localhost:8080/adminedit/${editUser.email}`, editUser)
       .then((response) => {
         setUsers((prevUsers) =>
           prevUsers.map((user) => (user.email === editUser.email ? response.data : user))
@@ -200,7 +200,7 @@ const AdminUsersPage = () => {
   const handleDelete = (email) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       axios
-        .delete(`https://protienpro-backend-production.up.railway.app/delete/${email}`)
+        .delete(`http://localhost:8080/delete/${email}`)
         .then(() => {
           setUsers((prevUsers) => prevUsers.filter((user) => user.email !== email));
           setSuccessMessage('User deleted successfully!');
@@ -216,12 +216,12 @@ const AdminUsersPage = () => {
     <ThemeProvider theme={skyBlueTheme}>
       <div>
         <AdminNav handleLogout={handleLogout}/> {/* Adding the AdminNav component */}
-        <div style={{ padding: '20px', backgroundColor: 'white', minHeight: '100vh' }}>
-          <Typography variant="h4" align="center" gutterBottom style={{ color: '#00bfff' }}>
+        <div style={{ padding: '1rem', backgroundColor: 'white', minHeight: '100vh' }}>
+          <Typography variant="h4" align="center" gutterBottom style={{ color: '#00bfff', fontSize: 'clamp(1.5rem, 5vw, 2.125rem)' }}>
             Registered Users
           </Typography>
-          <TableContainer component={Paper} style={{ boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)', marginBottom: '20px' }}>
-            <Table>
+          <TableContainer component={Paper} style={{ boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)', marginBottom: '20px', overflowX: 'auto' }}>
+            <Table sx={{ minWidth: { xs: 300, sm: 650 } }}>
               <TableHead>
                 <TableRow style={{ backgroundColor: '#00bfff' }}>
                   <TableCell style={{ color: '#ffffff', fontWeight: 'bold' }}>Name</TableCell>

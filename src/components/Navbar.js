@@ -38,15 +38,15 @@ export default function ButtonAppBar() {
             sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, cursor: 'pointer' }} 
             onClick={() => window.location.href = '/'}
           >
-            <Typography 
-              variant="h6" 
-              component="div" 
-              sx={{ 
-                color: '#00bfff', // Sky blue color
-                fontWeight: 'bold', 
-                fontSize: '1.5rem',
-                marginRight: '8px' // Margin for spacing
-              }} 
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                color: '#00bfff',
+                fontWeight: 'bold',
+                fontSize: { xs: '1.2rem', sm: '1.5rem' },
+                marginRight: '8px'
+              }}
             >
               Protien Pro
             </Typography>
@@ -55,18 +55,18 @@ export default function ButtonAppBar() {
           {/* About Us link (styled like Sign In button) */}
           <Button
             sx={{
-              color: '#ffffff', // Text color white to match Sign In button
-              backgroundColor: '#00bfff', // Sky blue color
+              color: '#ffffff',
+              backgroundColor: '#00bfff',
               '&:hover': {
-                backgroundColor: '#0095e8', // Darker blue on hover
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow on hover
+                backgroundColor: '#0095e8',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
               },
-              marginRight: 2, // Add margin between About Us and Sign In
-              textTransform: 'none', // Prevent capitalization of button text
-              fontSize: '1rem',
-              padding: '10px 20px', // Increased padding for a better button size
-              borderRadius: '20px', // Rounded corners
-              transition: 'background-color 0.3s ease, box-shadow 0.3s ease', // Smooth transition
+              marginRight: { xs: 1, sm: 2 },
+              textTransform: 'none',
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              padding: { xs: '8px 12px', sm: '10px 20px' },
+              borderRadius: '20px',
+              transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
             }}
             onClick={() => window.location.href = '/about'}
           >
@@ -75,25 +75,25 @@ export default function ButtonAppBar() {
 
           {/* Sign In Button with Dropdown */}
           <Button
-            sx={{ 
-              color: '#ffffff', // Text color white
-              backgroundColor: '#00bfff', // Sky blue color
+            sx={{
+              color: '#ffffff',
+              backgroundColor: '#00bfff',
               '&:hover': {
-                backgroundColor: '#0095e8', // Darker blue on hover
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow on hover
+                backgroundColor: '#0095e8',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
               },
-              display: 'flex', 
+              display: 'flex',
               alignItems: 'center',
-              padding: '10px 20px', // Increased padding for a better button size
-              borderRadius: '20px', // Rounded corners
-              transition: 'background-color 0.3s ease, box-shadow 0.3s ease', // Smooth transition
-              textTransform: 'none', // Prevent capitalization of button text
-              fontSize: '1rem',
+              padding: { xs: '8px 12px', sm: '10px 20px' },
+              borderRadius: '20px',
+              transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+              textTransform: 'none',
+              fontSize: { xs: '0.875rem', sm: '1rem' },
             }}
             onClick={handleMenuClick}
           >
             Sign In
-            <ArrowDropDownIcon sx={{ ml: 0.5 }} /> {/* Arrow icon next to Sign In */}
+            <ArrowDropDownIcon sx={{ ml: 0.5 }} />
           </Button>
           
           {/* Dropdown Menu aligned to the right of the button */}

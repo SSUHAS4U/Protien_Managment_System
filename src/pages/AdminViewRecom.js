@@ -46,8 +46,8 @@ const AdminViewRecom = () => {
     const fetchFoodItems = async (nutritionalLevel = null) => {
         try {
             const url = nutritionalLevel
-                ? `https://protienpro-backend-production.up.railway.app/recommendation/all?nutritionalLevel=${nutritionalLevel}`
-                : `https://protienpro-backend-production.up.railway.app/recommendation/all`;
+                ? `http://localhost:8080/recommendation/all?nutritionalLevel=${nutritionalLevel}`
+                : `http://localhost:8080/recommendation/all`;
             const response = await axios.get(url);
             setFoodItems(response.data);
             setFilteredFoodItems(response.data); // Update filtered items
@@ -122,7 +122,7 @@ const AdminViewRecom = () => {
 
             // Make API call to update the food item
             await axios.put(
-                `https://protienpro-backend-production.up.railway.app/recommendation/${editForm.id}`,
+                `http://localhost:8080/recommendation/${editForm.id}`,
                 formData,
                 {
                     headers: { 'Content-Type': 'multipart/form-data' },
@@ -137,7 +137,7 @@ const AdminViewRecom = () => {
             setOpenEdit(false); // Close the edit modal/dialog
 
             // Fetch updated food items
-            const updatedFoodItems = await axios.get('https://protienpro-backend-production.up.railway.app/recommendation/all');
+            const updatedFoodItems = await axios.get('http://localhost:8080/recommendation/all');
             setFoodItems(updatedFoodItems.data);
         } catch (error) {
             // Handle errors
@@ -159,7 +159,7 @@ const AdminViewRecom = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            await axios.delete(`https://protienpro-backend-production.up.railway.app/recommendation/${itemToDelete.id}`);
+            await axios.delete(`http://localhost:8080/recommendation/${itemToDelete.id}`);
             const updatedFoodItems = foodItems.filter(item => item.name !== itemToDelete.name);
             setFoodItems(updatedFoodItems);
             setOpenDelete(false);
@@ -198,9 +198,9 @@ const AdminViewRecom = () => {
     return (
         <div>
             <Navbar handleLogout={handleLogout} />
-            <main style={{ padding: '2rem' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-                    <Typography variant="h2">View all Recommendation</Typography>
+            <main style={{ padding: '1rem' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: { xs: 2, sm: 4 }, flexWrap: 'wrap' }}>
+                    <Typography variant="h2" sx={{ fontSize: { xs: '1.5rem', sm: '2.5rem', md: '3rem' } }}>View all Recommendation</Typography>
                 </Box>
                 {/* Success/Error Messages */}
                 {successMessage && (

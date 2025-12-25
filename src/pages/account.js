@@ -146,7 +146,7 @@ export default function Account() {
       navigate('/'); // Redirect to login if no token or email
     } else {
       axios
-        .get(`https://protienpro-backend-production.up.railway.app/users?email=${email}`, {
+        .get(`http://localhost:8080/users?email=${email}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -213,7 +213,7 @@ export default function Account() {
     const email = sessionStorage.getItem('email');
     if (user.Password) {
       axios
-        .post(`https://protienpro-backend-production.up.railway.app/verify-password`, { email, password: user.Password }) // Assume a backend endpoint to verify password
+        .post(`http://localhost:8080/verify-password`, { email, password: user.Password }) // Assume a backend endpoint to verify password
         .then((response) => {
           // If current password is correct, proceed with the update
           const formData = new FormData();
@@ -239,7 +239,7 @@ export default function Account() {
   
           // Send request to update user data
           axios
-            .put(`https://protienpro-backend-production.up.railway.app/edit/${email}`, formData, {
+            .put(`http://localhost:8080/edit/${email}`, formData, {
               headers: { 'Content-Type': 'multipart/form-data' },
             })
             .then((response) => {
@@ -280,7 +280,7 @@ export default function Account() {
   
       // Send request to update user data
       axios
-        .put(`https://protienpro-backend-production.up.railway.app/edit/${email}`, formData, {
+        .put(`http://localhost:8080/edit/${email}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         .then((response) => {
@@ -469,9 +469,9 @@ export default function Account() {
       </Drawer>
 
       {/* main content */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, sm: 3 } }}>
         <Toolbar />
-        <Typography variant="h5" component="div" gutterBottom>
+        <Typography variant="h5" component="div" gutterBottom sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
           Edit Profile
         </Typography>
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>

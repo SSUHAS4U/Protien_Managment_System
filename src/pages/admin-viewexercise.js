@@ -49,7 +49,7 @@ const ExerciseDashboard = () => {
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const response = await axios.get('https://protienpro-backend-production.up.railway.app/exercise/all'); // Adjust this URL as per your backend API
+        const response = await axios.get('http://localhost:8080/exercise/all'); // Adjust this URL as per your backend API
         setFoodItems(response.data);
         setFilteredFoodItems(response.data); // Initially set filtered items to all food items
       } catch (error) {
@@ -121,7 +121,7 @@ const ExerciseDashboard = () => {
 
       // Make API call to update the food item
       await axios.put(
-        `https://protienpro-backend-production.up.railway.app/exercise/${editForm.id}`,
+        `http://localhost:8080/exercise/${editForm.id}`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -136,7 +136,7 @@ const ExerciseDashboard = () => {
       setOpenEdit(false); // Close the edit modal/dialog
 
       // Fetch updated food items
-      const updatedFoodItems = await axios.get('https://protienpro-backend-production.up.railway.app/exercise/all');
+      const updatedFoodItems = await axios.get('http://localhost:8080/exercise/all');
       setFoodItems(updatedFoodItems.data);
     } catch (error) {
       // Handle errors
@@ -158,7 +158,7 @@ const ExerciseDashboard = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`https://protienpro-backend-production.up.railway.app/exercise/${itemToDelete.id}`);
+      await axios.delete(`http://localhost:8080/exercise/${itemToDelete.id}`);
       const updatedFoodItems = foodItems.filter(item => item.name !== itemToDelete.name);
       setFoodItems(updatedFoodItems);
       setOpenDelete(false);
@@ -177,7 +177,7 @@ const ExerciseDashboard = () => {
 
     try {
       // Fetch food items based on the search query
-      const response = await axios.get(`https://protienpro-backend-production.up.railway.app/exercise/search?name=${query}`);
+      const response = await axios.get(`http://localhost:8080/exercise/search?name=${query}`);
       setFilteredFoodItems(response.data); // Update the filtered items based on the search result
     } catch (error) {
       console.error('Error fetching Exercise:', error);
@@ -193,9 +193,9 @@ const ExerciseDashboard = () => {
   return (
     <div>
       <Navbar handleLogout={handleLogout} />
-      <main style={{ padding: '2rem' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-          <Typography variant="h2">View all Exercises</Typography>
+      <main style={{ padding: '1rem' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: { xs: 2, sm: 4 }, flexWrap: 'wrap' }}>
+          <Typography variant="h2" sx={{ fontSize: { xs: '1.5rem', sm: '2.5rem', md: '3rem' } }}>View all Exercises</Typography>
         </Box>
         {/* Success/Error Messages */}
         {successMessage && (

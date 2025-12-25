@@ -14,8 +14,8 @@ import Grid from '@mui/material/Grid';
 import CardMedia from '@mui/material/CardMedia';
 import img from '../images/heart.png';
 import Link from '@mui/material/Link';
-import Snackbar from '@mui/material/Snackbar'; // For showing success/error messages
-import Alert from '@mui/material/Alert'; // For success/error alerts
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -81,7 +81,14 @@ export default function SignIn() {
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: '' });
   const [showPassword, setShowPassword] = React.useState(false);
   const [captcha, setCaptcha] = React.useState('');
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleCloseSnackbar = () => setSnackbar({ open: false, message: '', severity: '' });
 
@@ -90,7 +97,7 @@ export default function SignIn() {
   // Fetch Captcha from Backend
   const generateCaptcha = async () => {
     try {
-      const response = await fetch('https://protienpro-backend-production.up.railway.app/captcha/generate');
+      const response = await fetch('http://localhost:8080/captcha/generate');
       const data = await response.json();
       setCaptcha(data.captcha);
       
@@ -132,7 +139,7 @@ export default function SignIn() {
     }
 
     try {
-      const response = await fetch('https://protienpro-backend-production.up.railway.app/users/login', {
+      const response = await fetch('http://localhost:8080/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, password: formData.password }),
@@ -170,70 +177,96 @@ export default function SignIn() {
       <div style={{ overflowX: 'hidden', width: '100vw' }}>
         <Navbar />
 
-        {/* Circles on the left bottom corner */}
-        <div style={{ position: 'absolute', bottom: '0', left: '0', zIndex: '-1', top: '-50px' }}>
-          <div style={{
-            width: '300px',
-            height: '300px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: '-150px',
-            bottom: '50px',
-            zIndex: '-1',
-          }} />
-          <div style={{
-            width: '400px',
-            height: '400px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: '-200px',
-            top: '100px',
-            bottom: '250px',
-            zIndex: '-1',
-          }} />
+        {/* Decorative background container - Hidden on mobile */}
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: -1, pointerEvents: 'none', display: windowWidth < 768 ? 'none' : 'block' }}>
+          {/* Circles on the left side */}
+          <div style={{ position: 'absolute', top: '50%', left: '0', transform: 'translateY(-50%)' }}>
+            {/* First Circle (Left) */}
+            <div style={{
+              width: windowWidth < 1024 ? '450px' : '600px',
+              height: windowWidth < 1024 ? '450px' : '600px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              left: windowWidth < 1024 ? '-225px' : '-300px',
+              top: windowWidth < 1024 ? '-75px' : '-100px',
+              opacity: '1',
+            }} />
+            {/* Second Circle (Left) */}
+            <div style={{
+              width: windowWidth < 1024 ? '550px' : '750px',
+              height: windowWidth < 1024 ? '550px' : '750px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              left: windowWidth < 1024 ? '-275px' : '-375px',
+              top: windowWidth < 1024 ? '-350px' : '-475px',
+              opacity: '0.9',
+            }} />
+          </div>
+
+          {/* Circles on the right side */}
+          <div style={{ position: 'absolute', top: '50%', right: '0', transform: 'translateY(-50%)' }}>
+            {/* First Circle (Right) */}
+            <div style={{
+              width: windowWidth < 1024 ? '450px' : '600px',
+              height: windowWidth < 1024 ? '450px' : '600px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              right: windowWidth < 1024 ? '-225px' : '-300px',
+              top: windowWidth < 1024 ? '-75px' : '-100px',
+              clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
+              opacity: '1',
+            }} />
+            {/* Second Circle (Right) */}
+            <div style={{
+              width: windowWidth < 1024 ? '550px' : '750px',
+              height: windowWidth < 1024 ? '550px' : '750px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              right: windowWidth < 1024 ? '-275px' : '-375px',
+              top: windowWidth < 1024 ? '-350px' : '-475px',
+              clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
+              opacity: '0.9',
+            }} />
+          </div>
         </div>
 
-        {/* Circles on the right bottom corner */}
-        <div style={{ position: 'absolute', bottom: '0', right: '0', zIndex: '-1', top: '0' }}>
-          <div style={{
-            width: '300px',
-            height: '300px',
-            backgroundColor: 'skyblue',
-            right: '-150px',
-            borderRadius: '50%',
-            position: 'absolute',
-            bottom: '50px',
-            zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
-          }} />
-          <div style={{
-            width: '400px',
-            height: '400px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            bottom: '250px',
-            right: '-200px',
-            top: '60px',
-            zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
-          }} />
-        </div>
-
-        <div style={{ minHeight: 'calc(100vh - 100px)', paddingBottom: '10px', marginTop: '100px' }}>
-          <Container component="main" maxWidth="lg">
-            <CssBaseline />
+        <Container component="main" maxWidth="md"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100vh',
+            position: 'relative',
+            px: { xs: 2, sm: 3, md: 4 },
+            mx: 'auto',
+          }}
+        >
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: { xs: 10, sm: 8 },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: { xs: 4, sm: 8 },
+              width: '100%',
+            }}
+          >
             <Card
               sx={{
                 boxShadow: 3,
                 borderRadius: 2,
                 display: 'flex',
-                height: '570px',
+                height: { xs: 'auto', md: '570px' },
+                width: '100%',
                 maxWidth: '900px',
+                mx: 'auto',
                 transition: 'transform 0.3s, box-shadow 0.3s',
-                marginLeft: '140px',
                 '&:hover': {
                   transform: 'scale(1.02)',
                   boxShadow: '0px 0px 20px 5px rgba(0, 191, 255, 0.5)',
@@ -241,10 +274,10 @@ export default function SignIn() {
               }}
             >
               <Grid container>
-                <Grid item xs={6} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 3 }}>
+                <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: { xs: 2, sm: 3 } }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <Typography component="h1" variant="h5" color="primary">
+                      <Typography component="h1" variant="h5" color="primary" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                         Sign In
                       </Typography>
                       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -264,46 +297,47 @@ export default function SignIn() {
                           sx={{ backgroundColor: 'white', borderRadius: '10px' }}
                         />
                         <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        error={!!errors.password}
-                        helperText={errors.password}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={togglePasswordVisibility}
-                                edge="end"
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
+                          margin="normal"
+                          required
+                          fullWidth
+                          name="password"
+                          label="Password"
+                          type={showPassword ? 'text' : 'password'}
+                          id="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          error={!!errors.password}
+                          helperText={errors.password}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={togglePasswordVisibility}
+                                  edge="end"
+                                >
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
                         <Box display="flex" flexDirection="column" alignItems="center" mt={2} sx={{ width: '100%' }}>
-                          <Box display="flex" alignItems="center" sx={{ width: '100%' }}>
-                            <Typography 
+                          <Box display="flex" alignItems="center" flexDirection={{ xs: 'column', sm: 'row' }} gap={{ xs: 1, sm: 0 }} sx={{ width: '100%' }}>
+                            <Typography
                               sx={{
                                 display: 'inline-block',
-                                padding: '10px',
-                                backgroundColor: '#e0f7ff', // Light sky blue background
-                                color: '#007acc', // Darker sky blue text
+                                padding: { xs: '8px', sm: '10px' },
+                                backgroundColor: '#e0f7ff',
+                                color: '#007acc',
                                 fontWeight: 'bold',
                                 borderRadius: '5px',
                                 border: '1px solid #007acc',
-                                fontSize: '18px',
+                                fontSize: { xs: '16px', sm: '18px' },
                                 letterSpacing: '2px',
-                                marginRight: '10px', // Spacing between captcha and button
+                                marginRight: { xs: 0, sm: '10px' },
                                 textAlign: 'center',
-                                flex: '1', // Allow captcha to take up available space
+                                flex: '1',
+                                width: { xs: '100%', sm: 'auto' },
                               }}
                             >
                               {captcha}
@@ -314,6 +348,8 @@ export default function SignIn() {
                               sx={{
                                 backgroundColor: '#00bfff',
                                 color: '#fff',
+                                width: { xs: '100%', sm: 'auto' },
+                                whiteSpace: 'nowrap',
                                 '&:hover': {
                                   backgroundColor: '#007acc',
                                 },
@@ -335,7 +371,7 @@ export default function SignIn() {
                             sx={{
                               backgroundColor: 'white',
                               borderRadius: '10px',
-                              mt: 2, // Add spacing above the TextField
+                              mt: 2,
                             }}
                           />
                         </Box>
@@ -348,11 +384,6 @@ export default function SignIn() {
                           Sign In
                         </Button>
                         <Grid container>
-                          {/* <Grid item xs>
-                            <Link href="#" variant="body2">
-                              Forgot password?
-                            </Link>
-                          </Grid> */}
                           <Grid item>
                             <Link href="/signup" variant="body2">
                               {"Don't have an account? Sign Up"}
@@ -363,27 +394,28 @@ export default function SignIn() {
                     </Box>
                   </CardContent>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
                   <CardMedia
                     component="img"
                     alt="sign-in"
                     height="100%"
                     image={img}
+                    sx={{ objectFit: 'cover' }}
                   />
                 </Grid>
               </Grid>
             </Card>
-          </Container>
-        </div>
+          </Box>
+        </Container>
 
-        <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
+      <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
-        <Footer />
-      </div>
+      <Footer />
+    </div>
     </ThemeProvider>
   );
 }

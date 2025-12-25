@@ -13,9 +13,9 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import CardMedia from '@mui/material/CardMedia';
 import img from '../images/bowl.png';
-import Snackbar from '@mui/material/Snackbar'; // For showing success/error messages
-import Alert from '@mui/material/Alert'; // For success/error alerts
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
@@ -81,6 +81,7 @@ export default function AdminSignIn() {
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: '' });
   const navigate = useNavigate(); // Initialize navigate
   const [showPassword, setShowPassword] = useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -113,7 +114,7 @@ export default function AdminSignIn() {
     }
 
     try {
-      const response = await fetch('https://protienpro-backend-production.up.railway.app/admin/login', {
+      const response = await fetch('http://localhost:8080/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,9 +148,15 @@ export default function AdminSignIn() {
   };
 
   React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  React.useEffect(() => {
     // Apply overflow-x: hidden to the body when the component mounts
     document.body.style.overflowX = 'hidden';
-    
+
     // Cleanup the style when the component unmounts
     return () => {
       document.body.style.overflowX = 'auto';
@@ -161,79 +168,104 @@ export default function AdminSignIn() {
       <div style={{ overflowX: 'hidden', width: '100vw' }}> {/* Apply full width */}
         <Navbar />
 
-        {/* Circles on the left bottom corner */}
-        <div style={{ position: 'absolute', bottom: '0', left: '0', zIndex: '-1', top: '-50px' }}>
-          <div style={{
-            width: '300px',
-            height: '300px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: '-150px',
-            bottom: '50px',
-            zIndex: '-1',
-          }} />
-          <div style={{
-            width: '400px',
-            height: '400px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: '-200px',
-            top: '100px',
-            bottom: '250px',
-            zIndex: '-1',
-          }} />
+        {/* Decorative background container - Hidden on mobile */}
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: -1, pointerEvents: 'none', display: windowWidth < 768 ? 'none' : 'block' }}>
+          {/* Circles on the left side */}
+          <div style={{ position: 'absolute', top: '50%', left: '0', transform: 'translateY(-50%)' }}>
+            {/* First Circle (Left) */}
+            <div style={{
+              width: windowWidth < 1024 ? '450px' : '600px',
+              height: windowWidth < 1024 ? '450px' : '600px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              left: windowWidth < 1024 ? '-225px' : '-300px',
+              top: windowWidth < 1024 ? '-75px' : '-100px',
+              opacity: '1',
+            }} />
+            {/* Second Circle (Left) */}
+            <div style={{
+              width: windowWidth < 1024 ? '550px' : '750px',
+              height: windowWidth < 1024 ? '550px' : '750px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              left: windowWidth < 1024 ? '-275px' : '-375px',
+              top: windowWidth < 1024 ? '-350px' : '-475px',
+              opacity: '0.9',
+            }} />
+          </div>
+
+          {/* Circles on the right side */}
+          <div style={{ position: 'absolute', top: '50%', right: '0', transform: 'translateY(-50%)' }}>
+            {/* First Circle (Right) */}
+            <div style={{
+              width: windowWidth < 1024 ? '450px' : '600px',
+              height: windowWidth < 1024 ? '450px' : '600px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              right: windowWidth < 1024 ? '-225px' : '-300px',
+              top: windowWidth < 1024 ? '-75px' : '-100px',
+              clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
+              opacity: '1',
+            }} />
+            {/* Second Circle (Right) */}
+            <div style={{
+              width: windowWidth < 1024 ? '550px' : '750px',
+              height: windowWidth < 1024 ? '550px' : '750px',
+              backgroundColor: '#87CEEB',
+              borderRadius: '50%',
+              position: 'absolute',
+              right: windowWidth < 1024 ? '-275px' : '-375px',
+              top: windowWidth < 1024 ? '-350px' : '-475px',
+              clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
+              opacity: '0.9',
+            }} />
+          </div>
         </div>
 
-        {/* Circles on the right bottom corner */}
-        <div style={{ position: 'absolute', bottom: '0', right: '0', zIndex: '-1', top: '0' }}>
-          <div style={{
-            width: '300px',
-            height: '300px',
-            backgroundColor: 'skyblue',
-            right: '-150px',
-            borderRadius: '50%',
-            position: 'absolute',
-            bottom: '50px',
-            zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
-          }} />
-          <div style={{
-            width: '400px',
-            height: '400px',
-            backgroundColor: 'skyblue',
-            borderRadius: '50%',
-            position: 'absolute',
-            bottom: '250px',
-            right: '-200px',
-            top: '60px',
-            zIndex: '-1',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
-          }} />
-        </div>
-
-        <div style={{ minHeight: 'calc(100vh - 100px)', paddingBottom: '10px', marginTop: '100px' }}>
-          <Container component="main" maxWidth="md">
-            <CssBaseline />
-            <Card 
-              sx={{ 
+        <Container component="main" maxWidth="md"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100vh',
+            position: 'relative',
+            px: { xs: 2, sm: 3, md: 4 },
+            mx: 'auto',
+          }}
+        >
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: { xs: 10, sm: 8 },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginBottom: { xs: 4, sm: 8 },
+              width: '100%',
+            }}
+          >
+            <Card
+              sx={{
                 display: 'flex',
-                boxShadow: 3, 
-                borderRadius: 2, 
+                boxShadow: 3,
+                borderRadius: 2,
                 transition: 'transform 0.3s, box-shadow 0.3s',
-                marginLeft:'40px',
-                height: '500px',  // Increased height
-                maxWidth: '1000px', // Set a maximum width for larger screens
+                height: { xs: 'auto', md: '500px' },
+                width: '100%',
+                maxWidth: '900px',
+                mx: 'auto',
                 '&:hover': {
                   transform: 'scale(1.02)',
                   boxShadow: '0px 0px 20px 5px rgba(0, 191, 255, 0.5)',
                 }
               }}
             >
-              {/* Left part of the card for the image */}
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
                   <CardMedia
                     component="img"
                     image={img}
@@ -242,18 +274,17 @@ export default function AdminSignIn() {
                   />
                 </Grid>
 
-                {/* Right part of the card for the form */}
-                <Grid item xs={12} sm={6}>
-                  <CardContent>
+                <Grid item xs={12} md={6}>
+                  <CardContent sx={{ padding: { xs: 2, sm: 3 } }}>
                     <Box
                       sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        marginTop: 13,
+                        marginTop: { xs: 2, md: 13 },
                       }}
                     >
-                      <Typography component="h1" variant="h5" color="primary">
+                      <Typography component="h1" variant="h5" color="primary" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                         Admin Sign In
                       </Typography>
                       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -309,17 +340,18 @@ export default function AdminSignIn() {
                 </Grid>
               </Grid>
             </Card>
-          </Container>
-        </div>
+          </Box>
+        </Container>
+
+        {/* Snackbar for success and error messages */}
+        <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+
         <Footer />
       </div>
-
-      {/* Snackbar for success and error messages */}
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </ThemeProvider>
   );
 }

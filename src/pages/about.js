@@ -1,10 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const AboutUs = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [isTitleHovered, setIsTitleHovered] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const styles = {
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            backgroundColor: '#fff',
+        },
+        aboutContainer: {
+            padding: windowWidth < 768 ? '20px 15px' : '40px 20px',
+            textAlign: 'left',
+            maxWidth: '1000px',
+            margin: windowWidth < 768 ? '90px 15px 20px' : '100px auto 40px',
+            borderRadius: '8px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#f9f9f9',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+        },
+        hover: {
+            boxShadow: '0 4px 20px rgba(0, 186, 255, 0.5)',
+            transform: 'scale(1.02)',
+        },
+        title: {
+            color: '#333',
+            fontSize: windowWidth < 768 ? '1.8rem' : windowWidth < 1024 ? '2.2rem' : '2.5rem',
+            marginBottom: '20px',
+            transition: 'text-shadow 0.3s, transform 0.3s',
+        },
+        titleHover: {
+            textShadow: '0 4px 10px rgba(0, 186, 255, 0.5)',
+            transform: 'scale(1.02)',
+        },
+        text: {
+            color: '#555',
+            lineHeight: 1.8,
+            margin: '10px 0',
+            fontSize: windowWidth < 768 ? '1rem' : '1.1rem',
+        },
+    };
 
     return (
         <div style={styles.container}>
@@ -41,48 +87,6 @@ const AboutUs = () => {
             <Footer />
         </div>
     );
-};
-
-const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        backgroundColor: '#fff',
-    },
-    aboutContainer: {
-        padding: '40px 20px',
-        textAlign: 'left',
-        maxWidth: '1000px',
-        margin: '20px auto',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        backgroundColor: '#f9f9f9',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-    },
-    hover: {
-        boxShadow: '0 4px 20px rgba(0, 186, 255, 0.5)', // Shadow on hover
-        transform: 'scale(1.02)', // Slightly scale on hover
-    },
-    title: {
-        color: '#333',
-        fontSize: '2.5rem',
-        marginBottom: '20px',
-        transition: 'text-shadow 0.3s, transform 0.3s', // Transition for the title
-    },
-    titleHover: {
-        textShadow: '0 4px 10px rgba(0, 186, 255, 0.5)', // Shadow effect on title hover
-        transform: 'scale(1.02)', // Scale effect on title hover
-    },
-    text: {
-        color: '#555',
-        lineHeight: 1.8,
-        margin: '10px 0',
-        fontSize: '1.1rem',
-    },
-    navbar: {
-        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-    },
 };
 
 export default AboutUs;

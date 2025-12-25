@@ -77,7 +77,7 @@ export default function ButtonAppBar({ handleLogout }) {
           margin: '0 auto',
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 1, sm: 2 } }}>
           <Box
             sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
             onClick={() => navigate('/admin-dashboard')}
@@ -88,7 +88,7 @@ export default function ButtonAppBar({ handleLogout }) {
               sx={{
                 color: '#00bfff',
                 fontWeight: 'bold',
-                fontSize: '1.5rem',
+                fontSize: { xs: '1.2rem', sm: '1.5rem' },
               }}
             >
               Protein Pro
@@ -101,7 +101,7 @@ export default function ButtonAppBar({ handleLogout }) {
             aria-label="menu"
             onClick={handleMenuClick}
             sx={{
-              marginRight: 2,
+              marginRight: { xs: 0, sm: 2 },
               color: '#00bfff',
             }}
           >

@@ -243,7 +243,7 @@ export default function SignUp() {
     }
 
     try {
-      const existingUserResponse = await axios.get(`https://protienpro-backend-production.up.railway.app/users/check-email?email=${formData.email}`);
+      const existingUserResponse = await axios.get(`http://localhost:8080/users/check-email?email=${formData.email}`);
       if (existingUserResponse.data.exists) {
         setSnackbarMessage("User already exists.");
         setSnackbarSeverity('error');
@@ -251,7 +251,7 @@ export default function SignUp() {
         return;
       }
 
-      const response = await axios.post('https://protienpro-backend-production.up.railway.app/users', {
+      const response = await axios.post('http://localhost:8080/users', {
         name: formData.Name,
         email: formData.email,
         password: formData.password,
@@ -312,60 +312,61 @@ export default function SignUp() {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      {/* Circles on the left bottom corner */}
-      <div style={{ position: 'absolute', bottom: '0', left: '0', zIndex: '-1', top: '-50px' }}>
-        {/* First Circle (Left) */}
-        <div style={{
-          width: '300px',
-          height: '300px',
-          backgroundColor: 'skyblue',
-          borderRadius: '50%',
-          position: 'absolute',
-          left: '-150px', // Half of the width to position it partially outside the page
-          bottom: '50px',
-          zIndex: '-1',
-        }} />
-        {/* Second Circle (Left) */}
-        <div style={{
-          width: '400px',
-          height: '400px',
-          backgroundColor: 'skyblue',
-          borderRadius: '50%',
-          position: 'absolute',
-          left: '-200px', // Slightly larger and more to the left
-          top: '100px',
-          bottom: '250px',
-          zIndex: '-1',
-        }} />
-      </div>
+      {/* Decorative background container - Hidden on mobile */}
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: -1, pointerEvents: 'none', display: window.innerWidth < 768 ? 'none' : 'block' }}>
+        {/* Circles on the left side */}
+        <div style={{ position: 'absolute', top: '50%', left: '0', transform: 'translateY(-50%)' }}>
+          {/* First Circle (Left) */}
+          <div style={{
+            width: window.innerWidth < 1024 ? '450px' : '600px',
+            height: window.innerWidth < 1024 ? '450px' : '600px',
+            backgroundColor: '#87CEEB',
+            borderRadius: '50%',
+            position: 'absolute',
+            left: window.innerWidth < 1024 ? '-225px' : '-300px',
+            top: window.innerWidth < 1024 ? '-75px' : '-100px',
+            opacity: '1',
+          }} />
+          {/* Second Circle (Left) */}
+          <div style={{
+            width: window.innerWidth < 1024 ? '550px' : '750px',
+            height: window.innerWidth < 1024 ? '550px' : '750px',
+            backgroundColor: '#87CEEB',
+            borderRadius: '50%',
+            position: 'absolute',
+            left: window.innerWidth < 1024 ? '-275px' : '-375px',
+            top: window.innerWidth < 1024 ? '-350px' : '-475px',
+            opacity: '0.9',
+          }} />
+        </div>
 
-      {/* Circles on the right bottom corner */}
-      <div style={{ position: 'absolute', bottom: '0', right: '0', zIndex: '-1', top: '0' }}>
-        {/* First Circle (Right) */}
-        <div style={{
-          width: '300px',
-          height: '300px',
-          backgroundColor: 'skyblue',
-          right: '-150px',
-          borderRadius: '50%',
-          position: 'absolute',
-          bottom: '50px',
-          zIndex: '-1',
-          clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
-        }} />
-        {/* Second Circle (Right) */}
-        <div style={{
-          width: '400px',
-          height: '400px',
-          backgroundColor: 'skyblue',
-          borderRadius: '50%',
-          position: 'absolute',
-          bottom: '250px',
-          right: '-200px',
-          top: '60px',
-          zIndex: '-1',
-          clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)', // Cuts right half
-        }} />
+        {/* Circles on the right side */}
+        <div style={{ position: 'absolute', top: '50%', right: '0', transform: 'translateY(-50%)' }}>
+          {/* First Circle (Right) */}
+          <div style={{
+            width: window.innerWidth < 1024 ? '450px' : '600px',
+            height: window.innerWidth < 1024 ? '450px' : '600px',
+            backgroundColor: '#87CEEB',
+            borderRadius: '50%',
+            position: 'absolute',
+            right: window.innerWidth < 1024 ? '-225px' : '-300px',
+            top: window.innerWidth < 1024 ? '-75px' : '-100px',
+            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
+            opacity: '1',
+          }} />
+          {/* Second Circle (Right) */}
+          <div style={{
+            width: window.innerWidth < 1024 ? '550px' : '750px',
+            height: window.innerWidth < 1024 ? '550px' : '750px',
+            backgroundColor: '#87CEEB',
+            borderRadius: '50%',
+            position: 'absolute',
+            right: window.innerWidth < 1024 ? '-275px' : '-375px',
+            top: window.innerWidth < 1024 ? '-350px' : '-475px',
+            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
+            opacity: '0.9',
+          }} />
+        </div>
       </div>
       <Container component="main" maxWidth="md"
         sx={{
@@ -375,23 +376,28 @@ export default function SignUp() {
           alignItems: 'center',
           minHeight: '100vh',
           position: 'relative',
+          px: { xs: 2, sm: 3, md: 4 },
+          mx: 'auto',
         }}
       >
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: { xs: 10, sm: 8 },
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            marginBottom: 8,
+            marginBottom: { xs: 4, sm: 8 },
+            width: '100%',
           }}
         >
           <Card
             sx={{
-              padding: 4,
+              padding: { xs: 2, sm: 3, md: 4 },
               marginTop: -1,
               width: '100%',
+              maxWidth: '900px',
+              mx: 'auto',
               backgroundColor: 'white',
               boxShadow: 3,
               textAlign: 'center',
@@ -402,14 +408,14 @@ export default function SignUp() {
               },
             }}
           >
-            <Typography component="h1" variant="h5" color="primary" sx={{ marginBottom: 2 }}>
+            <Typography component="h1" variant="h5" color="primary" sx={{ marginBottom: 2, fontSize: { xs: '1.5rem', sm: '2rem' } }}>
               SIGN UP
             </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   {/* Left Side: Create a Free Account */}
-                  <Typography component="h2" variant="h6" color="primary">
+                  <Typography component="h2" variant="h6" color="primary" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
                     Create a Free Account
                   </Typography>
                   <TextField
@@ -480,7 +486,7 @@ export default function SignUp() {
 
                 {/* Adjust the divider and proportions */}
                 <Grid item xs={12} sm={6}>
-                  <Typography component="h2" variant="h6" color="primary">
+                  <Typography component="h2" variant="h6" color="primary" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
                     Personal Details
                   </Typography>
                   <Grid container spacing={2}>

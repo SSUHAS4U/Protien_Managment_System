@@ -137,7 +137,7 @@ export default function MiniDrawer() {
     } else {
       // Fetch user details
       axios
-        .get(`https://protienpro-backend-production.up.railway.app/users?email=${email}`, {
+        .get(`http://localhost:8080/users?email=${email}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -158,7 +158,7 @@ export default function MiniDrawer() {
 
             // Fetch profile image if it exists
             axios
-              .get(`https://protienpro-backend-production.up.railway.app/imageconverter/${email}`, {
+              .get(`http://localhost:8080/imageconverter/${email}`, {
                 headers: {
                   Authorization: `Bearer ${authToken}`,
                 },
@@ -187,7 +187,7 @@ export default function MiniDrawer() {
       const fetchStats = async () => {
         try {
           const statsResponse = await axios.get(
-            `https://protienpro-backend-production.up.railway.app/fooddiary/foodstats`, // Updated endpoint
+            `http://localhost:8080/fooddiary/foodstats`, // Updated endpoint
             { headers: { email } } // Pass only the email in headers
           );
           setStats(statsResponse.data || {}); // Set an empty object if response is null or undefined
@@ -204,7 +204,7 @@ export default function MiniDrawer() {
       const fetchExerciseStats = async () => {
         try {
           const statsResponse = await axios.get(
-            `https://protienpro-backend-production.up.railway.app/exercisediary/exercisestats`, // Updated endpoint for exercise stats
+            `http://localhost:8080/exercisediary/exercisestats`, // Updated endpoint for exercise stats
             { headers: { email } } // Pass only the email in headers
           );
           setExerciseStats(statsResponse.data || {}); // Set an empty object if response is null or undefined
@@ -478,7 +478,7 @@ export default function MiniDrawer() {
 
 
       {/* main content  */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: '64px' }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, sm: 3 }, marginTop: '64px' }}>
         <DrawerHeader />
         <Card
           sx={{
@@ -487,14 +487,14 @@ export default function MiniDrawer() {
             position: 'relative',
             backgroundColor: '#f9f9f9',
             borderRadius: '16px',
-            padding: '24px',
+            padding: { xs: '16px', sm: '20px', md: '24px' },
             marginTop: '-40px',
             boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
             '&:hover': {
               transform: 'scale(1.01)',
-              boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+              boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)',
             },
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
           }}
         >
 
@@ -502,7 +502,7 @@ export default function MiniDrawer() {
           <Box
             sx={{
               width: '100%',
-              height: '200px',
+              height: { xs: '150px', sm: '180px', md: '200px' },
               backgroundImage: `url(${img1})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
@@ -515,15 +515,15 @@ export default function MiniDrawer() {
           >
             {/* Profile Picture with White Circular Background */}
             <Avatar
-              src={profilePic || "default-profile-pic.jpg"} // Fallback to a default image
+              src={profilePic || "default-profile-pic.jpg"}
               alt="Profile"
               sx={{
-                width: '170px',
-                height: '170px',
+                width: { xs: '100px', sm: '140px', md: '170px' },
+                height: { xs: '100px', sm: '140px', md: '170px' },
                 borderRadius: '50%',
-                border: '4px solid #fff', // Optional: border for better visibility
+                border: '4px solid #fff',
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                left: '10px',
+                left: { xs: '5px', sm: '10px' },
               }}
             />
           </Box>
@@ -548,9 +548,9 @@ export default function MiniDrawer() {
                 Bio: {userData.bio}
               </Typography>
 
-              <Box sx={{ display: 'flex', justifyContent: 'left', width: '100%' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'left', width: '100%', flexWrap: 'wrap', gap: { xs: 1, sm: 2 } }}>
 
-                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   Gender: {userData.gender}
                 </Typography>
                 {/* Divider */}
@@ -559,11 +559,11 @@ export default function MiniDrawer() {
                     width: '1px',
                     height: '16px',
                     backgroundColor: '#ccc',
-                    marginX: 1,
+                    display: { xs: 'none', sm: 'block' }
                   }}
                 />
 
-                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   DOB: {userData.birthDate ? formatToDDMMYYYY(userData.birthDate) : 'N/A'}
                 </Typography>
 
@@ -574,12 +574,12 @@ export default function MiniDrawer() {
                     width: '1px',
                     height: '16px',
                     backgroundColor: '#ccc',
-                    marginX: 1,
+                    display: { xs: 'none', sm: 'block' }
                   }}
                 />
 
                 {/* Weight */}
-                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   Weight: {userData.weight} kg
                 </Typography>
 
@@ -589,12 +589,12 @@ export default function MiniDrawer() {
                     width: '1px',
                     height: '16px',
                     backgroundColor: '#ccc',
-                    marginX: 1,
+                    display: { xs: 'none', sm: 'block' }
                   }}
                 />
 
                 {/* Height Feet */}
-                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', marginRight: 4 }}>
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   HeightFeet: {userData.heightFeet} cm
                 </Typography>
 
@@ -604,12 +604,12 @@ export default function MiniDrawer() {
                     width: '1px',
                     height: '16px',
                     backgroundColor: '#ccc',
-                    marginX: 1,
+                    display: { xs: 'none', sm: 'block' }
                   }}
                 />
 
                 {/* Height Inches */}
-                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold' }}>
+                <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   HeightInches: {userData.heightInches} in
                 </Typography>
               </Box>
@@ -620,8 +620,9 @@ export default function MiniDrawer() {
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", md: "row" },
             justifyContent: "space-between",
-            gap: "20px",
+            gap: { xs: "15px", md: "20px" },
             marginTop: "30px",
             marginBottom: "30px",
             alignItems: "center",
@@ -634,7 +635,7 @@ export default function MiniDrawer() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              width: "30%",
+              width: { xs: "100%", md: "30%" },
             }}
           >
             <Typography variant="h6" sx={{ marginBottom: "10px", fontWeight: "bold" }}>
@@ -689,7 +690,7 @@ export default function MiniDrawer() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              width: "30%",
+              width: { xs: "100%", md: "30%" },
             }}
           >
             <Typography variant="h6" sx={{ marginBottom: "10px", fontWeight: "bold" }}>
@@ -743,7 +744,7 @@ export default function MiniDrawer() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              width: "30%",
+              width: { xs: "100%", md: "30%" },
             }}
           >
             <Typography variant="h6" sx={{ marginBottom: "10px", fontWeight: "bold" }}>

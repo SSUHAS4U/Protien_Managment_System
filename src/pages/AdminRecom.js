@@ -77,7 +77,7 @@ const AdminRecom = () => {
     data.append('nutritionalLevel', formData.nutritionalLevel);
 
     try {
-      const response = await axios.post('https://protienpro-backend-production.up.railway.app/recommendation', data, {
+      const response = await axios.post('http://localhost:8080/recommendation', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -113,12 +113,12 @@ const AdminRecom = () => {
   return (
     <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
       <Navbar handleLogout={handleLogout} />
-      <main style={{ padding: '2rem' }}>
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <main style={{ padding: '1rem' }}>
+        <Box sx={{ textAlign: 'center', mt: { xs: 2, sm: 4 } }}>
           <Typography
             variant="h2"
             sx={{
-              fontSize: '3rem',
+              fontSize: { xs: '1.5rem', sm: '2.5rem', md: '3rem' },
               fontWeight: 'bold',
               color: '#008fcc',
               transition: 'transform 0.3s ease, text-shadow 0.3s ease',
@@ -137,7 +137,7 @@ const AdminRecom = () => {
             sx={{
               width: '100%',
               maxWidth: 900,
-              padding: 4,
+              padding: { xs: 2, sm: 3, md: 4 },
               backgroundColor: 'white',
               boxShadow: '0 4px 12px rgba(0, 143, 204, 0.3)',
               borderRadius: '12px',
