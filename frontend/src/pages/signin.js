@@ -344,6 +344,7 @@ export default function SignIn() {
                             </Typography>
                             <Button
                               onClick={generateCaptcha}
+                              type="button"
                               variant="contained"
                               sx={{
                                 backgroundColor: '#00bfff',
