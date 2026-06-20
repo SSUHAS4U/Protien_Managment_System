@@ -185,12 +185,9 @@ const AdminViewRecom = () => {
     };
 
     const handleMenuSelect = (nutrition) => {
-        setSelectedNutrition(nutrition); // Update the selected nutritional level
         fetchFoodItems(nutrition); // Fetch filtered food items
         handleMenuClose(); // Close the menu
     };
-
-    const [selectedNutrition, setSelectedNutrition] = useState(null);
 
 
 
