@@ -84,7 +84,27 @@ Located in the `backend` folder.
 
 ### Deploying
 
-- **Backend (Render):** add every variable above in the service's *Environment* tab
-  (do **not** ship a `.env` file). `PORT` is provided by Render automatically.
+- **Backend (Render):** the repo ships a [`render.yaml`](render.yaml) blueprint that
+  declares the Docker service and the env-var **keys** it needs (secret values are
+  `sync: false`, so nothing sensitive is committed). `PORT` is provided by Render.
 - **Frontend (Vercel):** deploys as-is. Optionally set `REACT_APP_API_BASE` to override
   the backend URL; otherwise it auto-targets the Render backend in production.
+
+#### Push secrets to Render automatically (no dashboard typing)
+
+Instead of pasting each key into the Render dashboard, sync them straight from your
+local `backend/.env` with the included script:
+
+```bash
+# 1. Add a Render API key to backend/.env (RENDER_API_KEY=...)
+#    Create one at https://dashboard.render.com/u/settings#api-keys
+# 2. Run:
+npm run render:env            # uploads all keys; Render auto-redeploys
+npm run render:env:deploy     # same, and triggers an explicit deploy
+```
+
+The script ([`scripts/render-sync-env.mjs`](scripts/render-sync-env.mjs)) reads your
+gitignored `backend/.env`, finds the service by name (`protien-managment-system`, or
+`RENDER_SERVICE_ID` if set), and pushes every key/value via the Render API. The
+Render credentials themselves (`RENDER_API_KEY`, `RENDER_SERVICE_*`) are never
+uploaded and never committed.

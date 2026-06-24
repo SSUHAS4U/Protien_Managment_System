@@ -1,0 +1,10 @@
+{
+  "name": "protienpro-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Repo-level tooling scripts (deploy/env automation). The app lives in frontend/ and backend/.",
+  "scripts": {
+    "render:env": "node scripts/render-sync-env.mjs",
+    "render:env:deploy": "node scripts/render-sync-env.mjs --deploy"
+  }
+}
