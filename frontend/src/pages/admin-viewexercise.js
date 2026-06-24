@@ -229,9 +229,9 @@ const ExerciseDashboard = () => {
               sx={{
                 '& .MuiInputBase-input': {
                   color: '#000',
-                  '&:focus': { color: '#0099cc' },
+                  '&:focus': { color: '#15803d' },
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
               }}
             />
             <TextField
@@ -243,9 +243,9 @@ const ExerciseDashboard = () => {
               sx={{
                 '& .MuiInputBase-input': {
                   color: '#000', // Default text color
-                  '&:focus': { color: '#0099cc' }, // Sky-blue color when focused
+                  '&:focus': { color: '#15803d' }, // Sky-blue color when focused
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
               }}
             />
             <TextField
@@ -257,9 +257,9 @@ const ExerciseDashboard = () => {
               sx={{
                 '& .MuiInputBase-input': {
                   color: '#000', // Default text color
-                  '&:focus': { color: '#0099cc' }, // Sky-blue color when focused
+                  '&:focus': { color: '#15803d' }, // Sky-blue color when focused
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
               }}
             />
             <TextField
@@ -271,9 +271,9 @@ const ExerciseDashboard = () => {
               sx={{
                 '& .MuiInputBase-input': {
                   color: '#000', // Default text color
-                  '&:focus': { color: '#0099cc' }, // Sky-blue color when focused
+                  '&:focus': { color: '#15803d' }, // Sky-blue color when focused
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
               }}
             />
             <TextField
@@ -285,9 +285,9 @@ const ExerciseDashboard = () => {
               sx={{
                 '& .MuiInputBase-input': {
                   color: '#000', // Default text color
-                  '&:focus': { color: '#0099cc' }, // Sky-blue color when focused
+                  '&:focus': { color: '#15803d' }, // Sky-blue color when focused
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
               }}
             />
             <TextField
@@ -303,9 +303,9 @@ const ExerciseDashboard = () => {
               sx={{
                 '& .MuiInputBase-input': {
                   color: '#000', // Default text color
-                  '&:focus': { color: '#0099cc' }, // Sky-blue color when focused
+                  '&:focus': { color: '#15803d' }, // Sky-blue color when focused
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
               }}
             />
           </DialogContent>
@@ -313,14 +313,14 @@ const ExerciseDashboard = () => {
             <Button
               onClick={handleCancelEdit}
               sx={{
-                color: '#00bfff', // Bright blue color for text
+                color: '#16a34a', // Bright blue color for text
                 textTransform: 'none', // Disable uppercase transformation
                 fontSize: '16px', // Match font size
                 fontWeight: 'bold', // Bold text
                 background: 'none', // No background
                 boxShadow: 'none', // No shadow
                 '&:hover': {
-                  color: '#0099cc', // Darker blue on hover
+                  color: '#15803d', // Darker blue on hover
                 },
               }}
             >
@@ -329,14 +329,14 @@ const ExerciseDashboard = () => {
             <Button
               onClick={handleSubmitEdit}
               sx={{
-                color: '#00bfff', // Bright blue color for text
+                color: '#16a34a', // Bright blue color for text
                 textTransform: 'none', // Disable uppercase transformation
                 fontSize: '16px', // Match font size
                 fontWeight: 'bold', // Bold text
                 background: 'none', // No background
                 boxShadow: 'none', // No shadow
                 '&:hover': {
-                  color: '#0099cc', // Darker blue on hover
+                  color: '#15803d', // Darker blue on hover
                 },
               }}
             >
@@ -356,14 +356,14 @@ const ExerciseDashboard = () => {
             <Button
               onClick={handleCancelDelete}
               sx={{
-                color: '#00bfff', // Bright blue color for text
+                color: '#16a34a', // Bright blue color for text
                 textTransform: 'none', // Disable uppercase transformation
                 fontSize: '16px', // Match font size
                 fontWeight: 'bold', // Bold text
                 background: 'none', // No background
                 boxShadow: 'none', // No shadow
                 '&:hover': {
-                  color: '#0099cc', // Darker blue on hover
+                  color: '#15803d', // Darker blue on hover
                 },
               }}
             >
@@ -372,14 +372,14 @@ const ExerciseDashboard = () => {
             <Button
               onClick={handleConfirmDelete}
               sx={{
-                color: '#00bfff', // Bright blue color for text
+                color: '#16a34a', // Bright blue color for text
                 textTransform: 'none', // Disable uppercase transformation
                 fontSize: '16px', // Match font size
                 fontWeight: 'bold', // Bold text
                 background: 'none', // No background
                 boxShadow: 'none', // No shadow
                 '&:hover': {
-                  color: '#0099cc', // Darker blue on hover
+                  color: '#15803d', // Darker blue on hover
                 },
               }}
             >
@@ -397,7 +397,7 @@ const ExerciseDashboard = () => {
             marginTop: '20px', // Adds space to the top
             '& .MuiOutlinedInput-root': {
               '&.Mui-focused fieldset': {
-                borderColor: '#00bfff', // Sky blue color on focus
+                borderColor: '#16a34a', // Sky blue color on focus
               },
             },
           }}
@@ -406,9 +406,9 @@ const ExerciseDashboard = () => {
               <IconButton
                 onClick={() => handleButtonClick()}
                 sx={{
-                  backgroundColor: buttonClicked ? '#00bfff' : 'transparent', // Sky blue color on click
+                  backgroundColor: buttonClicked ? '#16a34a' : 'transparent', // Sky blue color on click
                   '&:hover': {
-                    backgroundColor: '#87CEEB', // Darker blue on hover
+                    backgroundColor: '#86efac', // Darker blue on hover
                   },
                   borderRadius: '50%', // Makes it round
                 }}
@@ -433,7 +433,7 @@ const ExerciseDashboard = () => {
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth animation for hover effect
                       '&:hover': {
                         transform: 'scale(1.02)', // Slight enlargement
-                        boxShadow: '0 8px 16px rgba(0, 191, 255, 0.6)', // Sky blue box shadow
+                        boxShadow: '0 8px 16px rgba(22, 163, 74, 0.6)', // Sky blue box shadow
                       },
                     }}
                   >
@@ -505,12 +505,12 @@ const ExerciseDashboard = () => {
                         onClick={() => handleEdit(item)}
                         sx={{
                           width: '120px',
-                          backgroundColor: '#00bfff',
+                          backgroundColor: '#16a34a',
                           color: 'black',
                           borderRadius: '20px',
                           fontWeight: 'bold',
                           fontSize: '14px',
-                          '&:hover': { backgroundColor: '#0099cc' },
+                          '&:hover': { backgroundColor: '#15803d' },
                         }}
                       >
                         Edit
@@ -551,10 +551,10 @@ const ExerciseDashboard = () => {
             onChange={handlePageChange}
             sx={{
               '& .MuiPaginationItem-root': {
-                color: '#87CEEB', // Sky blue color
+                color: '#86efac', // Sky blue color
               },
               '& .MuiPaginationItem-root.Mui-selected': {
-                backgroundColor: '#87CEEB', // Sky blue background when selected
+                backgroundColor: '#86efac', // Sky blue background when selected
                 color: '#fff', // White text when selected
               },
             }}

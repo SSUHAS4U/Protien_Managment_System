@@ -17,10 +17,10 @@ import { styled } from '@mui/material/styles';
 const skyBlueTheme = createTheme({
   palette: {
     primary: {
-      main: '#00bfff', // Sky Blue
+      main: '#16a34a', // Sky Blue
     },
     secondary: {
-      main: '#00bfff', // Sky Blue
+      main: '#16a34a', // Sky Blue
     },
     text: {
       primary: '#000',
@@ -40,7 +40,7 @@ const skyBlueTheme = createTheme({
           transition: 'all 0.3s ease', // Smooth transition for hover effect
           '&:hover': {
             transform: 'scale(1.05)', // Slightly scale up on hover for a modern feel
-            backgroundColor: '#0095e8', // Darker Blue on hover
+            backgroundColor: '#15803d', // Darker Blue on hover
             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)', // Add shadow on hover
           },
         },
@@ -217,13 +217,13 @@ const AdminUsersPage = () => {
       <div>
         <AdminNav handleLogout={handleLogout}/> {/* Adding the AdminNav component */}
         <div style={{ padding: '1rem', backgroundColor: 'white', minHeight: '100vh' }}>
-          <Typography variant="h4" align="center" gutterBottom style={{ color: '#00bfff', fontSize: 'clamp(1.5rem, 5vw, 2.125rem)' }}>
+          <Typography variant="h4" align="center" gutterBottom style={{ color: '#16a34a', fontSize: 'clamp(1.5rem, 5vw, 2.125rem)' }}>
             Registered Users
           </Typography>
           <TableContainer component={Paper} style={{ boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)', marginBottom: '20px', overflowX: 'auto' }}>
             <Table sx={{ minWidth: { xs: 300, sm: 650 } }}>
               <TableHead>
-                <TableRow style={{ backgroundColor: '#00bfff' }}>
+                <TableRow style={{ backgroundColor: '#16a34a' }}>
                   <TableCell style={{ color: '#ffffff', fontWeight: 'bold' }}>Name</TableCell>
                   <TableCell style={{ color: '#ffffff', fontWeight: 'bold' }}>Email</TableCell>
                   <TableCell style={{ color: '#ffffff', fontWeight: 'bold' }}>Gender</TableCell>

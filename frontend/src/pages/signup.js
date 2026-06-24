@@ -1,152 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  CssBaseline,
-  TextField,
-  Typography,
-  Card,
-  Grid,
-  createTheme,
-  ThemeProvider,
-  Snackbar,
-  Alert,
+  Box, Button, Container, FormControl, TextField, Typography, Card, Grid,
+  Snackbar, Alert, MenuItem, InputAdornment, IconButton, Stack,
 } from '@mui/material';
-import Navbar from '../components/Navbar'; // Adjust the path based on your folder structure
-import Footer from '../components/Footer'; // Adjust the path based on your folder structure
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import axios from 'axios';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-// import { styled } from '@mui/material/styles';
-import { MenuItem } from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
-
-// const StyledTextField = styled(TextField)(({ theme }) => ({
-//   width: '100%', // Ensure full width
-//   marginTop: theme.spacing(2), // Add margin to match other fields
-//   '& .MuiInputBase-root': {
-//     color: '#000', // Ensure text color consistency
-//   },
-//   '& .MuiInputLabel-root': {
-//     color: '#000', // Ensure label color consistency
-//   },
-//   '& .MuiOutlinedInput-root': {
-//     '& fieldset': {
-//       borderColor: '#000', // Ensure border color consistency
-//     },
-//     '&:hover fieldset': {
-//       borderColor: '#000', // Hover effect
-//     },
-//     '&.Mui-focused fieldset': {
-//       borderColor: '#000', // Focused state color
-//     },
-//   },
-// }));
-
-// Custom styling for the DatePicker component
-// const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-//   width: '100%', // Ensure full width
-//   '& .MuiInputBase-root': {
-//     color: '#000', // Text color
-//   },
-//   '& .MuiInputLabel-root': {
-//     color: '#000', // Label color
-//   },
-//   '& .MuiOutlinedInput-root': {
-//     '& fieldset': {
-//       borderColor: '#000', // Border color
-//     },
-//     '&:hover fieldset': {
-//       borderColor: '#000', // Border color on hover
-//     },
-//     '&.Mui-focused fieldset': {
-//       borderColor: '#000', // Border color on focus
-//     },
-//   },
-// }));
-
-// Theme with sky blue palette
-const skyBlueTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#00bfff',
-    },
-    secondary: {
-      main: '#00bfff',
-    },
-    text: {
-      primary: '#000',
-    },
-    background: {
-      default: '#fff',
-    },
-    defaultProps: {
-      disableScrollLock: true,
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          color: '#fff',
-          backgroundColor: '#00bfff',
-          '&:hover': {
-            backgroundColor: '#0095e8',
-          },
-        },
-      },
-    },
-    MuiAvatar: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#00bfff',
-        },
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiInputBase-root': {
-            color: '#000',
-          },
-          '& .MuiInputLabel-root': {
-            color: '#000',
-          },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: '#000',
-            },
-            '&:hover fieldset': {
-              borderColor: '#000',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: '#000',
-            },
-          },
-        },
-      },
-    },
-  },
-});
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
+import { API_BASE } from '../config/api';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
-    Name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    gender: '',
-    birthDate: '', // Set birthDate as an empty string initially
-    heightFeet: '',
-    heightInches: '',
-    weight: '',
+    Name: '', email: '', password: '', confirmPassword: '', gender: '',
+    birthDate: '', heightFeet: '', heightInches: '', weight: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -157,78 +25,41 @@ export default function SignUp() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleClickShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
+  const handleSnackbarClose = () => setSnackbarOpen(false);
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleDateChange = (dateString) => {
-    // Convert the date string to a Date object
     const date = dateString ? new Date(dateString) : null;
-  
-    // Format the date string as needed (e.g., keep YYYY-MM-DD or transform it)
     const formattedDate = date && !isNaN(date.getTime()) ? dateString : null;
-  
-    // Update the state with the formatted date
     setFormData({ ...formData, birthDate: formattedDate });
-  
-    // Validate the date and update errors
     if (date && !isNaN(date.getTime())) {
-      // Clear error if the date is valid
-      setErrors((prevErrors) => ({ ...prevErrors, birthDate: "" }));
+      setErrors((prev) => ({ ...prev, birthDate: '' }));
     } else {
-      // Set error for invalid date
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        birthDate: "Invalid date format",
-      }));
+      setErrors((prev) => ({ ...prev, birthDate: 'Invalid date format' }));
     }
   };
-  
-
-  // const formatDate = (date) => {
-  //   if (!date) return "";
-  //   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month starts from 0
-  //   const day = date.getDate().toString().padStart(2, "0"); // Day of the month
-  //   const year = date.getFullYear(); // Full year
-  //   return `${day}/${month}/${year}`; // Return in DD/MM/YYYY format
-  // };
 
   const validate = () => {
     let tempErrors = {};
-    setFormSubmitted(true); // Mark form as submitted
-    if (!formData.Name) tempErrors.Name = "Name is required.";
-    if (!formData.email) {
-      tempErrors.email = "Email is required.";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      tempErrors.email = "Email is not valid.";
-    }
-    if (formData.password.length < 8) tempErrors.password = "Password must be at least 8 characters long.";
-    if (formData.password !== formData.confirmPassword) tempErrors.confirmPassword = "Passwords do not match.";
-    if (!formData.confirmPassword) tempErrors.confirmPassword = "Confirm Password is required.";
-    if (!formData.gender) tempErrors.gender = "Gender is required.";
+    setFormSubmitted(true);
+    if (!formData.Name) tempErrors.Name = 'Name is required.';
+    if (!formData.email) tempErrors.email = 'Email is required.';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) tempErrors.email = 'Email is not valid.';
+    if (formData.password.length < 8) tempErrors.password = 'Password must be at least 8 characters long.';
+    if (formData.password !== formData.confirmPassword) tempErrors.confirmPassword = 'Passwords do not match.';
+    if (!formData.confirmPassword) tempErrors.confirmPassword = 'Confirm Password is required.';
+    if (!formData.gender) tempErrors.gender = 'Gender is required.';
     if (!formData.birthDate) {
-      tempErrors.birthDate = "Birth Date is required.";
+      tempErrors.birthDate = 'Birth Date is required.';
     } else {
       const date = new Date(formData.birthDate);
-      if (isNaN(date.getTime()) || date.toString() === "Invalid Date") {
-        tempErrors.birthDate = "Birth Date is in incorrect format.";
-      }
+      if (isNaN(date.getTime()) || date.toString() === 'Invalid Date') tempErrors.birthDate = 'Birth Date is in incorrect format.';
     }
-    if (!formData.heightFeet) tempErrors.heightFeet = "Height (Feet) is required.";
-    if (!formData.heightInches) tempErrors.heightInches = "Height (Inches) is required.";
-    if (!formData.weight) tempErrors.weight = "Weight is required.";
+    if (!formData.heightFeet) tempErrors.heightFeet = 'Height (Feet) is required.';
+    if (!formData.heightInches) tempErrors.heightInches = 'Height (Inches) is required.';
+    if (!formData.weight) tempErrors.weight = 'Weight is required.';
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
@@ -236,22 +67,20 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
-      setSnackbarMessage("Please fix the errors before submitting.");
+      setSnackbarMessage('Please fix the errors before submitting.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
       return;
     }
-
     try {
-      const existingUserResponse = await axios.get(`http://localhost:8080/users/check-email?email=${formData.email}`);
+      const existingUserResponse = await axios.get(`${API_BASE}/users/check-email?email=${formData.email}`);
       if (existingUserResponse.data.exists) {
-        setSnackbarMessage("User already exists.");
+        setSnackbarMessage('User already exists.');
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
         return;
       }
-
-      const response = await axios.post('http://localhost:8080/users', {
+      const response = await axios.post(`${API_BASE}/users`, {
         name: formData.Name,
         email: formData.email,
         password: formData.password,
@@ -262,367 +91,93 @@ export default function SignUp() {
         weight: formData.weight,
       });
       console.log('User registered successfully:', response.data);
-      setSnackbarMessage("User registered successfully!");
+      setSnackbarMessage('User registered successfully!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
-
-      // Clear form data
-      setFormData({
-        Name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        gender: '',
-        birthDate: '', // Reset birthDate to an empty string
-        heightFeet: '',
-        heightInches: '',
-        weight: '',
-      });
+      setFormData({ Name: '', email: '', password: '', confirmPassword: '', gender: '', birthDate: '', heightFeet: '', heightInches: '', weight: '' });
     } catch (error) {
       console.error('There was an error registering the user:', error);
-      setSnackbarMessage("There was an error registering the user.");
+      setSnackbarMessage('There was an error registering the user.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
   };
 
-  useEffect(() => {
-    const bodyStyle = document.body.style;
-    bodyStyle.overflowX = 'hidden';
-    bodyStyle.overflowY = 'scroll';
-
-    return () => {
-      bodyStyle.overflowX = 'unset';
-      bodyStyle.overflowY = 'unset';
-    };
-  }, []);
-
-
   return (
-    <ThemeProvider theme={skyBlueTheme}>
-      <div style={{ overflowX: 'hidden', width: '100vw', position: 'relative' }}></div>
+    <Box>
       <Navbar />
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>{snackbarMessage}</Alert>
       </Snackbar>
-      {/* Decorative background container - Hidden on mobile */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: -1, pointerEvents: 'none', display: window.innerWidth < 768 ? 'none' : 'block' }}>
-        {/* Circles on the left side */}
-        <div style={{ position: 'absolute', top: '50%', left: '0', transform: 'translateY(-50%)' }}>
-          {/* First Circle (Left) */}
-          <div style={{
-            width: window.innerWidth < 1024 ? '450px' : '600px',
-            height: window.innerWidth < 1024 ? '450px' : '600px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: window.innerWidth < 1024 ? '-225px' : '-300px',
-            top: window.innerWidth < 1024 ? '-75px' : '-100px',
-            opacity: '1',
-          }} />
-          {/* Second Circle (Left) */}
-          <div style={{
-            width: window.innerWidth < 1024 ? '550px' : '750px',
-            height: window.innerWidth < 1024 ? '550px' : '750px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: window.innerWidth < 1024 ? '-275px' : '-375px',
-            top: window.innerWidth < 1024 ? '-350px' : '-475px',
-            opacity: '0.9',
-          }} />
-        </div>
 
-        {/* Circles on the right side */}
-        <div style={{ position: 'absolute', top: '50%', right: '0', transform: 'translateY(-50%)' }}>
-          {/* First Circle (Right) */}
-          <div style={{
-            width: window.innerWidth < 1024 ? '450px' : '600px',
-            height: window.innerWidth < 1024 ? '450px' : '600px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            right: window.innerWidth < 1024 ? '-225px' : '-300px',
-            top: window.innerWidth < 1024 ? '-75px' : '-100px',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
-            opacity: '1',
-          }} />
-          {/* Second Circle (Right) */}
-          <div style={{
-            width: window.innerWidth < 1024 ? '550px' : '750px',
-            height: window.innerWidth < 1024 ? '550px' : '750px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            right: window.innerWidth < 1024 ? '-275px' : '-375px',
-            top: window.innerWidth < 1024 ? '-350px' : '-475px',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
-            opacity: '0.9',
-          }} />
-        </div>
-      </div>
-      <Container component="main" maxWidth="md"
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          position: 'relative',
-          px: { xs: 2, sm: 3, md: 4 },
-          mx: 'auto',
-        }}
-      >
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: { xs: 10, sm: 8 },
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            marginBottom: { xs: 4, sm: 8 },
-            width: '100%',
-          }}
-        >
-          <Card
-            sx={{
-              padding: { xs: 2, sm: 3, md: 4 },
-              marginTop: -1,
-              width: '100%',
-              maxWidth: '900px',
-              mx: 'auto',
-              backgroundColor: 'white',
-              boxShadow: 3,
-              textAlign: 'center',
-              transition: 'transform 0.3s ease, box-shadow 0.2s ease',
-              '&:hover': {
-                transform: 'scale(1.02)',
-                boxShadow: '0px 0px 20px 5px rgba(0, 191, 255, 0.5)',
-              },
-            }}
-          >
-            <Typography component="h1" variant="h5" color="primary" sx={{ marginBottom: 2, fontSize: { xs: '1.5rem', sm: '2rem' } }}>
-              SIGN UP
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  {/* Left Side: Create a Free Account */}
-                  <Typography component="h2" variant="h6" color="primary" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
-                    Create a Free Account
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    label="Name"
-                    name="Name"
-                    value={formData.Name}
-                    onChange={handleChange}
-                    required
-                    margin="normal"
-                    error={!!errors.Name}
-                    helperText={errors.Name}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    margin="normal"
-                    error={!!errors.email}
-                    helperText={errors.email}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    margin="normal"
-                    error={!!errors.password}
-                    helperText={errors.password}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={handleClickShowPassword} edge="end">
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Confirm Password"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    margin="normal"
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={handleClickShowConfirmPassword} edge="end">
-                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
+      <Container component="main" maxWidth="md" sx={{ py: 6, display: 'flex', justifyContent: 'center' }}>
+        <Card sx={{ width: '100%', maxWidth: 920, overflow: 'hidden', borderRadius: 6, animation: 'pp-pop .4s ease' }}>
+          {/* Header band */}
+          <Box sx={{ p: { xs: 3, sm: 4 }, color: '#fff', background: 'linear-gradient(135deg,#15803d,#84cc16)' }}>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <PersonAddAltRoundedIcon sx={{ fontSize: 34 }} />
+              <Box>
+                <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 32, lineHeight: 1 }}>Create your free account</Typography>
+                <Typography sx={{ opacity: 0.92 }}>Start your healthier eating journey in under a minute.</Typography>
+              </Box>
+            </Stack>
+          </Box>
 
-                {/* Adjust the divider and proportions */}
-                <Grid item xs={12} sm={6}>
-                  <Typography component="h2" variant="h6" color="primary" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
-                    Personal Details
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <FormControl fullWidth margin="normal">
-                        <TextField
-                          select
-                          label="Gender"
-                          name="gender"
-                          value={formData.gender}
-                          onChange={handleChange}
-                          error={!!errors.gender}
-                          helperText={errors.gender}
-                          required
-                          SelectProps={{
-                            MenuProps: {
-                              disableScrollLock: true,  // Prevents scroll lock on the body
-                              anchorOrigin: {
-                                vertical: "bottom",
-                                horizontal: "left",
-                              },
-                              transformOrigin: {
-                                vertical: "top",
-                                horizontal: "left",
-                              },
-                              PaperProps: {
-                                style: {
-                                  maxHeight: 48 * 4.5 + 8,  // Set max height for dropdown
-                                  alignContent: 'right',
-                                  overflowX: 'hidden',
-                                  zIndex: 1300,  // Adjust z-index to ensure it's above card but below other overlays
-                                },
-                              },
-                              getContentAnchorEl: null,  // Prevents centering the menu with TextField
-                            },
-                            disablePortal: true,  // Keeps the dropdown within the form's flow instead of attaching to body
-                          }}
-                        >
-                          <MenuItem value="">Select Gender</MenuItem>
-                          <MenuItem value="female">Female</MenuItem>
-                          <MenuItem value="male">Male</MenuItem>
-                          <MenuItem value="other">Other</MenuItem>
-                        </TextField>
-                      </FormControl>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      style={{ marginTop: -10, marginBottom: 0 }} // Reduces the grid item's top and bottom margins
-                    >
-                      <TextField
-                        label="Birth Date"
-                        type="date"
-                        fullWidth
-                        margin="dense" // Use "dense" for reduced spacing
-                        required
-                        value={formData.birthDate || ''} // Ensure value is either a string or empty
-                        onChange={(e) =>
-                          handleDateChange(e.target.value) // Pass the value directly to the handler
-                        }
-                        InputLabelProps={{
-                          shrink: true, // Keep the label floated
-                        }}
-                        inputProps={{
-                          max: new Date().toISOString().split('T')[0], // Restrict selection to today or earlier
-                        }}
-                        error={formSubmitted && !!errors.birthDate} // Show error state if there's an issue
-                        helperText={formSubmitted && errors.birthDate}
-                      />
-                    </Grid>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ p: { xs: 3, sm: 4 } }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 700, fontSize: 20, color: 'primary.dark', mb: 0.5 }}>Account</Typography>
+                <TextField fullWidth label="Name" name="Name" value={formData.Name} onChange={handleChange} required margin="normal" error={!!errors.Name} helperText={errors.Name} />
+                <TextField fullWidth label="Email" name="email" value={formData.email} onChange={handleChange} required margin="normal" error={!!errors.email} helperText={errors.email} />
+                <TextField
+                  fullWidth label="Password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange} required margin="normal"
+                  error={!!errors.password} helperText={errors.password}
+                  InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={handleClickShowPassword} edge="end">{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }}
+                />
+                <TextField
+                  fullWidth label="Confirm Password" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={handleChange} required margin="normal"
+                  error={!!errors.confirmPassword} helperText={errors.confirmPassword}
+                  InputProps={{ endAdornment: (<InputAdornment position="end"><IconButton onClick={handleClickShowConfirmPassword} edge="end">{showConfirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }}
+                />
+              </Grid>
 
-
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Height (Feet)"
-                        name="heightFeet"
-                        value={formData.heightFeet}
-                        onChange={handleChange}
-                        required
-                        margin="dense"
-                        error={!!errors.heightFeet}
-                        helperText={errors.heightFeet}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Height (Inches)"
-                        name="heightInches"
-                        value={formData.heightInches}
-                        onChange={handleChange}
-                        required
-                        margin="dense"
-                        error={!!errors.heightInches}
-                        helperText={errors.heightInches}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Weight(kg)"
-                        name="weight"
-                        value={formData.weight}
-                        onChange={handleChange}
-                        required
-                        margin="dense"
-                        error={!!errors.weight}
-                        helperText={errors.weight}
-                      />
-                    </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 700, fontSize: 20, color: 'primary.dark', mb: 0.5 }}>Personal details</Typography>
+                <FormControl fullWidth margin="normal">
+                  <TextField select label="Gender" name="gender" value={formData.gender} onChange={handleChange} error={!!errors.gender} helperText={errors.gender} required
+                    SelectProps={{ MenuProps: { disableScrollLock: true } }}>
+                    <MenuItem value="">Select Gender</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="other">Other</MenuItem>
+                  </TextField>
+                </FormControl>
+                <TextField label="Birth Date" type="date" fullWidth margin="normal" required value={formData.birthDate || ''} onChange={(e) => handleDateChange(e.target.value)}
+                  InputLabelProps={{ shrink: true }} inputProps={{ max: new Date().toISOString().split('T')[0] }}
+                  error={formSubmitted && !!errors.birthDate} helperText={formSubmitted && errors.birthDate} />
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField fullWidth label="Height (Feet)" name="heightFeet" value={formData.heightFeet} onChange={handleChange} required margin="dense" error={!!errors.heightFeet} helperText={errors.heightFeet} />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField fullWidth label="Height (Inches)" name="heightInches" value={formData.heightInches} onChange={handleChange} required margin="dense" error={!!errors.heightInches} helperText={errors.heightInches} />
                   </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                      mt: 3,
-                      mb: 2,
-                      fontSize: '16px',
-                      backgroundColor: '#00bfff',
-                      '&:hover': { backgroundColor: '#0095e8' },
-                    }}
-                  >
-                    SIGN UP
-                  </Button>
-                </Grid>
+                <TextField fullWidth label="Weight (kg)" name="weight" value={formData.weight} onChange={handleChange} required margin="dense" error={!!errors.weight} helperText={errors.weight} />
               </Grid>
-            </Box>
-          </Card>
-        </Box>
+
+              <Grid item xs={12}>
+                <Button type="submit" fullWidth variant="contained" size="large" sx={{ mt: 1 }}>Create account</Button>
+                <Typography sx={{ textAlign: 'center', mt: 2, color: 'text.secondary' }}>
+                  Already have an account?{' '}
+                  <Box component="a" href="/signin" sx={{ color: 'primary.dark', fontWeight: 700, textDecoration: 'none' }}>Sign in</Box>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Card>
       </Container>
       <Footer />
-    </ThemeProvider>
+    </Box>
   );
 }

@@ -15,6 +15,13 @@
 /frontend/*-debug.log*
 /frontend/*-error.log*
 
+# Secrets / environment (NEVER commit these)
+.env
+.env.local
+*.env
+/backend/.env
+/frontend/.env
+
 # Backend ignores
 /backend/target/
 /backend/.apt_generated

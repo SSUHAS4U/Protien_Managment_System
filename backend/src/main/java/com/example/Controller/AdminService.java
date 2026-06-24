@@ -18,7 +18,6 @@ import com.example.Model.Admin;
 
 import jakarta.servlet.http.HttpSession;
 
-@CrossOrigin(origins = "*")
 @RestController
 public class AdminService {
 

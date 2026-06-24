@@ -46,8 +46,9 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
-  backgroundColor: '#87CEEB',  // Sky blue color for the opened drawer
-  borderBottomRightRadius: '50px',
+  backgroundColor: '#ffffff',
+  borderRight: '1px solid #e6efe6',
+  borderBottomRightRadius: '32px',
 });
 
 const closedMixin = (theme) => ({
@@ -57,8 +58,9 @@ const closedMixin = (theme) => ({
   }),
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: '#87CEEB',  // Sky blue color for the closed drawer
-  borderBottomRightRadius: '50px',
+  backgroundColor: '#ffffff',
+  borderRight: '1px solid #e6efe6',
+  borderBottomRightRadius: '32px',
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
@@ -76,8 +78,8 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: '#87CEEB',
-  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+  background: 'linear-gradient(135deg,#16a34a,#84cc16)',
+  boxShadow: '0 6px 20px -8px rgba(22,163,74,.5)',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -236,8 +238,8 @@ export default function MiniDrawer() {
           stats?.totalFat || 0,
           stats?.totalNetCarbs || 0,
         ],
-        backgroundColor: ["#4CAF50", "#2196F3", "#FFC107", "#FF5722"],
-        hoverBackgroundColor: ["#66BB6A", "#42A5F5", "#FFD54F", "#FF7043"],
+        backgroundColor: ["#f59e0b", "#6366f1", "#f43f5e", "#10b981"],
+        hoverBackgroundColor: ["#fbbf24", "#818cf8", "#fb7185", "#34d399"],
         borderWidth: 1,
       },
     ],
@@ -359,18 +361,18 @@ export default function MiniDrawer() {
             edge="start"
             sx={[{ marginRight: 5 }, open && { display: 'none' }]}
           >
-            <MenuIcon sx={{ color: 'black', fontSize: '32px' }} />
+            <MenuIcon sx={{ color: 'white', fontSize: '32px' }} />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" color="black">
+          <Typography variant="h6" noWrap component="div" sx={{ color: 'white', fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 24 }}>
             Dashboard
           </Typography>
           {/* Logout Button in the Right Corner */}
           <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body1" sx={{ color: 'black', marginRight: 2 }}>
+            <Typography variant="body1" sx={{ color: 'white', marginRight: 2, fontWeight: 600 }}>
               Welcome, {userName}
             </Typography>
             <IconButton color="inherit" onClick={handleLogout}>
-              <LogoutIcon sx={{ color: 'black' }} />
+              <LogoutIcon sx={{ color: 'white' }} />
             </IconButton>
           </Box>
         </Toolbar>
@@ -489,10 +491,10 @@ export default function MiniDrawer() {
             borderRadius: '16px',
             padding: { xs: '16px', sm: '20px', md: '24px' },
             marginTop: '-40px',
-            boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+            boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
             '&:hover': {
               transform: 'scale(1.01)',
-              boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)',
+              boxShadow: '0px 4px 15px 5px rgba(22, 163, 74, 0.5)',
             },
             transition: 'transform 0.3s ease, box-shadow 0.3s ease',
           }}
@@ -662,7 +664,7 @@ export default function MiniDrawer() {
                 value={(chartData.datasets[0].data[0] / foodTargetKcal) * 100}
                 size={150}
                 thickness={8}
-                sx={{ color: "#00bfff", position: "absolute", top: 0, left: 0 }}
+                sx={{ color: "#16a34a", position: "absolute", top: 0, left: 0 }}
               />
               <Box
                 sx={{
@@ -850,10 +852,10 @@ export default function MiniDrawer() {
               flexDirection: "column",
               alignItems: "center",
               width: "48%", // Adjusted width for better spacing
-              boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+              boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
               '&:hover': {
                 transform: 'scale(1.02)', // Slightly increased scale for hover effect
-                boxShadow: '0px 8px 20px rgba(0, 191, 255, 0.5)', // Enhanced sky blue box shadow
+                boxShadow: '0px 8px 20px rgba(22, 163, 74, 0.5)', // Enhanced sky blue box shadow
               },
               transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
             }}
@@ -914,10 +916,10 @@ export default function MiniDrawer() {
               flexDirection: "column",
               alignItems: "center",
               width: "48%", // Adjusted width for better spacing
-              boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+              boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
               '&:hover': {
                 transform: 'scale(1.02)', // Slightly increased scale for hover effect
-                boxShadow: '0px 8px 20px rgba(0, 191, 255, 0.5)', // Enhanced sky blue box shadow
+                boxShadow: '0px 8px 20px rgba(22, 163, 74, 0.5)', // Enhanced sky blue box shadow
               },
               transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
             }}

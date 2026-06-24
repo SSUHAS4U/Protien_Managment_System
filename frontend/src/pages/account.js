@@ -46,7 +46,7 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
-  backgroundColor: '#87CEEB',  // Sky blue color for the opened drawer
+  backgroundColor: '#86efac',  // Sky blue color for the opened drawer
   borderBottomRightRadius: '50px',
 });
 
@@ -57,7 +57,7 @@ const closedMixin = (theme) => ({
   }),
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: '#87CEEB',  // Sky blue color for the closed drawer
+  backgroundColor: '#86efac',  // Sky blue color for the closed drawer
   borderBottomRightRadius: '50px',
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -76,7 +76,7 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: '#87CEEB',
+  backgroundColor: '#86efac',
   boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,

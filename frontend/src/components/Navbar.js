@@ -1,134 +1,119 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import {
+  AppBar, Box, Toolbar, Typography, Button, Menu, MenuItem, Container,
+  IconButton, Drawer, List, ListItemButton, ListItemText, Divider,
+} from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import EnergySavingsLeafRoundedIcon from '@mui/icons-material/EnergySavingsLeafRounded';
 
-export default function ButtonAppBar() {
+const NAV_LINKS = [
+  { label: 'Home', href: '/' },
+  { label: 'About Us', href: '/about' },
+];
+
+export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const go = (href) => (window.location.href = href);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="static"
-        sx={{ 
-          backgroundColor: '#ffffff', // Set background color to white
-          color: '#333333', // Dark text color for contrast
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
-          height: '64px', // Fixed height for consistent layout
-          transition: 'background-color 0.3s ease', // Smooth transition for background
-          width: '100%' ,
-        }}
-      >
-        <Toolbar>
-          {/* Logo and home link */}
-          <Box 
-            sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, cursor: 'pointer' }} 
-            onClick={() => window.location.href = '/'}
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        top: 0,
+        background: 'rgba(255,255,255,0.72)',
+        backdropFilter: 'blur(14px)',
+        borderBottom: '1px solid rgba(22,163,74,0.12)',
+        color: '#0f172a',
+      }}
+    >
+      <Container maxWidth="lg">
+        <Toolbar disableGutters sx={{ minHeight: 70, gap: 2 }}>
+          {/* Brand */}
+          <Box
+            onClick={() => go('/')}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', flexGrow: 1 }}
           >
-            <Typography
-              variant="h6"
-              component="div"
+            <Box
               sx={{
-                color: '#00bfff',
-                fontWeight: 'bold',
-                fontSize: { xs: '1.2rem', sm: '1.5rem' },
-                marginRight: '8px'
+                width: 40, height: 40, borderRadius: '12px', display: 'grid', placeItems: 'center',
+                background: 'linear-gradient(135deg,#16a34a,#84cc16)',
+                boxShadow: '0 8px 18px -8px rgba(22,163,74,.7)',
               }}
             >
-              Protien Pro
+              <EnergySavingsLeafRoundedIcon sx={{ color: '#fff' }} />
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 26, lineHeight: 1,
+                background: 'linear-gradient(135deg,#15803d,#65a30d)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}
+            >
+              ProteinPro
             </Typography>
           </Box>
 
-          {/* About Us link (styled like Sign In button) */}
-          <Button
-            sx={{
-              color: '#ffffff',
-              backgroundColor: '#00bfff',
-              '&:hover': {
-                backgroundColor: '#0095e8',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-              },
-              marginRight: { xs: 1, sm: 2 },
-              textTransform: 'none',
-              fontSize: { xs: '0.875rem', sm: '1rem' },
-              padding: { xs: '8px 12px', sm: '10px 20px' },
-              borderRadius: '20px',
-              transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-            }}
-            onClick={() => window.location.href = '/about'}
-          >
-            About Us
-          </Button>
+          {/* Desktop links */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
+            {NAV_LINKS.map((l) => (
+              <Button key={l.href} onClick={() => go(l.href)} sx={{ color: '#0f172a', fontWeight: 600 }}>
+                {l.label}
+              </Button>
+            ))}
+            <Button
+              variant="contained"
+              endIcon={<ArrowDropDownIcon />}
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+            >
+              Sign In
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
+              disableScrollLock
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <MenuItem onClick={() => go('/signin')}>User Sign In</MenuItem>
+              <MenuItem onClick={() => go('/signup')}>Create Account</MenuItem>
+              <Divider />
+              <MenuItem onClick={() => go('/admin-signin')}>Admin Sign In</MenuItem>
+            </Menu>
+          </Box>
 
-          {/* Sign In Button with Dropdown */}
-          <Button
-            sx={{
-              color: '#ffffff',
-              backgroundColor: '#00bfff',
-              '&:hover': {
-                backgroundColor: '#0095e8',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-              },
-              display: 'flex',
-              alignItems: 'center',
-              padding: { xs: '8px 12px', sm: '10px 20px' },
-              borderRadius: '20px',
-              transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-              textTransform: 'none',
-              fontSize: { xs: '0.875rem', sm: '1rem' },
-            }}
-            onClick={handleMenuClick}
-          >
-            Sign In
-            <ArrowDropDownIcon sx={{ ml: 0.5 }} />
-          </Button>
-          
-          {/* Dropdown Menu aligned to the right of the button */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            disableScrollLock={true} // Prevent scroll lock
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right', // Aligns the dropdown to the right side of the button
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right', // Ensures the menu aligns with the right side
-            }}
-            sx={{
-              mt: 1, // Margin top to space from the button
-              '& .MuiMenuItem-root': {
-                transition: 'background-color 0.3s ease', // Smooth transition
-                '&:hover': {
-                  backgroundColor: '#f0f0f0', // Light gray on hover
-                },
-              },
-            }}
-          >
-            <MenuItem onClick={() => { window.location.href = '/signin'; handleClose(); }}>
-              User Sign In
-            </MenuItem>
-            <MenuItem onClick={() => { window.location.href = '/admin-signin'; handleClose(); }}>
-              Admin Sign In
-            </MenuItem>
-          </Menu>
+          {/* Mobile */}
+          <IconButton sx={{ display: { xs: 'inline-flex', md: 'none' } }} onClick={() => setMobileOpen(true)}>
+            <MenuRoundedIcon />
+          </IconButton>
         </Toolbar>
-      </AppBar>
-    </Box>
+      </Container>
+
+      <Drawer anchor="right" open={mobileOpen} onClose={() => setMobileOpen(false)}>
+        <Box sx={{ width: 260, pt: 2 }}>
+          <List>
+            {NAV_LINKS.map((l) => (
+              <ListItemButton key={l.href} onClick={() => go(l.href)}>
+                <ListItemText primary={l.label} />
+              </ListItemButton>
+            ))}
+            <Divider sx={{ my: 1 }} />
+            <ListItemButton onClick={() => go('/signin')}>
+              <ListItemText primary="User Sign In" />
+            </ListItemButton>
+            <ListItemButton onClick={() => go('/signup')}>
+              <ListItemText primary="Create Account" />
+            </ListItemButton>
+            <ListItemButton onClick={() => go('/admin-signin')}>
+              <ListItemText primary="Admin Sign In" />
+            </ListItemButton>
+          </List>
+        </Box>
+      </Drawer>
+    </AppBar>
   );
 }

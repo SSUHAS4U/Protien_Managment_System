@@ -231,9 +231,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         />
                         <TextField
@@ -245,9 +245,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         />
                         <TextField
@@ -259,9 +259,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         />
                         <TextField
@@ -273,9 +273,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         />
                         <TextField
@@ -287,9 +287,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         />
                         <TextField
@@ -305,9 +305,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         />
 
@@ -322,9 +322,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         >
                             <MenuItem value="High Protein">High Protein</MenuItem>
@@ -345,9 +345,9 @@ const AdminViewRecom = () => {
                             sx={{
                                 '& .MuiInputBase-input': {
                                     color: '#000',
-                                    '&:focus': { color: '#0099cc' },
+                                    '&:focus': { color: '#15803d' },
                                 },
-                                '& .MuiInputLabel-root.Mui-focused': { color: '#0099cc' },
+                                '& .MuiInputLabel-root.Mui-focused': { color: '#15803d' },
                             }}
                         />
                     </DialogContent>
@@ -355,14 +355,14 @@ const AdminViewRecom = () => {
                         <Button
                             onClick={handleCancelEdit}
                             sx={{
-                                color: '#00bfff',
+                                color: '#16a34a',
                                 textTransform: 'none',
                                 fontSize: '16px',
                                 fontWeight: 'bold',
                                 background: 'none',
                                 boxShadow: 'none',
                                 '&:hover': {
-                                    color: '#0099cc',
+                                    color: '#15803d',
                                 },
                             }}
                         >
@@ -371,14 +371,14 @@ const AdminViewRecom = () => {
                         <Button
                             onClick={handleSubmitEdit}
                             sx={{
-                                color: '#00bfff',
+                                color: '#16a34a',
                                 textTransform: 'none',
                                 fontSize: '16px',
                                 fontWeight: 'bold',
                                 background: 'none',
                                 boxShadow: 'none',
                                 '&:hover': {
-                                    color: '#0099cc',
+                                    color: '#15803d',
                                 },
                             }}
                         >
@@ -399,14 +399,14 @@ const AdminViewRecom = () => {
                         <Button
                             onClick={handleCancelDelete}
                             sx={{
-                                color: '#00bfff', // Bright blue color for text
+                                color: '#16a34a', // Bright blue color for text
                                 textTransform: 'none', // Disable uppercase transformation
                                 fontSize: '16px', // Match font size
                                 fontWeight: 'bold', // Bold text
                                 background: 'none', // No background
                                 boxShadow: 'none', // No shadow
                                 '&:hover': {
-                                    color: '#0099cc', // Darker blue on hover
+                                    color: '#15803d', // Darker blue on hover
                                 },
                             }}
                         >
@@ -415,14 +415,14 @@ const AdminViewRecom = () => {
                         <Button
                             onClick={handleConfirmDelete}
                             sx={{
-                                color: '#00bfff', // Bright blue color for text
+                                color: '#16a34a', // Bright blue color for text
                                 textTransform: 'none', // Disable uppercase transformation
                                 fontSize: '16px', // Match font size
                                 fontWeight: 'bold', // Bold text
                                 background: 'none', // No background
                                 boxShadow: 'none', // No shadow
                                 '&:hover': {
-                                    color: '#0099cc', // Darker blue on hover
+                                    color: '#15803d', // Darker blue on hover
                                 },
                             }}
                         >
@@ -505,7 +505,7 @@ const AdminViewRecom = () => {
                                             transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                                             '&:hover': {
                                                 transform: 'scale(1.02)',
-                                                boxShadow: '0 8px 16px rgba(0, 191, 255, 0.6)',
+                                                boxShadow: '0 8px 16px rgba(22, 163, 74, 0.6)',
                                             },
                                         }}
                                     >
@@ -605,12 +605,12 @@ const AdminViewRecom = () => {
                                                 onClick={() => handleEdit(item)}
                                                 sx={{
                                                     width: '120px',
-                                                    backgroundColor: '#00bfff',
+                                                    backgroundColor: '#16a34a',
                                                     color: 'black',
                                                     borderRadius: '20px',
                                                     fontWeight: 'bold',
                                                     fontSize: '14px',
-                                                    '&:hover': { backgroundColor: '#0099cc' },
+                                                    '&:hover': { backgroundColor: '#15803d' },
                                                 }}
                                             >
                                                 Edit

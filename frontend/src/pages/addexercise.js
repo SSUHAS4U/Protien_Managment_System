@@ -46,7 +46,7 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
-  backgroundColor: '#87CEEB',
+  backgroundColor: '#86efac',
   borderBottomRightRadius: '50px',
 });
 
@@ -57,7 +57,7 @@ const closedMixin = (theme) => ({
   }),
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: '#87CEEB',
+  backgroundColor: '#86efac',
   borderBottomRightRadius: '50px',
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -76,7 +76,7 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: '#87CEEB',
+  backgroundColor: '#86efac',
   boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
@@ -520,7 +520,7 @@ export default function Addexercise() {
               marginLeft: '30px',
               '& .MuiOutlinedInput-root': {
                 '&.Mui-focused fieldset': {
-                  borderColor: '#00bfff', // Sky blue color on focus
+                  borderColor: '#16a34a', // Sky blue color on focus
                 },
               },
             }}
@@ -529,9 +529,9 @@ export default function Addexercise() {
                 <IconButton
                   onClick={() => handleButtonClick()}
                   sx={{
-                    backgroundColor: buttonClicked ? '#00bfff' : 'transparent', // Sky blue color on click
+                    backgroundColor: buttonClicked ? '#16a34a' : 'transparent', // Sky blue color on click
                     '&:hover': {
-                      backgroundColor: '#87CEEB', // Darker blue on hover
+                      backgroundColor: '#86efac', // Darker blue on hover
                     },
                     borderRadius: '50%', // Makes it round
                   }}
@@ -553,7 +553,7 @@ export default function Addexercise() {
                     transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Hover animation
                     '&:hover': {
                       transform: 'scale(1.01)', // Slight enlargement
-                      boxShadow: '0 8px 16px rgba(0, 191, 255, 0.6)', // Sky blue shadow
+                      boxShadow: '0 8px 16px rgba(22, 163, 74, 0.6)', // Sky blue shadow
                     },
                   }}
                 >
@@ -643,19 +643,19 @@ export default function Addexercise() {
                       onClick={() => handleAddFoodClick(item)} // Open dialog when clicked, passing the item
                       sx={{
                         width: '120px',
-                        backgroundColor: '#00bfff',
+                        backgroundColor: '#16a34a',
                         color: 'black',
                         borderRadius: '20px',
                         fontWeight: 'bold',
                         fontSize: '14px',
-                        '&:hover': { backgroundColor: '#0099cc' },
+                        '&:hover': { backgroundColor: '#15803d' },
                       }}
                     >
                       Add
                     </Button>
                     {/* Pop-up dialog */}
                     <Dialog open={openDialog} onClose={handleDialogClose} sx={{ borderRadius: '10px' }}>
-                      <DialogTitle sx={{ backgroundColor: '#00bfff', color: 'white', fontWeight: 'bold', textAlign: 'center' }}>
+                      <DialogTitle sx={{ backgroundColor: '#16a34a', color: 'white', fontWeight: 'bold', textAlign: 'center' }}>
                         Select Category
                       </DialogTitle>
                       <DialogContent sx={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -667,14 +667,14 @@ export default function Addexercise() {
                             label="Category"
                             sx={{
                               '& .MuiSelect-root': {
-                                backgroundColor: '#e6f7ff', // Light blue background for the select
+                                backgroundColor: '#eafce9', // Light blue background for the select
                                 borderRadius: '8px',
                               },
                               '& .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#00bfff', // Sky blue border for the select input
+                                borderColor: '#16a34a', // Sky blue border for the select input
                               },
                               '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#0099cc', // Darker blue when hovered
+                                borderColor: '#15803d', // Darker blue when hovered
                               },
                             }}
                           >
@@ -694,11 +694,11 @@ export default function Addexercise() {
                           sx={{
                             marginTop: '20px',
                             '& .MuiInputBase-root': {
-                              backgroundColor: '#e6f7ff',
+                              backgroundColor: '#eafce9',
                               borderRadius: '8px',
                             },
                             '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: '#00bfff',
+                              borderColor: '#16a34a',
                             },
                             width: '100%', // Make the TextField take full width
                             marginBottom: '20px', // Add some spacing below the Duration field
@@ -707,16 +707,16 @@ export default function Addexercise() {
 
                       </DialogContent>
                       <DialogActions sx={{ padding: '16px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                        <Button onClick={handleDialogClose} color="secondary" sx={{ fontWeight: 'bold', color: '#00bfff' }}>
+                        <Button onClick={handleDialogClose} color="secondary" sx={{ fontWeight: 'bold', color: '#16a34a' }}>
                           Cancel
                         </Button>
                         <Button
                           onClick={handleSave} // Trigger save action
                           color="primary"
                           sx={{
-                            backgroundColor: '#00bfff',
+                            backgroundColor: '#16a34a',
                             color: 'white',
-                            '&:hover': { backgroundColor: '#0099cc' },
+                            '&:hover': { backgroundColor: '#15803d' },
                             fontWeight: 'bold',
                             borderRadius: '20px',
                             padding: '10px 20px',
@@ -748,10 +748,10 @@ export default function Addexercise() {
             onChange={handlePageChange}
             sx={{
               '& .MuiPaginationItem-root': {
-                color: '#87CEEB', // Sky blue color
+                color: '#86efac', // Sky blue color
               },
               '& .MuiPaginationItem-root.Mui-selected': {
-                backgroundColor: '#87CEEB', // Sky blue background when selected
+                backgroundColor: '#86efac', // Sky blue background when selected
                 color: '#fff', // White text when selected
               },
             }}

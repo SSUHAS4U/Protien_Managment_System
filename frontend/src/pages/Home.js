@@ -1,628 +1,178 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Container, Typography, Button, Grid, Stack, Chip, Avatar } from '@mui/material';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSeedling } from '@fortawesome/free-solid-svg-icons';
-import { faClipboardList, faAppleAlt, faDumbbell, faHeartbeat, faChartLine, faCog, faClock } from '@fortawesome/free-solid-svg-icons';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import Carousel from 'react-bootstrap/Carousel'; // Import Carousel component from Bootstrap
+import RestaurantMenuRoundedIcon from '@mui/icons-material/RestaurantMenuRounded';
+import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
+import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
+import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded';
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
+import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
+import BoltRoundedIcon from '@mui/icons-material/BoltRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import img1 from '../images/track2.jpg';
 import img2 from '../images/eat healthy.png';
 import img3 from '../images/stayfit.jpg';
-import img4 from '../images/healthy.png';
+
+const STATS = [
+  { value: '5,000+', label: 'Recipes' },
+  { value: '84', label: 'Nutrients tracked' },
+  { value: 'AI', label: 'Powered coach' },
+];
+
+const FEATURES = [
+  { icon: FilterAltRoundedIcon, title: 'Smart filters', desc: 'Browse by high-protein, high-energy, low-carb and more — instantly.', span: { xs: 12, md: 5 }, tint: '#16a34a' },
+  { icon: SmartToyRoundedIcon, title: 'NutriBot AI', desc: 'Chat your cravings and goals; get tailored meals with cooking steps.', span: { xs: 12, md: 7 }, tint: '#6366f1' },
+  { icon: MenuBookRoundedIcon, title: 'Step-by-step cooking', desc: 'Every dish ships with clear, numbered instructions and ingredients.', span: { xs: 12, md: 7 }, tint: '#fb923c' },
+  { icon: InsightsRoundedIcon, title: 'Macro insights', desc: 'Visualise protein, energy, carbs & fat across your day.', span: { xs: 12, md: 5 }, tint: '#2563eb' },
+];
+
+function FloatCard({ icon: Icon, color, label, value, sx }) {
+  return (
+    <Box
+      sx={{
+        position: 'absolute', display: 'flex', gap: 1.2, alignItems: 'center',
+        bgcolor: 'rgba(255,255,255,.92)', backdropFilter: 'blur(6px)',
+        px: 2, py: 1.2, borderRadius: 3, boxShadow: '0 16px 40px -18px rgba(15,23,42,.4)',
+        animation: 'pp-float 4s ease-in-out infinite', ...sx,
+      }}
+    >
+      <Avatar sx={{ bgcolor: `${color}1a`, color, width: 38, height: 38 }}>
+        <Icon fontSize="small" />
+      </Avatar>
+      <Box>
+        <Typography sx={{ fontWeight: 800, fontFamily: "'Barlow Condensed'", fontSize: 20, lineHeight: 1 }}>{value}</Typography>
+        <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{label}</Typography>
+      </Box>
+    </Box>
+  );
+}
 
 export default function Home() {
   const navigate = useNavigate();
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-
-  React.useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const redirectToSignup = () => {
-    navigate('/signup');
-  };
 
   return (
-    <div>
-      {/* Set overflow for the body */}
-      <style>
-        {`
-          body {
-            overflow-x: hidden; /* Prevent horizontal scroll */
-          }
-          h1, h2 {
-            transition: all 0.3s ease-in-out;
-          }
-          h1:hover, h2:hover {
-            text-shadow: 0 4px 10px rgba(0, 186, 255, 0.5);
-            transform: scale(1.05);
-          }
-          .feature-card {
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            padding: ${windowWidth < 768 ? '25px' : windowWidth < 1024 ? '30px' : '35px'};
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            text-align: center;
-            min-height: ${windowWidth < 768 ? '280px' : '320px'};
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-          }
-          .feature-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 35px rgba(0, 191, 255, 0.6);
-          }
-          .feature-icon {
-            transition: transform 0.3s ease-in-out;
-          }
-          .feature-icon:hover {
-            transform: scale(1.1);
-          }
-        `}
-      </style>
-
-      {/* Navbar */}
+    <Box>
       <Navbar />
 
-      {/* Decorative background container */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: -1, pointerEvents: 'none', display: windowWidth < 768 ? 'none' : 'block' }}>
-        {/* Circles on the left side */}
-        <div style={{ position: 'absolute', top: '50%', left: '0', transform: 'translateY(-50%)' }}>
-          {/* First Circle (Left) */}
-          <div style={{
-            width: windowWidth < 1024 ? '450px' : '600px',
-            height: windowWidth < 1024 ? '450px' : '600px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: windowWidth < 1024 ? '-225px' : '-300px',
-            top: windowWidth < 1024 ? '-75px' : '-100px',
-            opacity: '1',
-          }} />
-          {/* Second Circle (Left) */}
-          <div style={{
-            width: windowWidth < 1024 ? '550px' : '750px',
-            height: windowWidth < 1024 ? '550px' : '750px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            left: windowWidth < 1024 ? '-275px' : '-375px',
-            top: windowWidth < 1024 ? '-350px' : '-475px',
-            opacity: '0.9',
-          }} />
-        </div>
+      {/* HERO */}
+      <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: { xs: 6, md: 8 } }}>
+        <Grid container spacing={6} alignItems="center">
+          <Grid item xs={12} md={6}>
+            <Chip
+              icon={<BoltRoundedIcon />}
+              label="Your vibrant nutrition companion"
+              sx={{ mb: 2, bgcolor: '#eafce9', color: '#15803d', fontWeight: 700 }}
+            />
+            <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: { xs: 48, md: 72 }, lineHeight: 0.98 }}>
+              Eat smarter.<br />
+              <Box component="span" sx={{ background: 'linear-gradient(135deg,#16a34a,#84cc16)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Live stronger.
+              </Box>
+            </Typography>
+            <Typography sx={{ fontSize: { xs: 17, md: 20 }, color: 'text.secondary', mt: 2, maxWidth: 480, lineHeight: 1.6 }}>
+              Discover high-protein meals, track every macro, and let our AI coach plan and cook with you — all in one delightful place.
+            </Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} sx={{ mt: 4 }}>
+              <Button size="large" variant="contained" endIcon={<ArrowForwardRoundedIcon />} onClick={() => navigate('/signup')}>
+                Get started — it's free
+              </Button>
+              <Button size="large" variant="outlined" color="primary" onClick={() => navigate('/signin')} sx={{ borderWidth: 2 }}>
+                I have an account
+              </Button>
+            </Stack>
+            <Stack direction="row" gap={4} sx={{ mt: 4 }}>
+              {STATS.map((s) => (
+                <Box key={s.label}>
+                  <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 30, color: 'primary.main', lineHeight: 1 }}>{s.value}</Typography>
+                  <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{s.label}</Typography>
+                </Box>
+              ))}
+            </Stack>
+          </Grid>
 
-        {/* Circles on the right side */}
-        <div style={{ position: 'absolute', top: '50%', right: '0', transform: 'translateY(-50%)' }}>
-          {/* First Circle (Right) */}
-          <div style={{
-            width: windowWidth < 1024 ? '450px' : '600px',
-            height: windowWidth < 1024 ? '450px' : '600px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            right: windowWidth < 1024 ? '-225px' : '-300px',
-            top: windowWidth < 1024 ? '-75px' : '-100px',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
-            opacity: '1',
-          }} />
-          {/* Second Circle (Right) */}
-          <div style={{
-            width: windowWidth < 1024 ? '550px' : '750px',
-            height: windowWidth < 1024 ? '550px' : '750px',
-            backgroundColor: '#87CEEB',
-            borderRadius: '50%',
-            position: 'absolute',
-            right: windowWidth < 1024 ? '-275px' : '-375px',
-            top: windowWidth < 1024 ? '-350px' : '-475px',
-            clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)',
-            opacity: '0.9',
-          }} />
-        </div>
-      </div>
-
-      {/* Main Content with Carousel */}
-      <div style={{
-        display: 'flex',
-        flexDirection: windowWidth < 768 ? 'column' : 'row',
-        justifyContent: 'space-between',
-        alignItems: windowWidth < 768 ? 'center' : 'flex-start',
-        minHeight: 'auto',
-        padding: windowWidth < 768 ? '100px 20px 60px' : '120px 60px 80px',
-        color: '#000',
-        maxWidth: windowWidth < 1200 ? '100%' : '1400px',
-        margin: '0 auto',
-      }}>
-        <div style={{
-          flex: '1',
-          textAlign: windowWidth < 768 ? 'center' : 'left',
-          maxWidth: windowWidth < 768 ? '100%' : '600px',
-          padding: windowWidth < 768 ? '0' : '0 20px'
-        }}>
-          <h1 style={{
-            fontWeight: 'bold',
-            fontSize: windowWidth < 768 ? '2.5rem' : windowWidth < 1024 ? '3.5rem' : '4.5rem',
-            margin: '0 0 20px',
-            color: '#000',
-            lineHeight: '1.2'
-          }}>
-            Eat smarter.
-          </h1>
-          <h1 style={{
-            fontWeight: 'bold',
-            fontSize: windowWidth < 768 ? '2.5rem' : windowWidth < 1024 ? '3.5rem' : '4.5rem',
-            margin: '0 0 30px',
-            color: '#000',
-            lineHeight: '1.2'
-          }}>
-            Live better.
-          </h1>
-          <p style={{
-            fontSize: windowWidth < 768 ? '1.3rem' : windowWidth < 1024 ? '1.6rem' : '1.8rem',
-            marginBottom: '50px',
-            color: '#333',
-            lineHeight: '1.5'
-          }}>
-            Track your diet, exercise, and health data.
-          </p>
-
-          {/* Sign Up Button */}
-          <button
-            onClick={redirectToSignup}
-            style={{
-              padding: windowWidth < 768 ? '18px 35px' : '20px 45px',
-              fontSize: windowWidth < 768 ? '1.1rem' : '1.3rem',
-              backgroundColor: '#00bfff',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              marginBottom: '30px',
-              transition: 'all 0.3s',
-              fontWeight: 'bold',
-              boxShadow: '0 4px 15px rgba(0, 191, 255, 0.3)',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#008fbf';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 191, 255, 0.5)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#00bfff';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 191, 255, 0.3)';
-            }}
-          >
-            SIGN UP – It's Free
-          </button>
-        </div>
-
-        {/* Centered and Enlarged Carousel */}
-        <div style={{
-          flex: '1',
-          textAlign: 'center',
-          marginLeft: windowWidth < 768 ? '0' : '40px',
-          marginTop: windowWidth < 768 ? '40px' : '0',
-          maxWidth: windowWidth < 768 ? '100%' : '550px',
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center'
-        }}>
-          <style>
-            {`
-              .carousel-container {
-                max-width: 100%;
-                margin: 0 auto;
-                border-radius: 20px;
-                overflow: hidden;
-                box-shadow: 0 10px 60px rgba(0, 191, 255, 0.6);
-                transition: transform 0.3s, box-shadow 0.3s;
-              }
-
-              .carousel-container:hover {
-                transform: scale(1.03);
-                box-shadow: 0 15px 80px rgba(0, 191, 255, 0.8);
-              }
-
-              .carousel-container img {
-                border-radius: 0;
-                transition: transform 0.3s;
-                height: ${windowWidth < 768 ? '300px' : windowWidth < 1024 ? '350px' : '400px'};
-              }
-            `}
-          </style>
-
-          <div className="carousel-container" style={{ width: '100%' }}>
-            <Carousel indicators={true} controls={false} interval={1000} className="custom-carousel">
-              <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src={img1}
-                  alt="First slide"
-                  style={{ objectFit: 'cover', height: windowWidth < 768 ? '300px' : windowWidth < 1024 ? '350px' : '400px', width: '100%' }}
-                />
-                <Carousel.Caption>
-                  <h3 style={{ fontSize: windowWidth < 768 ? '1.2rem' : '1.4rem', fontWeight: 'bold' }}>Track Your Health</h3>
-                </Carousel.Caption>
-              </Carousel.Item>
-              <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src={img2}
-                  alt="Second slide"
-                  style={{ objectFit: 'cover', height: windowWidth < 768 ? '300px' : windowWidth < 1024 ? '350px' : '400px', width: '100%' }}
-                />
-                <Carousel.Caption>
-                  <h3 style={{ fontSize: windowWidth < 768 ? '1.2rem' : '1.4rem', fontWeight: 'bold' }}>Eat Healthy</h3>
-                </Carousel.Caption>
-              </Carousel.Item>
-              <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src={img3}
-                  alt="Third slide"
-                  style={{ objectFit: 'cover', height: windowWidth < 768 ? '300px' : windowWidth < 1024 ? '350px' : '400px', width: '100%' }}
-                />
-                <Carousel.Caption>
-                  <h3 style={{ fontSize: windowWidth < 768 ? '1.2rem' : '1.4rem', fontWeight: 'bold' }}>Stay Fit</h3>
-                </Carousel.Caption>
-              </Carousel.Item>
-            </Carousel>
-          </div>
-        </div>
-      </div>
-
-      {/* Grid Section for Health Features */}
-      <div style={{
-        padding: windowWidth < 768 ? '60px 20px' : windowWidth < 1024 ? '80px 40px' : '100px 60px',
-        maxWidth: '1400px',
-        margin: '0 auto'
-      }}>
-        <h2 style={{
-          fontSize: windowWidth < 768 ? '2rem' : windowWidth < 1024 ? '2.8rem' : '3.2rem',
-          color: '#00bfff',
-          marginBottom: windowWidth < 768 ? '40px' : '60px',
-          textAlign: 'center',
-          fontWeight: 'bold'
-        }}>Develop healthy habits</h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: windowWidth < 768 ? '1fr' : windowWidth < 1024 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
-          gap: windowWidth < 768 ? '25px' : windowWidth < 1024 ? '35px' : '45px',
-        }}>
-          {/* Feature 1 */}
-          <div className="feature-card">
-            <FontAwesomeIcon icon={faClipboardList} className="feature-icon" style={{
-              color: '#00bfff',
-              height: windowWidth < 768 ? '80px' : '100px',
-              width: windowWidth < 768 ? '80px' : '100px',
-              marginBottom: '20px'
-            }} />
-            <h3 style={{
-              color: '#00bfff',
-              fontSize: windowWidth < 768 ? '1.3rem' : '1.5rem',
-              marginBottom: '15px'
-            }}>Track up to 84 nutrients</h3>
-            <p style={{ fontSize: windowWidth < 768 ? '1rem' : '1.1rem', lineHeight: '1.6' }}>
-              Log your meals and track all your macro and micronutrients.
-            </p>
-          </div>
-
-          {/* Feature 2 */}
-          <div className="feature-card">
-            <div style={{ marginBottom: '20px' }}>
-              <FontAwesomeIcon icon={faAppleAlt} className="feature-icon" style={{
-                color: '#00bfff',
-                height: windowWidth < 768 ? '55px' : '65px',
-                marginRight: '10px'
-              }} />
-              <FontAwesomeIcon icon={faDumbbell} className="feature-icon" style={{
-                color: '#00bfff',
-                height: windowWidth < 768 ? '55px' : '65px',
-                marginRight: '10px'
-              }} />
-              <FontAwesomeIcon icon={faHeartbeat} className="feature-icon" style={{
-                color: '#00bfff',
-                height: windowWidth < 768 ? '55px' : '65px'
-              }} />
-            </div>
-            <h3 style={{
-              color: '#00bfff',
-              fontSize: windowWidth < 768 ? '1.3rem' : '1.5rem',
-              marginBottom: '15px'
-            }}>Log meals, exercise and health data</h3>
-            <p style={{ fontSize: windowWidth < 768 ? '1rem' : '1.1rem', lineHeight: '1.6' }}>
-              Track your food, exercise, blood pressure, blood sugar, and cholesterol.
-            </p>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="feature-card">
-            <FontAwesomeIcon icon={faChartLine} className="feature-icon" style={{
-              color: '#00bfff',
-              height: windowWidth < 768 ? '80px' : '100px',
-              width: windowWidth < 768 ? '80px' : '100px',
-              marginBottom: '20px'
-            }} />
-            <h3 style={{
-              color: '#00bfff',
-              fontSize: windowWidth < 768 ? '1.3rem' : '1.5rem',
-              marginBottom: '15px'
-            }}>Create custom reports</h3>
-            <p style={{ fontSize: windowWidth < 768 ? '1rem' : '1.1rem', lineHeight: '1.6' }}>
-              Analyze your nutrition and health trends with our advanced reports.
-            </p>
-          </div>
-
-          {/* Feature 4 */}
-          <div className="feature-card">
-            <FontAwesomeIcon icon={faCog} className="feature-icon" style={{
-              color: '#00bfff',
-              height: windowWidth < 768 ? '80px' : '100px',
-              width: windowWidth < 768 ? '80px' : '100px',
-              marginBottom: '20px'
-            }} />
-            <h3 style={{
-              color: '#00bfff',
-              fontSize: windowWidth < 768 ? '1.3rem' : '1.5rem',
-              marginBottom: '15px'
-            }}>Customize your experience</h3>
-            <p style={{ fontSize: windowWidth < 768 ? '1rem' : '1.1rem', lineHeight: '1.6' }}>
-              Set your goals and track your progress.
-            </p>
-          </div>
-
-          {/* Feature 5 */}
-          <div className="feature-card">
-            <FontAwesomeIcon icon={faClock} className="feature-icon" style={{
-              color: '#00bfff',
-              height: windowWidth < 768 ? '80px' : '100px',
-              width: windowWidth < 768 ? '80px' : '100px',
-              marginBottom: '20px'
-            }} />
-            <h3 style={{
-              color: '#00bfff',
-              fontSize: windowWidth < 768 ? '1.3rem' : '1.5rem',
-              marginBottom: '15px'
-            }}>Daily reminders</h3>
-            <p style={{ fontSize: windowWidth < 768 ? '1rem' : '1.1rem', lineHeight: '1.6' }}>
-              Get daily reminders to stay on track.
-            </p>
-          </div>
-
-          {/* Feature 6 */}
-          <div className="feature-card">
-            <FontAwesomeIcon icon={faSeedling} className="feature-icon" style={{
-              color: '#00bfff',
-              height: windowWidth < 768 ? '80px' : '100px',
-              width: windowWidth < 768 ? '80px' : '100px',
-              marginBottom: '20px'
-            }} />
-            <h3 style={{
-              color: '#00bfff',
-              fontSize: windowWidth < 768 ? '1.3rem' : '1.5rem',
-              marginBottom: '15px'
-            }}>Nutrient suggestions</h3>
-            <p style={{ fontSize: windowWidth < 768 ? '1rem' : '1.1rem', lineHeight: '1.6' }}>
-              Receive personalized suggestions for your diet.
-            </p>
-          </div>
-        </div>
-      </div>
-        <div style={{
-          textAlign: 'center',
-          padding: windowWidth < 768 ? '60px 20px 40px' : windowWidth < 1024 ? '80px 40px 40px' : '100px 60px 40px',
-          maxWidth: '1400px',
-          margin: '0 auto'
-        }}>
-          <h2 style={{
-            fontSize: windowWidth < 768 ? '2rem' : windowWidth < 1024 ? '2.8rem' : '3.2rem',
-            color: '#00bfff',
-            marginBottom: '25px',
-            fontWeight: 'bold'
-          }}>Discover your nutrition</h2>
-          <p style={{
-            fontSize: windowWidth < 768 ? '1.2rem' : windowWidth < 1024 ? '1.5rem' : '1.7rem',
-            color: '#333',
-            maxWidth: '900px',
-            margin: '0 auto',
-            lineHeight: '1.7',
-            marginBottom: windowWidth < 768 ? '50px' : '70px'
-          }}>
-            Protein Pro encourages you to not just count your calories but to focus on your nutrition as a whole.
-          </p>
-        </div>
-
-        {/* New section for checkmarks and image */}
-        <div style={{
-          display: 'flex',
-          flexDirection: windowWidth < 768 ? 'column-reverse' : 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          minHeight: windowWidth < 768 ? 'auto' : '80vh',
-          padding: windowWidth < 768 ? '40px 20px' : windowWidth < 1024 ? '60px 40px' : '80px 60px',
-          maxWidth: '1400px',
-          margin: '0 auto',
-        }}>
-          <div style={{
-            flex: '1',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: windowWidth < 768 ? '50px' : '0',
-          }}>
-            <div style={{
-              width: windowWidth < 768 ? '300px' : windowWidth < 1024 ? '400px' : '550px',
-              height: windowWidth < 768 ? '420px' : windowWidth < 1024 ? '520px' : '650px',
-              overflow: 'hidden',
-              borderRadius: '200px 200px 0 0',
-              boxShadow: '0 10px 60px rgba(0, 191, 255, 0.7)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.03)';
-              e.currentTarget.style.boxShadow = '0 15px 80px rgba(0, 191, 255, 0.9)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 10px 60px rgba(0, 191, 255, 0.7)';
-            }}
-            >
-              <img
-                src={img4}
-                alt="Nutrition visualization"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '200px 200px 0 0',
-                }}
+          {/* Image collage */}
+          <Grid item xs={12} md={6}>
+            <Box sx={{ position: 'relative', height: { xs: 360, md: 460 } }}>
+              <Box
+                component="img"
+                src={img2}
+                alt="Healthy bowl"
+                sx={{ position: 'absolute', top: 0, right: 0, width: '74%', height: '70%', objectFit: 'cover', borderRadius: 6, boxShadow: '0 30px 60px -24px rgba(22,163,74,.5)' }}
               />
-            </div>
-          </div>
+              <Box
+                component="img"
+                src={img3}
+                alt="Stay fit"
+                sx={{ position: 'absolute', bottom: 0, left: 0, width: '52%', height: '46%', objectFit: 'cover', borderRadius: 5, border: '6px solid #fff', boxShadow: '0 24px 50px -22px rgba(15,23,42,.4)' }}
+              />
+              <FloatCard icon={FitnessCenterRoundedIcon} color="#6366f1" value="32g" label="Protein / meal" sx={{ top: '8%', left: '-4%' }} />
+              <FloatCard icon={VerifiedRoundedIcon} color="#16a34a" value="Verified" label="Nutrition data" sx={{ bottom: '6%', right: '-2%', animationDelay: '1.2s' }} />
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
 
-          {/* Right Side Checkmarks */}
-          <div style={{
-            flex: '1',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: windowWidth < 768 ? 'center' : 'flex-start',
-            padding: windowWidth < 768 ? '0' : '0 20px'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: windowWidth < 768 ? 'flex-start' : 'center',
-              marginBottom: windowWidth < 768 ? '40px' : '60px',
-              flexDirection: windowWidth < 768 ? 'column' : 'row',
-              textAlign: windowWidth < 768 ? 'center' : 'left'
-            }}>
-              <div style={{
-                width: windowWidth < 768 ? '70px' : '75px',
-                height: windowWidth < 768 ? '70px' : '75px',
-                backgroundColor: 'skyblue',
-                borderRadius: '50%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: windowWidth < 768 ? '0' : '20px',
-                marginBottom: windowWidth < 768 ? '15px' : '0',
-                flexShrink: 0
-              }}>
-                <FontAwesomeIcon icon={faCheck} style={{
-                  color: 'white',
-                  fontSize: windowWidth < 768 ? '1.8rem' : '2rem'
-                }} />
-              </div>
-              <div>
-                <h4 style={{
-                  color: '#00bfff',
-                  margin: '0 0 10px 0',
-                  fontSize: windowWidth < 768 ? '1.4rem' : '1.6rem'
-                }}>Accurate nutrition data</h4>
-                <p style={{
-                  fontSize: windowWidth < 768 ? '1.1rem' : '1.2rem',
-                  color: '#333',
-                  lineHeight: '1.7',
-                  margin: 0
-                }}>
-                  Be confident that the food you log has the correct nutrition data. We verify every food submission for accuracy.
-                </p>
-              </div>
-            </div>
+      {/* BENTO FEATURES */}
+      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
+        <Typography sx={{ textAlign: 'center', fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: { xs: 34, md: 48 } }}>
+          Everything you need to eat well
+        </Typography>
+        <Typography sx={{ textAlign: 'center', color: 'text.secondary', mt: 1, mb: 5, fontSize: 18 }}>
+          A vibrant toolkit for discovering, cooking and tracking nutritious food.
+        </Typography>
+        <Grid container spacing={3}>
+          {FEATURES.map((f, i) => (
+            <Grid item {...f.span} key={f.title}>
+              <Box
+                sx={{
+                  height: '100%', p: { xs: 3, md: 4 }, borderRadius: 5, bgcolor: '#fff',
+                  border: '1px solid', borderColor: 'divider', position: 'relative', overflow: 'hidden',
+                  transition: 'transform .25s ease, box-shadow .25s ease',
+                  animation: 'pp-fade-up .5s ease both', animationDelay: `${i * 0.06}s`,
+                  '&:hover': { transform: 'translateY(-6px)', boxShadow: '0 26px 50px -24px rgba(15,23,42,.3)' },
+                }}
+              >
+                <Box sx={{ position: 'absolute', right: -30, top: -30, width: 140, height: 140, borderRadius: '50%', bgcolor: `${f.tint}12` }} />
+                <Avatar sx={{ width: 56, height: 56, bgcolor: `${f.tint}1a`, color: f.tint, mb: 2 }}>
+                  <f.icon />
+                </Avatar>
+                <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 700, fontSize: 26 }}>{f.title}</Typography>
+                <Typography sx={{ color: 'text.secondary', mt: 0.5, fontSize: 16, lineHeight: 1.6, maxWidth: 460 }}>{f.desc}</Typography>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
 
-            <div style={{
-              display: 'flex',
-              alignItems: windowWidth < 768 ? 'flex-start' : 'center',
-              marginBottom: windowWidth < 768 ? '40px' : '60px',
-              flexDirection: windowWidth < 768 ? 'column' : 'row',
-              textAlign: windowWidth < 768 ? 'center' : 'left'
-            }}>
-              <div style={{
-                width: windowWidth < 768 ? '70px' : '75px',
-                height: windowWidth < 768 ? '70px' : '75px',
-                backgroundColor: 'skyblue',
-                borderRadius: '50%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: windowWidth < 768 ? '0' : '20px',
-                marginBottom: windowWidth < 768 ? '15px' : '0',
-                flexShrink: 0
-              }}>
-                <FontAwesomeIcon icon={faCheck} style={{
-                  color: 'white',
-                  fontSize: windowWidth < 768 ? '1.8rem' : '2rem'
-                }} />
-              </div>
-              <div>
-                <h4 style={{
-                  color: '#00bfff',
-                  margin: '0 0 10px 0',
-                  fontSize: windowWidth < 768 ? '1.4rem' : '1.6rem'
-                }}>Data privacy & security</h4>
-                <p style={{
-                  fontSize: windowWidth < 768 ? '1.1rem' : '1.2rem',
-                  color: '#333',
-                  lineHeight: '1.7',
-                  margin: 0
-                }}>
-                  We don't sell your account data to third parties and take the security of our users' accounts seriously.
-                </p>
-              </div>
-            </div>
+      {/* CTA BAND */}
+      <Container maxWidth="lg" sx={{ pb: { xs: 6, md: 10 } }}>
+        <Box
+          sx={{
+            borderRadius: 7, p: { xs: 4, md: 7 }, color: '#fff', position: 'relative', overflow: 'hidden',
+            background: 'linear-gradient(135deg,#15803d,#84cc16)',
+            boxShadow: '0 30px 60px -26px rgba(22,163,74,.7)',
+          }}
+        >
+          <Box component="img" src={img1} alt="" sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.14 }} />
+          <Box sx={{ position: 'relative' }}>
+            <RestaurantMenuRoundedIcon sx={{ fontSize: 48, mb: 1 }} />
+            <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: { xs: 34, md: 50 }, lineHeight: 1 }}>
+              Ready to transform your plate?
+            </Typography>
+            <Typography sx={{ opacity: 0.95, mt: 1.5, fontSize: 18, maxWidth: 560 }}>
+              Join ProteinPro today and let NutriBot craft your next delicious, goal-crushing meal.
+            </Typography>
+            <Button size="large" onClick={() => navigate('/signup')} sx={{ mt: 3, bgcolor: '#fff', color: '#15803d', fontWeight: 800, '&:hover': { bgcolor: '#f0fdf4' } }} endIcon={<ArrowForwardRoundedIcon />}>
+              Create your free account
+            </Button>
+          </Box>
+        </Box>
+      </Container>
 
-            <div style={{
-              display: 'flex',
-              alignItems: windowWidth < 768 ? 'flex-start' : 'center',
-              marginBottom: windowWidth < 768 ? '20px' : '0',
-              flexDirection: windowWidth < 768 ? 'column' : 'row',
-              textAlign: windowWidth < 768 ? 'center' : 'left'
-            }}>
-              <div style={{
-                width: windowWidth < 768 ? '70px' : '75px',
-                height: windowWidth < 768 ? '70px' : '75px',
-                backgroundColor: 'skyblue',
-                borderRadius: '50%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: windowWidth < 768 ? '0' : '20px',
-                marginBottom: windowWidth < 768 ? '15px' : '0',
-                flexShrink: 0
-              }}>
-                <FontAwesomeIcon icon={faCheck} style={{
-                  color: 'white',
-                  fontSize: windowWidth < 768 ? '1.8rem' : '2rem'
-                }} />
-              </div>
-              <div>
-                <h4 style={{
-                  color: '#00bfff',
-                  margin: '0 0 10px 0',
-                  fontSize: windowWidth < 768 ? '1.4rem' : '1.6rem'
-                }}>User-friendly interface</h4>
-                <p style={{
-                  fontSize: windowWidth < 768 ? '1.1rem' : '1.2rem',
-                  color: '#333',
-                  lineHeight: '1.7',
-                  margin: 0
-                }}>
-                  Our intuitive design makes it easy to track your nutrition and reach your goals with minimal effort.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      {/* Footer */}
       <Footer />
-    </div>
+    </Box>
   );
 }

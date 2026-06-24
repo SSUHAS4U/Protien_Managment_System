@@ -1,102 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from 'react';
+import { Box, Container, Grid, Typography, Stack, IconButton, Divider } from '@mui/material';
+import EnergySavingsLeafRoundedIcon from '@mui/icons-material/EnergySavingsLeafRounded';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import GitHubIcon from '@mui/icons-material/GitHub';
+
+const COLS = [
+  { title: 'Product', links: [['Recommendations', '/Recommendations'], ['Dashboard', '/Dashboard'], ['About', '/about']] },
+  { title: 'Account', links: [['Sign In', '/signin'], ['Create Account', '/signup'], ['Admin', '/admin-signin']] },
+  { title: 'Legal', links: [['Terms', '/terms'], ['Privacy', '/privacy'], ['Contact', '/contact']] },
+];
 
 export default function Footer() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const linkStyle = {
-    color: 'white',
-    textDecoration: 'none',
-    transition: 'all 0.3s ease',
-  };
-
   return (
-    <>
-      <footer
-        style={{
-          backgroundColor: 'black',
-          color: 'white',
-          padding: windowWidth < 768 ? '15px 10px' : '20px 0',
-          width: '100%',
-        }}
-      >
-        <Container>
-          <Row>
-            <Col md={6} xs={12} className="d-flex align-items-center" style={{ justifyContent: windowWidth < 768 ? 'center' : 'flex-start', marginBottom: windowWidth < 768 ? '15px' : '0' }}>
-              <h5 style={{ margin: 0, fontSize: windowWidth < 768 ? '1.2rem' : '1.5rem' }}>Protien Pro</h5>
-            </Col>
-            <Col md={6} xs={12} className="d-flex" style={{ justifyContent: windowWidth < 768 ? 'center' : 'flex-end' }}>
-              <ul style={{ listStyleType: 'none', margin: 0, padding: 0, display: 'flex', flexWrap: 'wrap', justifyContent: windowWidth < 768 ? 'center' : 'flex-end' }}>
-                <li style={{ marginRight: windowWidth < 768 ? '10px' : '20px', marginBottom: windowWidth < 768 ? '10px' : '0' }}>
-                  <a href="/contact" style={{ ...linkStyle, fontSize: windowWidth < 768 ? '0.875rem' : '1rem' }}>
-                    Contact Us
-                  </a>
-                </li>
-                <li style={{ marginRight: windowWidth < 768 ? '10px' : '20px', marginBottom: windowWidth < 768 ? '10px' : '0' }}>
-                  <a href="/signin" style={{ ...linkStyle, fontSize: windowWidth < 768 ? '0.875rem' : '1rem' }}>
-                    Sign In
-                  </a>
-                </li>
-                <li style={{ marginRight: windowWidth < 768 ? '10px' : '20px', marginBottom: windowWidth < 768 ? '10px' : '0' }}>
-                  <a href="/signup" style={{ ...linkStyle, fontSize: windowWidth < 768 ? '0.875rem' : '1rem' }}>
-                    Sign Up
-                  </a>
-                </li>
-                <li>
-                  <a href="/terms" style={{ ...linkStyle, fontSize: windowWidth < 768 ? '0.875rem' : '1rem' }}>
-                    Terms of Service
-                  </a>
-                </li>
-              </ul>
-            </Col>
-          </Row>
-          <hr style={{ borderColor: 'white', margin: windowWidth < 768 ? '15px 0' : '20px 0' }} />
-          <Row>
-            <Col className="text-center">
-              <p style={{ margin: 0, fontSize: windowWidth < 768 ? '0.875rem' : '1rem' }}>© 2024 Protien Pro. All rights reserved.</p>
-            </Col>
-          </Row>
-        </Container>
-      </footer>
-
-      {/* Inline CSS for the sticky footer */}
-      <style jsx="true">{`
-        html, body {
-          height: 100%;
-          margin: 0;
-        }
-
-        #root {
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-        }
-
-        main {
-          flex: 1;
-        }
-
-        footer {
-          margin-top: auto;
-        }
-
-        a {
-          color: white; // Change link color to white for better visibility
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-
-        a:hover {
-          text-decoration: underline; // Optional: Add underline on hover
-        }
-      `}</style>
-    </>
+    <Box component="footer" sx={{ mt: 8, color: '#e7f4ea', background: 'linear-gradient(135deg,#0f3d24,#14532d)' }}>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={4}>
+            <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: 1.5 }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#16a34a,#84cc16)' }}>
+                <EnergySavingsLeafRoundedIcon sx={{ color: '#fff' }} />
+              </Box>
+              <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 28 }}>ProteinPro</Typography>
+            </Stack>
+            <Typography sx={{ opacity: 0.8, maxWidth: 320, lineHeight: 1.6 }}>
+              Your vibrant nutrition companion — discover high-protein meals, track macros, and cook smarter with AI.
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+              {[InstagramIcon, TwitterIcon, GitHubIcon].map((Icon, i) => (
+                <IconButton key={i} sx={{ color: '#e7f4ea', bgcolor: 'rgba(255,255,255,.08)', '&:hover': { bgcolor: 'rgba(255,255,255,.18)' } }}>
+                  <Icon fontSize="small" />
+                </IconButton>
+              ))}
+            </Stack>
+          </Grid>
+          {COLS.map((col) => (
+            <Grid item xs={6} md={Math.floor(8 / COLS.length)} key={col.title}>
+              <Typography sx={{ fontWeight: 700, fontFamily: "'Barlow Condensed'", fontSize: 20, mb: 1.5 }}>{col.title}</Typography>
+              <Stack spacing={1}>
+                {col.links.map(([label, href]) => (
+                  <Box
+                    key={label}
+                    component="a"
+                    href={href}
+                    sx={{ color: '#cfe8d6', textDecoration: 'none', fontSize: 15, '&:hover': { color: '#fff' } }}
+                  >
+                    {label}
+                  </Box>
+                ))}
+              </Stack>
+            </Grid>
+          ))}
+        </Grid>
+        <Divider sx={{ my: 4, borderColor: 'rgba(255,255,255,.12)' }} />
+        <Typography sx={{ textAlign: 'center', opacity: 0.7, fontSize: 14 }}>
+          © {new Date().getFullYear()} ProteinPro. Crafted with care for healthier eating.
+        </Typography>
+      </Container>
+    </Box>
   );
 }

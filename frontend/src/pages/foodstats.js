@@ -69,7 +69,7 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
-  backgroundColor: '#87CEEB',  // Sky blue color for the opened drawer
+  backgroundColor: '#86efac',  // Sky blue color for the opened drawer
   borderBottomRightRadius: '50px',
 });
 
@@ -80,7 +80,7 @@ const closedMixin = (theme) => ({
   }),
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: '#87CEEB',  // Sky blue color for the closed drawer
+  backgroundColor: '#86efac',  // Sky blue color for the closed drawer
   borderBottomRightRadius: '50px',
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -99,7 +99,7 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: '#87CEEB',
+  backgroundColor: '#86efac',
   boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
@@ -153,21 +153,21 @@ export default function FoodStatistics() {
 
   const textFieldStyle = {
     '& .MuiInputLabel-root': {
-      color: '#87CEEB', // Sky blue label color
+      color: '#86efac', // Sky blue label color
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
-        borderColor: '#87CEEB', // Sky blue border color
+        borderColor: '#86efac', // Sky blue border color
       },
       '&:hover fieldset': {
-        borderColor: '#87CEEB', // Sky blue on hover
+        borderColor: '#86efac', // Sky blue on hover
       },
       '&.Mui-focused fieldset': {
-        borderColor: '#87CEEB', // Sky blue when focused
+        borderColor: '#86efac', // Sky blue when focused
       },
     },
     '& .MuiInputLabel-root.Mui-focused': {
-      color: '#87CEEB', // Sky blue when focused
+      color: '#86efac', // Sky blue when focused
     },
   };
 
@@ -706,17 +706,17 @@ export default function FoodStatistics() {
               sx={{
                 borderRadius: '8px',
                 overflowY: 'auto',
-                boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+                boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
                 '&:hover': {
                   transform: 'scale(1.01)',
-                  boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+                  boxShadow: '0px 4px 15px 5px rgba(22, 163, 74, 0.5)', // Sky blue box shadow
                 },
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
               }}
             >
               <Table padding="dense">
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: '#87ceeb' }}>
+                  <TableRow sx={{ backgroundColor: '#86efac' }}>
                     <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
                     <TableCell
                       sx={{
@@ -746,9 +746,9 @@ export default function FoodStatistics() {
                               size="small"
                               onClick={() => handleShowDetails(item.id)}
                               sx={{
-                                borderColor: '#00bfff',
-                                color: '#00bfff',
-                                '&:hover': { backgroundColor: '#e0f7ff' },
+                                borderColor: '#16a34a',
+                                color: '#16a34a',
+                                '&:hover': { backgroundColor: '#eafce9' },
                               }}
                             >
                               Details
@@ -804,10 +804,10 @@ export default function FoodStatistics() {
             display: 'flex',
             justifyContent: 'space-between', // Space between text and icon
             alignItems: 'center', // Vertically center items
-            boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+            boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
             '&:hover': {
               transform: 'scale(1.01)',
-              boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+              boxShadow: '0px 4px 15px 5px rgba(22, 163, 74, 0.5)', // Sky blue box shadow
             },
             transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
             marginLeft: 6, // Add space from the drawer
@@ -820,7 +820,7 @@ export default function FoodStatistics() {
             onClick={() => setIsModalOpen(true)}
             sx={{ ml: 2 }}
           >
-            <AddCircleOutlineIcon fontSize="large" sx={{ color: '#87CEEB' }} /> {/* Sky blue icon */}
+            <AddCircleOutlineIcon fontSize="large" sx={{ color: '#86efac' }} /> {/* Sky blue icon */}
           </IconButton>
         </Box>
 
@@ -912,9 +912,9 @@ export default function FoodStatistics() {
             <FormControl fullWidth variant="outlined" margin="normal">
               <InputLabel
                 sx={{
-                  color: '#87CEEB', // Sky blue label color by default
+                  color: '#86efac', // Sky blue label color by default
                   '&.Mui-focused': {
-                    color: '#87CEEB', // Sky blue when the field is focused
+                    color: '#86efac', // Sky blue when the field is focused
                   },
                 }}
               >
@@ -927,30 +927,30 @@ export default function FoodStatistics() {
                 label="Category"
                 sx={{
                   '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#87CEEB', // Sky blue border color
+                    borderColor: '#86efac', // Sky blue border color
                   },
                   '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#87CEEB', // Sky blue on hover
+                    borderColor: '#86efac', // Sky blue on hover
                   },
                   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#87CEEB', // Sky blue when focused
+                    borderColor: '#86efac', // Sky blue when focused
                   },
                   '& .MuiInputLabel-root': {
-                    color: '#87CEEB', // Sky blue label color by default
+                    color: '#86efac', // Sky blue label color by default
                   },
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
-                      borderColor: '#87CEEB', // Sky blue border color
+                      borderColor: '#86efac', // Sky blue border color
                     },
                     '&:hover fieldset': {
-                      borderColor: '#87CEEB', // Sky blue on hover
+                      borderColor: '#86efac', // Sky blue on hover
                     },
                     '&.Mui-focused fieldset': {
-                      borderColor: '#87CEEB', // Sky blue when focused
+                      borderColor: '#86efac', // Sky blue when focused
                     },
                   },
                   '& .MuiInputLabel-root.Mui-focused': {
-                    color: '#87CEEB', // Sky blue when focused
+                    color: '#86efac', // Sky blue when focused
                   },
                 }}
               >
@@ -968,9 +968,9 @@ export default function FoodStatistics() {
               fullWidth
               sx={{
                 mt: 2,
-                bgcolor: '#87CEEB', // Sky blue background
+                bgcolor: '#86efac', // Sky blue background
                 '&:hover': {
-                  bgcolor: '#00BFFF', // Lighter sky blue on hover
+                  bgcolor: '#16a34a', // Lighter sky blue on hover
                 },
               }}
               onClick={handleAddFood}
@@ -1166,10 +1166,10 @@ export default function FoodStatistics() {
                   textAlign: "center",
                   width: "200px", // Reduced width
                   backgroundColor: "white",
-                  boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+                  boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
                   '&:hover': {
                     transform: 'scale(1.01)',
-                    boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+                    boxShadow: '0px 4px 15px 5px rgba(22, 163, 74, 0.5)', // Sky blue box shadow
                   },
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
                 }}
@@ -1231,10 +1231,10 @@ export default function FoodStatistics() {
                   textAlign: "center",
                   width: "200px", // Reduced width
                   backgroundColor: "white",
-                  boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+                  boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
                   '&:hover': {
                     transform: 'scale(1.01)',
-                    boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+                    boxShadow: '0px 4px 15px 5px rgba(22, 163, 74, 0.5)', // Sky blue box shadow
                   },
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
                 }}
@@ -1260,7 +1260,7 @@ export default function FoodStatistics() {
                       position: "absolute",
                       top: 0,
                       left: 0,
-                      color: "#00bfff", // Colored section (Energy)
+                      color: "#16a34a", // Colored section (Energy)
                     }}
                   />
                   {/* Icon in the center of the circle */}
@@ -1273,13 +1273,13 @@ export default function FoodStatistics() {
                       zIndex: 1,
                     }}
                   >
-                    <FontAwesomeIcon icon={faHeartbeat} style={{ color: "#00bfff", fontSize: "30px" }} />
+                    <FontAwesomeIcon icon={faHeartbeat} style={{ color: "#16a34a", fontSize: "30px" }} />
                   </IconButton>
                 </Box>
-                <Typography variant="h6" sx={{ color: "#00bfff", fontWeight: "bold", marginTop: 2 }}>
+                <Typography variant="h6" sx={{ color: "#16a34a", fontWeight: "bold", marginTop: 2 }}>
                   Energy Intake
                 </Typography>
-                <Typography variant="h4" sx={{ color: "#00bfff", fontWeight: "bold", fontSize: "1rem" }}>
+                <Typography variant="h4" sx={{ color: "#16a34a", fontWeight: "bold", fontSize: "1rem" }}>
                   {stats.totalEnergy} kcal / 2000 kcal
                 </Typography>
               </Box>
@@ -1296,10 +1296,10 @@ export default function FoodStatistics() {
                   textAlign: "center",
                   width: "200px", // Reduced width
                   backgroundColor: "white",
-                  boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+                  boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
                   '&:hover': {
                     transform: 'scale(1.01)',
-                    boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+                    boxShadow: '0px 4px 15px 5px rgba(22, 163, 74, 0.5)', // Sky blue box shadow
                   },
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
                 }}
@@ -1361,10 +1361,10 @@ export default function FoodStatistics() {
                   textAlign: "center",
                   width: "200px", // Reduced width
                   backgroundColor: "white",
-                  boxShadow: '0 8px 20px rgba(0, 191, 255, 0.3)',
+                  boxShadow: '0 8px 20px rgba(22, 163, 74, 0.3)',
                   '&:hover': {
                     transform: 'scale(1.01)',
-                    boxShadow: '0px 4px 15px 5px rgba(0, 191, 255, 0.5)', // Sky blue box shadow
+                    boxShadow: '0px 4px 15px 5px rgba(22, 163, 74, 0.5)', // Sky blue box shadow
                   },
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
                 }}
@@ -1435,7 +1435,7 @@ export default function FoodStatistics() {
               backgroundColor: '#f0f8ff', // Light sky blue background
               padding: 4,
               borderRadius: '12px',
-              boxShadow: '0 4px 15px rgba(0, 191, 255, 0.2)', // Sky blue shadow
+              boxShadow: '0 4px 15px rgba(22, 163, 74, 0.2)', // Sky blue shadow
               textAlign: 'left', // Align text to the left
               overflowY: 'auto',
             }}
@@ -1491,7 +1491,7 @@ export default function FoodStatistics() {
                   color="primary"
                   onClick={() => setShowPopup(false)}
                   sx={{
-                    backgroundColor: '#00bfff', // Sky blue button
+                    backgroundColor: '#16a34a', // Sky blue button
                     '&:hover': {
                       backgroundColor: '#0077b6', // Darker blue on hover
                     },

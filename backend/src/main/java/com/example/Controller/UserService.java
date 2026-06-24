@@ -29,7 +29,6 @@ import com.example.Model.User;
 import com.example.Interface.DAO;
 
 
-@CrossOrigin(origins = "*")
 @RestController
 public class UserService {
 

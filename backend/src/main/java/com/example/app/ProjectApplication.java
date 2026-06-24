@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(scanBasePackages = {"com.example"},exclude = {org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class})
-@ComponentScan(basePackages = {"com.example.Controller", "com.example.Interface"})
+@ComponentScan(basePackages = {"com.example.Controller", "com.example.Interface", "com.example.external", "com.example.app"})
 @EnableJpaRepositories(basePackages = {"com.example.Interface"}) 
 @EntityScan(basePackages = {"com.example.Model"}) 
 
