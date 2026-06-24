@@ -112,14 +112,15 @@ uploaded and never committed.
 #### Keep the backend warm (no cold starts)
 
 Render's free tier spins the service down after ~15 min idle, causing a slow first
-request. A free [UptimeRobot](https://uptimerobot.com) monitor pinging the
-dependency-free `/health` endpoint every 5 minutes keeps it awake. Automate it:
+request. The backend exposes a dependency-free `/health` endpoint; ping it regularly
+to keep the instance awake.
 
-```bash
-# Add a Main API key to backend/.env (UPTIMEROBOT_API_KEY=...), then:
-npm run uptime:setup
-```
+**Default (zero setup): GitHub Actions.** [`.github/workflows/keep-warm.yml`](.github/workflows/keep-warm.yml)
+pings `/health` every 10 minutes automatically — no third-party service, no secrets,
+no manual URL entry. It also runs on demand from the repo's **Actions** tab.
 
-This creates an HTTP monitor for `HEALTH_URL` (default
-`https://protien-managment-system.onrender.com/health`) on a 5-minute interval, or
-no-ops if one already exists.
+**Alternative: UptimeRobot.** A 5-minute monitor on the `/health` URL also works.
+Note that UptimeRobot's **free plan blocks creating monitors via the API**, so
+`npm run uptime:setup` ([`scripts/uptimerobot-setup.mjs`](scripts/uptimerobot-setup.mjs))
+only works on a paid plan — on free, add the monitor once in the UptimeRobot dashboard
+(HTTP monitor → paste the `/health` URL).
