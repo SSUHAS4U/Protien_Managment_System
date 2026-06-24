@@ -1,265 +1,74 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AddIcon from '@mui/icons-material/Add';
+import {
+  AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem, Container, Avatar,
+} from '@mui/material';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import PeopleIcon from '@mui/icons-material/People'; // Icon for View All Users
+import PeopleIcon from '@mui/icons-material/People';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import AssistantIcon from '@mui/icons-material/Assistant';
+import EnergySavingsLeafRoundedIcon from '@mui/icons-material/EnergySavingsLeafRounded';
 import { useNavigate } from 'react-router-dom';
 
-export default function ButtonAppBar({ handleLogout }) {
+export default function Adminnav({ handleLogout }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const close = () => setAnchorEl(null);
+  const go = (path) => { close(); navigate(path); };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleAddRecomClick = () => {
-    setAnchorEl(null);
-    navigate('/AdminRecom');
-  };
-
-  const handleViewRecomClick = () => {
-    setAnchorEl(null);
-    navigate('/AdminViewRecom');
-  };
-
-  const handleFoodClick = () => {
-    setAnchorEl(null);
-    navigate('/admin-addfood');
-  };
-
-  const handleExerciseClick = () => {
-    setAnchorEl(null);
-    navigate('/admin-exercise');
-  };
-
-  const handleViewExercisesClick = () => {
-    setAnchorEl(null);
-    navigate('/admin-viewexercise');
-  };
-
-  const handleViewUsersClick = () => {
-    setAnchorEl(null);
-    navigate('/admin-viewusers');
-    window.location.reload();
-  };
-
-  const handleLogoutClick = () => {
-    setAnchorEl(null);
-    handleLogout();
-  };
+  const ITEMS = [
+    { label: 'Add Exercise', icon: <FitnessCenterIcon fontSize="small" />, onClick: () => go('/admin-exercise'), tint: '#16a34a' },
+    { label: 'View Exercises', icon: <SportsMartialArtsIcon fontSize="small" />, onClick: () => go('/admin-viewexercise'), tint: '#16a34a' },
+    { label: 'View All Users', icon: <PeopleIcon fontSize="small" />, onClick: () => { close(); navigate('/admin-viewusers'); }, tint: '#2563eb' },
+    { label: 'Logout', icon: <ExitToAppIcon fontSize="small" />, onClick: () => { close(); handleLogout(); }, tint: '#ef4444' },
+  ];
 
   return (
-    <Box sx={{ width: '100%', overflowX: 'hidden' }}>
-      <AppBar
-        position="static"
-        sx={{
-          backgroundColor: '#ffffff',
-          color: '#333333',
-          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
-          width: '100%',
-          maxWidth: '100vw',
-          margin: '0 auto',
-        }}
-      >
-        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 1, sm: 2 } }}>
-          <Box
-            sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-            onClick={() => navigate('/admin-dashboard')}
-          >
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                color: '#00bfff',
-                fontWeight: 'bold',
-                fontSize: { xs: '1.2rem', sm: '1.5rem' },
-              }}
-            >
-              Protein Pro
-            </Typography>
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        background: 'rgba(255,255,255,0.78)', backdropFilter: 'blur(14px)',
+        borderBottom: '1px solid rgba(22,163,74,0.12)', color: '#0f172a',
+      }}
+    >
+      <Container maxWidth="lg">
+        <Toolbar disableGutters sx={{ minHeight: 70 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', flexGrow: 1 }} onClick={() => navigate('/admin-dashboard')}>
+            <Box sx={{ width: 40, height: 40, borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#16a34a,#84cc16)' }}>
+              <EnergySavingsLeafRoundedIcon sx={{ color: '#fff' }} />
+            </Box>
+            <Box>
+              <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 24, lineHeight: 1, background: 'linear-gradient(135deg,#15803d,#65a30d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                ProteinPro
+              </Typography>
+              <Typography sx={{ fontSize: 11, color: 'text.secondary', letterSpacing: 1, textTransform: 'uppercase' }}>Admin</Typography>
+            </Box>
           </Box>
 
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={handleMenuClick}
-            sx={{
-              marginRight: { xs: 0, sm: 2 },
-              color: '#00bfff',
-            }}
-          >
-            <MenuIcon />
+          <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} aria-label="Admin menu" sx={{ color: '#15803d' }}>
+            <MenuRoundedIcon />
           </IconButton>
 
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
-            onClose={handleClose}
-            disableScrollLock={true}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            sx={{
-              mt: 1,
-              '& .MuiMenuItem-root': {
-                transition: 'background-color 0.3s ease',
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                  borderRadius: '8px',
-                },
-              },
-            }}
+            onClose={close}
+            disableScrollLock
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            sx={{ mt: 1 }}
           >
-            <MenuItem onClick={handleAddRecomClick} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 2 }}>Add Recom</Typography>
-              <Box
-                sx={{
-                  ml: 'auto',
-                  backgroundColor: '#00bfff',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <TipsAndUpdatesIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
-              </Box>
-            </MenuItem>
-
-            <MenuItem onClick={handleViewRecomClick} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 2 }}>View Recomm</Typography>
-              <Box
-                sx={{
-                  ml: 'auto',
-                  backgroundColor: '#00bfff',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <AssistantIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
-              </Box>
-            </MenuItem>
-
-            <MenuItem onClick={handleFoodClick} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 2 }}>Add Food</Typography>
-              <Box
-                sx={{
-                  ml: 'auto',
-                  backgroundColor: '#00bfff',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <AddIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
-              </Box>
-            </MenuItem>
-
-            <MenuItem onClick={handleExerciseClick} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 2 }}>Add Exercise</Typography>
-              <Box
-                sx={{
-                  ml: 'auto',
-                  backgroundColor: '#00bfff',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <FitnessCenterIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
-              </Box>
-            </MenuItem>
-
-            <MenuItem onClick={handleViewExercisesClick} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 2 }}>View Exercises</Typography>
-              <Box
-                sx={{
-                  ml: 'auto',
-                  backgroundColor: '#00bfff',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <SportsMartialArtsIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
-              </Box>
-            </MenuItem>
-
-            <MenuItem onClick={handleViewUsersClick} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 2 }}>View All Users</Typography>
-              <Box
-                sx={{
-                  ml: 'auto',
-                  backgroundColor: '#00bfff',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <PeopleIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
-              </Box>
-            </MenuItem>
-
-            <MenuItem onClick={handleLogoutClick} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ mr: 2 }}>Logout</Typography>
-              <Box
-                sx={{
-                  ml: 'auto',
-                  backgroundColor: '#ff4d4d',
-                  borderRadius: '50%',
-                  width: '30px',
-                  height: '30px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ExitToAppIcon sx={{ color: '#ffffff', fontSize: '20px' }} />
-              </Box>
-            </MenuItem>
+            {ITEMS.map((it) => (
+              <MenuItem key={it.label} onClick={it.onClick} sx={{ display: 'flex', gap: 2, minWidth: 200, py: 1.2 }}>
+                <Typography sx={{ flexGrow: 1, fontWeight: 600 }}>{it.label}</Typography>
+                <Avatar sx={{ width: 30, height: 30, bgcolor: it.tint, color: '#fff' }}>{it.icon}</Avatar>
+              </MenuItem>
+            ))}
           </Menu>
         </Toolbar>
-      </AppBar>
-    </Box>
+      </Container>
+    </AppBar>
   );
 }
