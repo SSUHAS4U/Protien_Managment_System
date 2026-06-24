@@ -74,13 +74,13 @@ Located in the `backend` folder.
 | Variable | Purpose |
 |----------|---------|
 | `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | Supabase Postgres connection |
-| `MAIL_USERNAME`, `MAIL_PASSWORD` | Gmail SMTP (app password) |
 | `SPOONACULAR_API_KEY` | Food/recipe data ([spoonacular.com/food-api](https://spoonacular.com/food-api)) |
 | `GROQ_API_KEY` | NutriBot chatbot ([console.groq.com](https://console.groq.com)) |
+| `EXERCISE_API_KEY` | Exercise catalogue + calories ([api-ninjas.com](https://api-ninjas.com)) |
 | `ALLOWED_ORIGINS` | Comma-separated CORS allow-list (no wildcard) |
 
-> ⚠️ The DB and Gmail passwords previously committed to git are compromised —
-> **rotate them** in Supabase / Google before redeploying.
+> ⚠️ The DB password previously committed to git is compromised — **rotate it**
+> in Supabase, then re-run `npm run render:env`.
 
 ### Deploying
 

@@ -24,11 +24,6 @@ services:
         sync: false
       - key: DB_PASSWORD
         sync: false
-      # --- Mail (Gmail App Password) ---
-      - key: MAIL_USERNAME
-        sync: false
-      - key: MAIL_PASSWORD
-        sync: false
       # --- External APIs ---
       - key: SPOONACULAR_API_KEY
         sync: false
