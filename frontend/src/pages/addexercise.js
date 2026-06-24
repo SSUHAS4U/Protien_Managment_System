@@ -1,770 +1,253 @@
-import React, { useState, useEffect } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AddIcon from '@mui/icons-material/Add';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { useNavigate } from 'react-router-dom';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Grid, Card, CardMedia, CardContent, Button, Pagination, Snackbar,
-  Alert, Dialog, DialogActions, DialogContent, DialogTitle, Select, MenuItem, FormControl, InputLabel
+  Box, Container, Typography, Grid, Card, CardContent, Chip, Stack, TextField,
+  InputAdornment, Select, MenuItem, FormControl, InputLabel, IconButton, Button,
+  Skeleton, Alert, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar,
+  Collapse,
 } from '@mui/material';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded';
+import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import StatisticsIcon from '@mui/icons-material/QueryStats';
-import AddExerciseIcon from '@mui/icons-material/FitnessCenter';
-import TextField from '@mui/material/TextField';
-import { Search } from '@mui/icons-material'; // Import icons
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LocalDiningIcon from '@mui/icons-material/LocalDining'; // Icon for Food Stats
-import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import { API_BASE } from '../config/api';
 
+const MUSCLES = ['', 'biceps', 'triceps', 'chest', 'lats', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'abdominals', 'shoulders', 'forearms'];
+const TYPES = ['', 'strength', 'cardio', 'stretching', 'plyometrics', 'powerlifting', 'strongman'];
+const DIFF_COLOR = { beginner: '#16a34a', intermediate: '#f59e0b', expert: '#f43f5e' };
 
+// Map a catalogue exercise to a general activity the calories API understands.
+const activityForType = (type, name) => {
+  switch ((type || '').toLowerCase()) {
+    case 'cardio': return 'running';
+    case 'stretching': return 'stretching';
+    case 'plyometrics': return 'jumping';
+    case 'strength':
+    case 'powerlifting':
+    case 'strongman':
+    case 'olympic_weightlifting': return 'weight lifting';
+    default: return name;
+  }
+};
 
-const drawerWidth = 240;
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-  backgroundColor: '#86efac',
-  borderBottomRightRadius: '50px',
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: '#86efac',
-  borderBottomRightRadius: '50px',
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: '#86efac',
-  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
-  })
-);
+const titleCase = (s) => (s ? s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : s);
 
 export default function Addexercise() {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
-  const [, setFoodItems] = useState([]);
-  const [filteredFoodItems, setFilteredFoodItems] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [openStats, setOpenStats] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false); // Dialog state
-  const itemsPerPage = 3; // Show 3 items per page
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [foodItem, setFoodItem] = useState(null); // Store the selected item
+  const [muscle, setMuscle] = useState('');
+  const [type, setType] = useState('');
+  const [query, setQuery] = useState('');
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [expanded, setExpanded] = useState(null);
+  const [weightLb, setWeightLb] = useState(160);
 
-  useEffect(() => {
-    const fetchFoodItems = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/exercise/all'); // Adjust this URL as per your backend API
-        setFoodItems(response.data);
-        setFilteredFoodItems(response.data); // Initially set filtered items to all food items
-      } catch (error) {
-        console.error('Error fetching exercise:', error);
-      }
-    };
+  const [dialogItem, setDialogItem] = useState(null);
+  const [duration, setDuration] = useState(30);
+  const [saving, setSaving] = useState(false);
+  const [snack, setSnack] = useState({ open: false, severity: 'success', message: '' });
 
-    fetchFoodItems();
-  }, []);
-
-  const [buttonClicked, setButtonClicked] = useState(false);
-
-  const handleButtonClick = () => {
-    setButtonClicked(!buttonClicked);
-  };
-
-
-
-  const handlePageChange = (event, value) => {
-    setPage(value); // Change the current page
-  };
-
-  const paginatedFoodItems = filteredFoodItems.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-  const handleSearch = async (event) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-
-    try {
-      // Fetch food items based on the search query
-      const response = await axios.get(`http://localhost:8080/exercise/search?name=${query}`);
-      setFilteredFoodItems(response.data); // Update the filtered items based on the search result
-    } catch (error) {
-      console.error('Error fetching exercise:', error);
-    }
-  };
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
+  // Auth guard + pull the user's weight (kg -> lb) for accurate calorie math.
   useEffect(() => {
     const email = sessionStorage.getItem('email');
     const authToken = sessionStorage.getItem('authToken');
-
     if (!authToken || !email) {
-      navigate('/'); // Redirect to login if no token or email
-    } else {
-      axios.get(`http://localhost:8080/users?email=${email}`, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-        },
-      })
-        .then(response => {
-          if (response.data.user && response.data.user.name) {
-            sessionStorage.setItem('userName', response.data.user.name); // Store name in session
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching user data:', error.response ? error.response.data : error.message);
-        });
+      navigate('/signin');
+      return;
     }
+    axios
+      .get(`${API_BASE}/users?email=${email}`, { headers: { Authorization: `Bearer ${authToken}` } })
+      .then((res) => {
+        const kg = Number(res.data?.user?.weight);
+        if (kg > 0) setWeightLb(Math.round(kg * 2.20462));
+      })
+      .catch(() => {});
   }, [navigate]);
 
-
-  const handleLogout = () => {
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('userName');
-    navigate('/'); // Redirect to login page after logout
-    window.location.reload();
-  };
-
-  const handleAddFood = async (item, category, totalEnergy, totalProtein, totalFat, totalCarbs) => {
-    // Retrieve the email from session storage
-    const email = sessionStorage.getItem('email');
-
-    if (!email) {
-      console.error('Email not found in session. Please log in again.');
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: 'Email not found. Please log in again.'
-      });
-      return;
-    }
-
-    // Create the food diary entry object with the selected category and calculated values
-    const foodDiaryEntry = {
-      name: item.name,         // Name of the food item
-      energy: totalEnergy,     // Total Energy in kcal based on quantity
-      protein: totalProtein,   // Total Protein in grams based on quantity
-      fat: totalFat,           // Total Fat in grams based on quantity
-      netCarbs: totalCarbs,    // Total Net Carbs in grams based on quantity
-      category: category,      // Category of the food item (Breakfast, Lunch, Dinner, Snacks)
-      duration: duration       // The quantity entered by the user
-    };
-
-    // Validate the Name field (ensure it is not empty)
-    if (!foodDiaryEntry.name || foodDiaryEntry.name.trim() === '') {
-      console.error('Name cannot be null or empty');
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: 'Name cannot be null or empty.'
-      });
-      return;
-    }
-
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      // Send the food diary entry to the server via POST request
-      const response = await axios.post(
-        'http://localhost:8080/exercisediary/add',
-        foodDiaryEntry, // The data to send to the backend
-        {
-          headers: {
-            email, // Include the email in the headers
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        // Show success message if food item added successfully
-        setSnackbar({
-          open: true,
-          severity: 'success',
-          message: 'Exercise added successfully!'
-        });
-      } else {
-        console.error('Failed to add Exercise:', response.data);
-        setSnackbar({
-          open: true,
-          severity: 'error',
-          message: 'Failed to add Exercise. Please try again.'
-        });
-      }
-    } catch (error) {
-      // Handle any errors from the request
-      console.error('Error adding Exercise:', error.response ? error.response.data : error.message);
-      setSnackbar({
-        open: true,
-        severity: 'error',
-        message: `Error: ${error.response ? error.response.data : error.message}`
+      const res = await axios.get(`${API_BASE}/api/exercises`, {
+        params: { name: query.trim() || undefined, muscle: muscle || undefined, type: type || undefined },
       });
+      setItems(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      setError(err.response?.data?.hint || err.response?.data?.error || 'Could not load exercises.');
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [muscle, type, query]);
+
+  useEffect(() => {
+    const t = setTimeout(fetchData, query ? 450 : 0);
+    return () => clearTimeout(t);
+  }, [fetchData, query]);
+
+  const logout = () => {
+    sessionStorage.clear();
+    navigate('/');
+  };
+
+  const saveLog = async () => {
+    const email = sessionStorage.getItem('email');
+    if (!email || !dialogItem) return;
+    const mins = Math.max(1, Number(duration) || 1);
+    setSaving(true);
+    try {
+      // 1) estimate calories burned via the activity calories API
+      let calories = 0;
+      try {
+        const cal = await axios.get(`${API_BASE}/api/exercises/calories`, {
+          params: { activity: activityForType(dialogItem.type, dialogItem.name), weight: weightLb, duration: mins },
+        });
+        calories = Math.round(cal.data?.[0]?.total_calories || 0);
+      } catch {
+        calories = Math.round(5 * mins); // graceful fallback estimate
+      }
+      // 2) record it in the exercise diary (energy = calories burned)
+      await axios.post(
+        `${API_BASE}/exercisediary/add`,
+        {
+          name: dialogItem.name,
+          energy: calories,
+          protein: 0,
+          fat: 0,
+          netCarbs: 0,
+          category: titleCase(dialogItem.muscle || dialogItem.type),
+          duration: mins,
+        },
+        { headers: { email } }
+      );
+      setSnack({ open: true, severity: 'success', message: `Logged ${dialogItem.name} — ~${calories} kcal burned.` });
+      setDialogItem(null);
+      setDuration(30);
+    } catch (err) {
+      setSnack({ open: true, severity: 'error', message: 'Could not log exercise. Try again.' });
+    } finally {
+      setSaving(false);
     }
   };
-
-
-
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    severity: 'success', // success or error
-    message: ''
-  });
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
-  const handleDashboard = () => {
-    navigate('/dashboard');
-  };
-
-  const handleFood = () => {
-    navigate('/addfood');
-  };
-
-  const handleFoodStats = () => {
-    navigate('/foodstats');
-    window.location.reload();
-  };
-
-  const handleExerciseStats = () => {
-    navigate('/exercisestats');
-    window.location.reload();
-  };
-  const toggleStatsDropdown = () => {
-    setOpenStats(!openStats); // Toggle dropdown visibility
-  };
-
-  const handleExercise = () => {
-    navigate('/addexercise');
-  };
-
-  const handleRecommendations = () => {
-    navigate('/Recommendations');
-    window.location.reload();
-  };
-
-  const handleAccount = () => {
-    navigate('/account');
-  };
-
-  const handleDialogClose = () => {
-    setOpenDialog(false); // Close the dialog
-  };
-
-  // Function to handle category selection change
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-  };
-
-  const [duration, setDuration] = useState(30); // Initialize quantity to 1
-
-  // Function to handle the Save button click
-  const handleSave = () => {
-    if (selectedCategory && foodItem && duration > 0) {
-      // Calculate the multiplier based on 30-minute intervals
-      const multiplier = duration / 30;
-  
-      // Adjust the nutritional values based on the multiplier
-      const totalEnergy = foodItem.energy * multiplier;
-      const totalProtein = foodItem.protein * multiplier;
-      const totalFat = foodItem.fat * multiplier;
-      const totalCarbs = foodItem.netCarbs * multiplier;
-  
-      // Call the method to add food with updated values
-      handleAddFood(foodItem, selectedCategory, totalEnergy, totalProtein, totalFat, totalCarbs);
-      setOpenDialog(false); // Close the dialog
-      setSelectedCategory(''); // Reset the selected category
-      setDuration(30); // Reset the duration to default
-    }
-  };
-  
-  // Function to open the pop-up
-  const handleAddFoodClick = (item) => {
-    setFoodItem(item); // Store the selected food item
-    setOpenDialog(true); // Open the pop-up
-  };
-
-
-
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={[{ marginRight: 5 }, open && { display: 'none' }]}
-          >
-            <MenuIcon sx={{ color: 'black', fontSize: '32px' }} />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" color="black">
-            Add Exercise
-          </Typography>
-          {/* Logout Button in the Right Corner */}
-          <Box sx={{ marginLeft: 'auto' }}>
-            <IconButton color="inherit" onClick={handleLogout}>
-              <LogoutIcon sx={{ color: 'black' }} />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-          {open && (
-            <Typography
-              variant="h6"
-              sx={{
-                color: 'Black',
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                flexGrow: 1,
-                marginLeft: open ? '-30px' : '0px',
-              }}
-            >
-              Menu
-            </Typography>
-          )}
-        </DrawerHeader>
-        <Divider />
-        <Box sx={{ flexGrow: 1 }}>
-          <List>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={handleDashboard}>
-                <ListItemIcon>
-                  <DashboardIcon />
-                </ListItemIcon>
-                <ListItemText primary="Dashboard" sx={{ opacity: 1 }} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={handleFood}>
-                <ListItemIcon>
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary="Food" sx={{ opacity: 1 }} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={handleExercise}>
-                <ListItemIcon>
-                  <AddExerciseIcon />
-                </ListItemIcon>
-                <ListItemText primary="Add Exercise" sx={{ opacity: 1 }} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={handleRecommendations}>
-                <ListItemIcon>
-                  <TipsAndUpdatesIcon />
-                </ListItemIcon>
-                <ListItemText primary="Recommendation" sx={{ opacity: 1 }} />
-              </ListItemButton>
-            </ListItem>
-
-            {/* Statistics with dropdown for Food Stats and Exercise Stats */}
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={toggleStatsDropdown}>
-                <ListItemIcon>
-                  <StatisticsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Statistics" sx={{ opacity: 1 }} />
-                <ExpandMoreIcon sx={{ transform: openStats ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }} />
-              </ListItemButton>
-
-              {/* Dropdown for Food Stats and Exercise Stats */}
-              {openStats && (
-                <List component="div" disablePadding>
-                  <ListItem disablePadding sx={{ display: 'block' }}>
-                    <ListItemButton onClick={handleFoodStats}>
-                      <ListItemIcon>
-                        <LocalDiningIcon /> {/* Food Stats icon */}
-                      </ListItemIcon>
-                      <ListItemText primary="Food Stats" sx={{ opacity: 1 }} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding sx={{ display: 'block' }}>
-                    <ListItemButton onClick={handleExerciseStats}>
-                      <ListItemIcon>
-                        <SportsMartialArtsIcon /> {/* Exercise Stats icon */}
-                      </ListItemIcon>
-                      <ListItemText primary="Exercise Stats" sx={{ opacity: 1 }} />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              )}
-            </ListItem>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={handleAccount}>
-                <ListItemIcon>
-                  <AccountCircle />
-                </ListItemIcon>
-                <ListItemText primary="Account" sx={{ opacity: 1 }} />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
-      {/* main Content */}
-      {/* Food Cards */}
-      <Box
-        sx={{
-          width: '100%', // Ensure the parent Box spans the full width
-          maxWidth: '100%',
-          padding: '16px', // Add padding around the entire content
-          margin: '0 auto', // Center content if there's horizontal margin
-          backgroundColor: 'white', // Optional background color for testing
-        }}
-      >
-        <Grid
-          container
-          spacing={4}
-          sx={{
-            paddingTop: '32px',
-            width: '100%', // Ensure the Grid container spans the full width
-            margin: 0, // Remove any default margins
-            paddingBottom: '32px', // Add space at the bottom for the last card
-          }}
-        >
-          <TextField
-            label="Search Exercise"
-            variant="outlined"
-            value={searchQuery}
-            onChange={handleSearch}
-            sx={{
-              width: '300px',
-              marginTop: '40px', // Adds space to the top
-              marginLeft: '30px',
-              '& .MuiOutlinedInput-root': {
-                '&.Mui-focused fieldset': {
-                  borderColor: '#16a34a', // Sky blue color on focus
-                },
-              },
-            }}
-            InputProps={{
-              endAdornment: (
-                <IconButton
-                  onClick={() => handleButtonClick()}
-                  sx={{
-                    backgroundColor: buttonClicked ? '#16a34a' : 'transparent', // Sky blue color on click
-                    '&:hover': {
-                      backgroundColor: '#86efac', // Darker blue on hover
-                    },
-                    borderRadius: '50%', // Makes it round
-                  }}
-                >
-                  <Search sx={{ color: buttonClicked ? 'white' : 'black' }} />
-                </IconButton>
-              ),
-            }}
-          />
-          {paginatedFoodItems.length > 0 ? (
-            paginatedFoodItems.map((item, index) => (
-              <Grid item xs={12} key={index}>
-                <Card
-                  sx={{
-                    display: 'flex',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    borderRadius: '8px',
-                    width: '100%', // Make Card span the full width of its container
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Hover animation
-                    '&:hover': {
-                      transform: 'scale(1.01)', // Slight enlargement
-                      boxShadow: '0 8px 16px rgba(22, 163, 74, 0.6)', // Sky blue shadow
-                    },
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    sx={{
-                      width: 150,
-                      height: '200px',
-                      objectFit: 'cover',
-                      borderTopLeftRadius: '8px',
-                      borderBottomLeftRadius: '8px',
-                    }}
-                    image={`data:image/jpeg;base64,${item.image}`}
-                    alt={item.name}
-                  />
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      width: '100%',
-                      alignItems: 'stretch', // Stretch children to fill available space
-                      backgroundColor: 'white',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <CardContent
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        height: 'auto', // Dynamic height
-                        flex: 1, // Stretch content
-                      }}
-                    >
-                      <Typography
-                        component="div"
-                        variant="h5"
-                        sx={{
-                          fontWeight: 'bold',
-                          color: '#333',
-                          marginBottom: 0.5,
-                        }}
-                      >
-                        {item.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          marginBottom: 0.5,
-                          wordBreak: 'break-word',
-                          whiteSpace: 'normal',
-                          color: '#333',
-                        }}
-                      >
-                        <strong>Description:</strong> {item.description}
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>Required Energy:</strong> {item.energy} kcal
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>Burns Protein:</strong> {item.protein} grams
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>burns Fat:</strong> {item.fat} grams
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#333', marginBottom: 0.2 }}>
-                        <strong>Burns Net Carbs:</strong> {item.netCarbs} grams
-                      </Typography>
-                    </CardContent>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: 1.5,
-                      padding: 2,
-                    }}
-                  >
-                    {/* Trigger button */}
-                    <Button
-                      variant="contained"
-                      size="medium"
-                      startIcon={<AddIcon />}
-                      onClick={() => handleAddFoodClick(item)} // Open dialog when clicked, passing the item
-                      sx={{
-                        width: '120px',
-                        backgroundColor: '#16a34a',
-                        color: 'black',
-                        borderRadius: '20px',
-                        fontWeight: 'bold',
-                        fontSize: '14px',
-                        '&:hover': { backgroundColor: '#15803d' },
-                      }}
-                    >
-                      Add
-                    </Button>
-                    {/* Pop-up dialog */}
-                    <Dialog open={openDialog} onClose={handleDialogClose} sx={{ borderRadius: '10px' }}>
-                      <DialogTitle sx={{ backgroundColor: '#16a34a', color: 'white', fontWeight: 'bold', textAlign: 'center' }}>
-                        Select Category
-                      </DialogTitle>
-                      <DialogContent sx={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <FormControl fullWidth variant="outlined" sx={{ marginTop: '20px' }}>
-                          <InputLabel>Category</InputLabel>
-                          <Select
-                            value={selectedCategory}
-                            onChange={handleCategoryChange}
-                            label="Category"
-                            sx={{
-                              '& .MuiSelect-root': {
-                                backgroundColor: '#eafce9', // Light blue background for the select
-                                borderRadius: '8px',
-                              },
-                              '& .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#16a34a', // Sky blue border for the select input
-                              },
-                              '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#15803d', // Darker blue when hovered
-                              },
-                            }}
-                          >
-                            <MenuItem value="Breakfast">Breakfast</MenuItem>
-                            <MenuItem value="Lunch">Lunch</MenuItem>
-                            <MenuItem value="Dinner">Dinner</MenuItem>
-                            <MenuItem value="Snacks">Snacks</MenuItem>
-                          </Select>
-                        </FormControl>
-                        {/* Duration input */}
-                        <TextField
-                          label="Duration (minutes)"
-                          type="number"
-                          value={duration}
-                          onChange={(e) => setDuration(e.target.value)}
-                          placeholder="Enter duration of exercise in minutes"
-                          sx={{
-                            marginTop: '20px',
-                            '& .MuiInputBase-root': {
-                              backgroundColor: '#eafce9',
-                              borderRadius: '8px',
-                            },
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: '#16a34a',
-                            },
-                            width: '100%', // Make the TextField take full width
-                            marginBottom: '20px', // Add some spacing below the Duration field
-                          }}
-                        />
-
-                      </DialogContent>
-                      <DialogActions sx={{ padding: '16px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                        <Button onClick={handleDialogClose} color="secondary" sx={{ fontWeight: 'bold', color: '#16a34a' }}>
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={handleSave} // Trigger save action
-                          color="primary"
-                          sx={{
-                            backgroundColor: '#16a34a',
-                            color: 'white',
-                            '&:hover': { backgroundColor: '#15803d' },
-                            fontWeight: 'bold',
-                            borderRadius: '20px',
-                            padding: '10px 20px',
-                            width: 'auto', // Let the button maintain its natural width
-                          }}
-                        >
-                          Save
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-
-                  </Box>
-                </Card>
-              </Grid>
-            ))
-          ) : (
-            <Grid item xs={12}>
-              <Typography variant="h6" color="text.secondary">
-                No Exercise available
-              </Typography>
-            </Grid>
-          )}
-        </Grid>
-        {/* Pagination */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <Pagination
-            count={Math.ceil(filteredFoodItems.length / itemsPerPage)} // Calculate the total pages
-            page={page}
-            onChange={handlePageChange}
-            sx={{
-              '& .MuiPaginationItem-root': {
-                color: '#86efac', // Sky blue color
-              },
-              '& .MuiPaginationItem-root.Mui-selected': {
-                backgroundColor: '#86efac', // Sky blue background when selected
-                color: '#fff', // White text when selected
-              },
-            }}
-            size="large"
-          />
-        </Box>
-        {/* Snackbar for displaying messages */}
-        <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
+    <Box sx={{ minHeight: '100vh', pb: 8 }}>
+      {/* Top bar */}
+      <Box sx={{ position: 'sticky', top: 0, zIndex: 10, py: 1.5, background: 'rgba(255,255,255,.72)', backdropFilter: 'blur(14px)', borderBottom: '1px solid rgba(22,163,74,.12)' }}>
+        <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <IconButton onClick={() => navigate('/Dashboard')} aria-label="Back to dashboard"><ArrowBackRoundedIcon /></IconButton>
+          <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 24, flexGrow: 1 }}>Log a Workout</Typography>
+          <Button color="inherit" startIcon={<LogoutRoundedIcon />} onClick={logout} sx={{ color: 'text.secondary' }}>Logout</Button>
+        </Container>
       </Box>
+
+      <Container maxWidth="lg" sx={{ pt: 4 }}>
+        {/* Hero */}
+        <Box sx={{ borderRadius: 5, p: { xs: 3, sm: 4 }, mb: 3, color: '#fff', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg,#2563eb,#22d3ee)', boxShadow: '0 24px 50px -22px rgba(37,99,235,.55)' }}>
+          <FitnessCenterRoundedIcon sx={{ position: 'absolute', right: -10, top: -10, fontSize: 160, opacity: 0.15 }} />
+          <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: { xs: 30, sm: 40 }, lineHeight: 1 }}>Find &amp; log your exercise</Typography>
+          <Typography sx={{ opacity: 0.92, mt: 1, maxWidth: 560 }}>
+            Browse exercises by muscle or type, follow the step-by-step instructions, and log the calories you burn — calculated from your body weight and workout duration.
+          </Typography>
+        </Box>
+
+        {/* Controls */}
+        <Stack direction={{ xs: 'column', md: 'row' }} gap={2} sx={{ mb: 3 }}>
+          <TextField
+            fullWidth placeholder="Search an exercise…" value={query} onChange={(e) => setQuery(e.target.value)}
+            InputProps={{ startAdornment: (<InputAdornment position="start"><SearchRoundedIcon color="action" /></InputAdornment>), sx: { bgcolor: '#fff', borderRadius: 999 } }}
+          />
+          <FormControl sx={{ minWidth: 170 }}>
+            <InputLabel>Muscle</InputLabel>
+            <Select label="Muscle" value={muscle} onChange={(e) => setMuscle(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
+              {MUSCLES.map((m) => <MenuItem key={m || 'any'} value={m}>{m ? titleCase(m) : 'Any muscle'}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: 160 }}>
+            <InputLabel>Type</InputLabel>
+            <Select label="Type" value={type} onChange={(e) => setType(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
+              {TYPES.map((t) => <MenuItem key={t || 'any'} value={t}>{t ? titleCase(t) : 'Any type'}</MenuItem>)}
+            </Select>
+          </FormControl>
+        </Stack>
+
+        {error && <Alert severity="info" sx={{ mb: 3, borderRadius: 3 }}>{error}</Alert>}
+
+        <Grid container spacing={3}>
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <Grid item xs={12} md={6} key={i}><Skeleton variant="rounded" height={150} sx={{ borderRadius: 4 }} /></Grid>
+              ))
+            : items.map((ex, i) => (
+                <Grid item xs={12} md={6} key={`${ex.name}-${i}`}>
+                  <Card sx={{ height: '100%', p: 1, animation: 'pp-fade-up .5s ease both', animationDelay: `${Math.min(i, 8) * 0.05}s` }}>
+                    <CardContent>
+                      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
+                        <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 700, fontSize: 22, lineHeight: 1.1 }}>{ex.name}</Typography>
+                        <Chip size="small" label={titleCase(ex.difficulty)} sx={{ color: '#fff', fontWeight: 700, bgcolor: DIFF_COLOR[ex.difficulty] || '#64748b' }} />
+                      </Stack>
+                      <Stack direction="row" gap={0.75} flexWrap="wrap" sx={{ mt: 1 }}>
+                        {ex.type && <Chip size="small" label={titleCase(ex.type)} sx={{ bgcolor: '#eafce9', color: '#15803d', fontWeight: 600 }} />}
+                        {ex.muscle && <Chip size="small" label={titleCase(ex.muscle)} sx={{ bgcolor: '#eff6ff', color: '#2563eb', fontWeight: 600 }} />}
+                        {ex.equipment && ex.equipment !== 'body_only' && <Chip size="small" label={titleCase(ex.equipment)} variant="outlined" />}
+                      </Stack>
+
+                      <Button size="small" onClick={() => setExpanded(expanded === i ? null : i)} endIcon={<ExpandMoreRoundedIcon sx={{ transform: expanded === i ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />} sx={{ mt: 1.5, color: 'text.secondary' }}>
+                        {expanded === i ? 'Hide instructions' : 'How to perform'}
+                      </Button>
+                      <Collapse in={expanded === i}>
+                        <Typography sx={{ fontSize: 14.5, lineHeight: 1.6, color: 'text.secondary', mt: 1 }}>{ex.instructions}</Typography>
+                      </Collapse>
+
+                      <Button fullWidth variant="contained" startIcon={<AddRoundedIcon />} onClick={() => setDialogItem(ex)} sx={{ mt: 2 }}>
+                        Log this workout
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+        </Grid>
+
+        {!loading && !error && items.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
+            <Typography sx={{ fontSize: 48 }}>🏋️</Typography>
+            <Typography sx={{ fontFamily: "'Barlow Condensed'", fontSize: 24, fontWeight: 700 }}>No exercises found</Typography>
+            <Typography>Try a different muscle, type, or search term.</Typography>
+          </Box>
+        )}
+      </Container>
+
+      {/* Log dialog */}
+      <Dialog open={Boolean(dialogItem)} onClose={() => setDialogItem(null)} PaperProps={{ sx: { borderRadius: 4, width: 420 } }}>
+        <DialogTitle sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 24 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <LocalFireDepartmentRoundedIcon sx={{ color: '#fb923c' }} />
+            <span>Log "{dialogItem?.name}"</span>
+          </Stack>
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: 'text.secondary', mb: 2, fontSize: 14 }}>
+            Calories are estimated from your body weight (~{weightLb} lb) and duration.
+          </Typography>
+          <TextField
+            fullWidth type="number" label="Duration (minutes)" value={duration}
+            onChange={(e) => setDuration(e.target.value)} inputProps={{ min: 1 }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setDialogItem(null)} sx={{ color: 'text.secondary' }}>Cancel</Button>
+          <Button variant="contained" onClick={saveLog} disabled={saving}>{saving ? 'Logging…' : 'Log workout'}</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack({ ...snack, open: false })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity={snack.severity} onClose={() => setSnack({ ...snack, open: false })}>{snack.message}</Alert>
+      </Snackbar>
     </Box>
   );
 }

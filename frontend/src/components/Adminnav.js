@@ -5,8 +5,6 @@ import {
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PeopleIcon from '@mui/icons-material/People';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import EnergySavingsLeafRoundedIcon from '@mui/icons-material/EnergySavingsLeafRounded';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,11 +13,8 @@ export default function Adminnav({ handleLogout }) {
   const navigate = useNavigate();
 
   const close = () => setAnchorEl(null);
-  const go = (path) => { close(); navigate(path); };
 
   const ITEMS = [
-    { label: 'Add Exercise', icon: <FitnessCenterIcon fontSize="small" />, onClick: () => go('/admin-exercise'), tint: '#16a34a' },
-    { label: 'View Exercises', icon: <SportsMartialArtsIcon fontSize="small" />, onClick: () => go('/admin-viewexercise'), tint: '#16a34a' },
     { label: 'View All Users', icon: <PeopleIcon fontSize="small" />, onClick: () => { close(); navigate('/admin-viewusers'); }, tint: '#2563eb' },
     { label: 'Logout', icon: <ExitToAppIcon fontSize="small" />, onClick: () => { close(); handleLogout(); }, tint: '#ef4444' },
   ];

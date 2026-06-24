@@ -15,8 +15,6 @@ const Admin = lazy(() => import('./pages/admin-dashboard'));
 const AddFood = lazy(() => import('./pages/addfood'));
 const AboutUs = lazy(() => import('./pages/about'));
 const Viewusers = lazy(() => import('./pages/admin-viewusers'));
-const AddExercise = lazy(() => import('./pages/admin-exercise'));
-const ExerciseDashboard = lazy(() => import('./pages/admin-viewexercise'));
 const FoodStatistics = lazy(() => import('./pages/foodstats'));
 const ExerciseStatistics = lazy(() => import('./pages/exercisestats'));
 const Exercise = lazy(() => import('./pages/addexercise'));
@@ -40,8 +38,6 @@ function App() {
               <Route path="/addfood" element={<AddFood />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/admin-viewusers" element={<Viewusers />} />
-              <Route path="/admin-exercise" element={<AddExercise />} />
-              <Route path="/admin-viewexercise" element={<ExerciseDashboard />} />
               <Route path="/foodstats" element={<FoodStatistics />} />
               <Route path="/exercisestats" element={<ExerciseStatistics />} />
               <Route path="/addexercise" element={<Exercise />} />
