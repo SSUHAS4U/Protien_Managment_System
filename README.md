@@ -104,7 +104,22 @@ npm run render:env:deploy     # same, and triggers an explicit deploy
 ```
 
 The script ([`scripts/render-sync-env.mjs`](scripts/render-sync-env.mjs)) reads your
-gitignored `backend/.env`, finds the service by name (`protien-managment-system`, or
+gitignored `backend/.env`, finds the service by name (`Protien_Managment_System`, or
 `RENDER_SERVICE_ID` if set), and pushes every key/value via the Render API. The
 Render credentials themselves (`RENDER_API_KEY`, `RENDER_SERVICE_*`) are never
 uploaded and never committed.
+
+#### Keep the backend warm (no cold starts)
+
+Render's free tier spins the service down after ~15 min idle, causing a slow first
+request. A free [UptimeRobot](https://uptimerobot.com) monitor pinging the
+dependency-free `/health` endpoint every 5 minutes keeps it awake. Automate it:
+
+```bash
+# Add a Main API key to backend/.env (UPTIMEROBOT_API_KEY=...), then:
+npm run uptime:setup
+```
+
+This creates an HTTP monitor for `HEALTH_URL` (default
+`https://protien-managment-system.onrender.com/health`) on a 5-minute interval, or
+no-ops if one already exists.

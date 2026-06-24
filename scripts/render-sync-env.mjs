@@ -24,7 +24,10 @@ const ENV_PATH = join(__dirname, '..', 'backend', '.env');
 const API = 'https://api.render.com/v1';
 
 // Keys that are tooling/runtime-managed and must NOT be uploaded.
-const EXCLUDE = new Set(['RENDER_API_KEY', 'RENDER_SERVICE_ID', 'RENDER_SERVICE_NAME', 'PORT']);
+const EXCLUDE = new Set([
+  'RENDER_API_KEY', 'RENDER_SERVICE_ID', 'RENDER_SERVICE_NAME', 'PORT',
+  'UPTIMEROBOT_API_KEY', 'HEALTH_URL',
+]);
 
 function parseEnv(text) {
   const out = {};
@@ -79,7 +82,7 @@ async function main() {
   }
 
   let serviceId = process.env.RENDER_SERVICE_ID || fileEnv.RENDER_SERVICE_ID;
-  const serviceName = process.env.RENDER_SERVICE_NAME || fileEnv.RENDER_SERVICE_NAME || 'protien-managment-system';
+  const serviceName = process.env.RENDER_SERVICE_NAME || fileEnv.RENDER_SERVICE_NAME || 'Protien_Managment_System';
 
   if (!serviceId) {
     console.log(`• Looking up Render service by name: "${serviceName}"…`);

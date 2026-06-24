@@ -8,14 +8,14 @@
 #   b) automatically with:  npm run render:env   (see scripts/render-sync-env.mjs)
 services:
   - type: web
-    name: protien-managment-system
+    name: Protien_Managment_System
     runtime: docker
     rootDir: backend
     dockerfilePath: ./Dockerfile
     plan: free
     branch: main
     autoDeploy: true
-    healthCheckPath: /captcha/generate
+    healthCheckPath: /health
     envVars:
       # --- Database (Supabase Postgres) ---
       - key: DB_URL

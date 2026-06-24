@@ -5,6 +5,7 @@
   "description": "Repo-level tooling scripts (deploy/env automation). The app lives in frontend/ and backend/.",
   "scripts": {
     "render:env": "node scripts/render-sync-env.mjs",
-    "render:env:deploy": "node scripts/render-sync-env.mjs --deploy"
+    "render:env:deploy": "node scripts/render-sync-env.mjs --deploy",
+    "uptime:setup": "node scripts/uptimerobot-setup.mjs"
   }
 }
