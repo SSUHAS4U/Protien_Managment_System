@@ -1,27 +1,26 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  Box, Grid, Card, Typography, Avatar, Button, Stack, Divider,
+  Box, Grid, Card, Typography, Button, Stack, Divider,
   Table, TableBody, TableCell, TableHead, TableRow, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert,
 } from '@mui/material';
 import Calendar from 'react-calendar';
 import '../Styles/Enhanced.css';
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
-import EggAltRoundedIcon from '@mui/icons-material/EggAltRounded';
-import GrainRoundedIcon from '@mui/icons-material/GrainRounded';
-import OpacityRoundedIcon from '@mui/icons-material/OpacityRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import { Flame, Drumstick, Wheat, Droplet } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE } from '../config/api';
 import AppLayout from '../components/AppLayout';
+import StatCard from '../components/StatCard';
 
 const fmt = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
 const MACROS = [
-  { key: 'totalEnergy', label: 'Energy', unit: 'kcal', color: '#f59e0b', icon: LocalFireDepartmentRoundedIcon },
-  { key: 'totalProtein', label: 'Protein', unit: 'g', color: '#6366f1', icon: EggAltRoundedIcon },
-  { key: 'totalNetCarbs', label: 'Net Carbs', unit: 'g', color: '#10b981', icon: GrainRoundedIcon },
-  { key: 'totalFat', label: 'Fat', unit: 'g', color: '#f43f5e', icon: OpacityRoundedIcon },
+  { key: 'totalEnergy', label: 'Energy', unit: 'kcal', color: '#f59e0b', Icon: Flame, target: 2000 },
+  { key: 'totalProtein', label: 'Protein', unit: 'g', color: '#6366f1', Icon: Drumstick, target: 150 },
+  { key: 'totalNetCarbs', label: 'Net Carbs', unit: 'g', color: '#10b981', Icon: Wheat, target: 250 },
+  { key: 'totalFat', label: 'Fat', unit: 'g', color: '#f43f5e', Icon: Droplet, target: 70 },
 ];
 
 export default function FoodStatistics() {
@@ -88,15 +87,13 @@ export default function FoodStatistics() {
         {/* Right: totals + table */}
         <Grid item xs={12} md={8}>
           <Grid container spacing={2} sx={{ mb: 1 }}>
-            {MACROS.map((m) => (
+            {MACROS.map((m, i) => (
               <Grid item xs={6} sm={3} key={m.key}>
-                <Card sx={{ p: 2, textAlign: 'center' }}>
-                  <Avatar sx={{ bgcolor: `${m.color}1a`, color: m.color, width: 40, height: 40, mx: 'auto', mb: 1 }}><m.icon /></Avatar>
-                  <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 26, color: m.color, lineHeight: 1 }}>
-                    {Math.round(stats[m.key] || 0)}
-                  </Typography>
-                  <Typography sx={{ fontSize: 12.5, color: 'text.secondary' }}>{m.label} ({m.unit})</Typography>
-                </Card>
+                <StatCard
+                  label={m.label} value={Math.round(stats[m.key] || 0)} unit={m.unit}
+                  color={m.color} Icon={m.Icon} delay={i * 0.06}
+                  progress={Math.min(100, ((stats[m.key] || 0) / m.target) * 100)}
+                />
               </Grid>
             ))}
           </Grid>

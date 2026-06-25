@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  Box, Grid, Card, Typography, Avatar, Button, Stack, Divider,
+  Box, Grid, Card, Typography, Button, Stack, Divider,
   Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Snackbar, Alert,
 } from '@mui/material';
 import Calendar from 'react-calendar';
 import '../Styles/Enhanced.css';
-import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
 import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded';
-import TimerRoundedIcon from '@mui/icons-material/TimerRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import { Flame, Dumbbell, Timer } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE } from '../config/api';
 import AppLayout from '../components/AppLayout';
+import StatCard from '../components/StatCard';
 
 const fmt = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
@@ -45,9 +45,9 @@ export default function ExerciseStatistics() {
   const totalMinutes = Math.round(items.reduce((s, i) => s + (i.duration || 0), 0));
 
   const CARDS = [
-    { label: 'Calories Burned', value: totalBurned, unit: 'kcal', color: '#16a34a', icon: LocalFireDepartmentRoundedIcon },
-    { label: 'Workouts', value: items.length, unit: '', color: '#2563eb', icon: FitnessCenterRoundedIcon },
-    { label: 'Active Minutes', value: totalMinutes, unit: 'min', color: '#fb923c', icon: TimerRoundedIcon },
+    { label: 'Calories Burned', value: totalBurned, unit: 'kcal', color: '#16a34a', Icon: Flame, progress: Math.min(100, (totalBurned / 500) * 100) },
+    { label: 'Workouts', value: items.length, unit: '', color: '#2563eb', Icon: Dumbbell, progress: null },
+    { label: 'Active Minutes', value: totalMinutes, unit: 'min', color: '#fb923c', Icon: Timer, progress: Math.min(100, (totalMinutes / 60) * 100) },
   ];
 
   return (
@@ -68,13 +68,9 @@ export default function ExerciseStatistics() {
 
         <Grid item xs={12} md={8}>
           <Grid container spacing={2} sx={{ mb: 1 }}>
-            {CARDS.map((c) => (
+            {CARDS.map((c, i) => (
               <Grid item xs={12} sm={4} key={c.label}>
-                <Card sx={{ p: 2, textAlign: 'center' }}>
-                  <Avatar sx={{ bgcolor: `${c.color}1a`, color: c.color, width: 40, height: 40, mx: 'auto', mb: 1 }}><c.icon /></Avatar>
-                  <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: 26, color: c.color, lineHeight: 1 }}>{c.value}</Typography>
-                  <Typography sx={{ fontSize: 12.5, color: 'text.secondary' }}>{c.label} {c.unit && `(${c.unit})`}</Typography>
-                </Card>
+                <StatCard label={c.label} value={c.value} unit={c.unit} color={c.color} Icon={c.Icon} progress={c.progress} delay={i * 0.06} />
               </Grid>
             ))}
           </Grid>
