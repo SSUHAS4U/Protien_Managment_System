@@ -7,14 +7,22 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Thin client around the Spoonacular Food API.
  * The API key is injected from the SPOONACULAR_API_KEY environment variable and
  * is never exposed to the frontend — all calls are proxied through the backend.
+ *
+ * Responses are cached in-memory with a short TTL so repeated identical
+ * queries (e.g. the default recommendations shown on every page load) return
+ * instantly instead of hitting the (slow, rate-limited) Spoonacular API.
  */
 @Component
 public class SpoonacularClient {
+
+    private static final long TTL_MS = 30 * 60 * 1000L; // 30 minutes
+    private final ConcurrentHashMap<String, Cached> cache = new ConcurrentHashMap<>();
 
     private final RestClient restClient;
     private final String apiKey;
@@ -37,30 +45,44 @@ public class SpoonacularClient {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> complexSearch(MultiValueMap<String, String> params) {
-        return restClient.get()
+        MultiValueMap<String, String> clean = sanitize(params);
+        return cached("search:" + clean, () -> restClient.get()
                 .uri(builder -> builder.path("/recipes/complexSearch")
                         .queryParam("apiKey", apiKey)
                         .queryParam("addRecipeNutrition", "true")
                         .queryParam("addRecipeInformation", "true")
                         .queryParam("instructionsRequired", "true")
                         .queryParam("fillIngredients", "false")
-                        .queryParams(sanitize(params))
+                        .queryParams(clean)
                         .build())
                 .retrieve()
-                .body(Map.class);
+                .body(Map.class));
     }
 
     /** Full recipe information including analyzed (step-by-step) cooking instructions. */
     @SuppressWarnings("unchecked")
     public Map<String, Object> recipeInformation(long id) {
-        return restClient.get()
+        return cached("recipe:" + id, () -> restClient.get()
                 .uri(builder -> builder.path("/recipes/{id}/information")
                         .queryParam("apiKey", apiKey)
                         .queryParam("includeNutrition", "true")
                         .build(id))
                 .retrieve()
-                .body(Map.class);
+                .body(Map.class));
     }
+
+    /** Returns a cached value if fresh, otherwise loads, stores and returns it. */
+    private Map<String, Object> cached(String key, java.util.function.Supplier<Map<String, Object>> loader) {
+        Cached hit = cache.get(key);
+        if (hit != null && System.currentTimeMillis() - hit.at < TTL_MS) {
+            return hit.value;
+        }
+        Map<String, Object> value = loader.get();
+        cache.put(key, new Cached(value, System.currentTimeMillis()));
+        return value;
+    }
+
+    private record Cached(Map<String, Object> value, long at) {}
 
     /** Drops blank params and our reserved apiKey so callers can't override it. */
     private MultiValueMap<String, String> sanitize(MultiValueMap<String, String> params) {

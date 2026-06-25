@@ -24,12 +24,12 @@ public class ExerciseDiaryService {
         // Set the email from the session or header
         exerciseDiary.setEmail(email);
 
-        // Set the current date as the date of the exercise entry
-        LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
-        exerciseDiary.setDate(currentDate);
-
-        // If category is not provided, it will be null (optional field)
-        System.out.println("Adding exercise item with date: " + currentDate);
+        // Honor the client's local date if provided (avoids UTC/local mismatch
+        // where an entry logged near midnight lands on the wrong day); otherwise
+        // fall back to the server date.
+        if (exerciseDiary.getDate() == null) {
+            exerciseDiary.setDate(LocalDate.now(ZoneId.systemDefault()));
+        }
 
         return exerciseDiaryRepository.save(exerciseDiary);
     }

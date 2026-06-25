@@ -24,14 +24,14 @@ public class FoodDiaryService {
     public FoodDairy addFoodItem(@RequestBody FoodDairy foodDiary, @RequestHeader("email") String email) {
         // Set the email from the session or header
         foodDiary.setEmail(email);
-        
-        // Set the current date as the date of the food entry
-        LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
-        foodDiary.setDate(currentDate);
 
-        // If category is not provided, it will be null (optional field)
-        System.out.println("Adding food item with date: " + currentDate);
-        
+        // Honor the client's local date if provided (avoids UTC/local mismatch
+        // where an entry logged near midnight lands on the wrong day); otherwise
+        // fall back to the server date.
+        if (foodDiary.getDate() == null) {
+            foodDiary.setDate(LocalDate.now(ZoneId.systemDefault()));
+        }
+
         return foodDiaryRepository.save(foodDiary);
     }
 

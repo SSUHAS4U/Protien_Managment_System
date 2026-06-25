@@ -20,10 +20,12 @@ const FILTERS = [
   { key: 'balanced', label: '⚖️ Balanced' },
 ];
 const DIETS = ['', 'vegetarian', 'vegan', 'ketogenic', 'paleo', 'gluten free', 'pescetarian'];
+const CUISINES = ['', 'Indian', 'Italian', 'Chinese', 'Mexican', 'Thai', 'Mediterranean', 'American', 'Japanese'];
 
 export default function Recommendations() {
   const [filter, setFilter] = useState('high-protein');
   const [diet, setDiet] = useState('');
+  const [cuisine, setCuisine] = useState('');
   const [query, setQuery] = useState('');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,8 +39,8 @@ export default function Recommendations() {
     try {
       const url = query.trim() ? `${API_BASE}/api/foods/search` : `${API_BASE}/api/foods/recommendations`;
       const params = query.trim()
-        ? { query: query.trim(), diet: diet || undefined, number: 12 }
-        : { filter, diet: diet || undefined, number: 12 };
+        ? { query: query.trim(), diet: diet || undefined, cuisine: cuisine || undefined, number: 12 }
+        : { filter, diet: diet || undefined, cuisine: cuisine || undefined, number: 12 };
       const res = await axios.get(url, { params });
       setItems(res.data?.results || []);
     } catch (err) {
@@ -47,7 +49,7 @@ export default function Recommendations() {
     } finally {
       setLoading(false);
     }
-  }, [filter, diet, query]);
+  }, [filter, diet, cuisine, query]);
 
   useEffect(() => {
     const t = setTimeout(fetchData, query ? 450 : 0);
@@ -73,10 +75,16 @@ export default function Recommendations() {
           fullWidth placeholder="Search any dish or ingredient…" value={query} onChange={(e) => setQuery(e.target.value)}
           InputProps={{ startAdornment: (<InputAdornment position="start"><SearchRoundedIcon color="action" /></InputAdornment>), sx: { bgcolor: '#fff', borderRadius: 999 } }}
         />
-        <FormControl sx={{ minWidth: 190 }}>
+        <FormControl sx={{ minWidth: 160 }}>
           <InputLabel>Diet</InputLabel>
           <Select label="Diet" value={diet} onChange={(e) => setDiet(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
             {DIETS.map((d) => <MenuItem key={d || 'any'} value={d}>{d ? d.replace(/^\w/, (c) => c.toUpperCase()) : 'Any diet'}</MenuItem>)}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ minWidth: 160 }}>
+          <InputLabel>Cuisine</InputLabel>
+          <Select label="Cuisine" value={cuisine} onChange={(e) => setCuisine(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
+            {CUISINES.map((c) => <MenuItem key={c || 'any'} value={c}>{c || 'Any cuisine'}</MenuItem>)}
           </Select>
         </FormControl>
       </Stack>

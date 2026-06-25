@@ -72,6 +72,7 @@ public class FoodApiController {
     public ResponseEntity<?> recommendations(
             @RequestParam(defaultValue = "high-protein") String filter,
             @RequestParam(required = false) String diet,
+            @RequestParam(required = false) String cuisine,
             @RequestParam(defaultValue = "12") int number) {
 
         if (!spoonacular.isConfigured()) {
@@ -80,6 +81,7 @@ public class FoodApiController {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         addIf(params, "diet", diet);
+        addIf(params, "cuisine", cuisine);
         params.add("number", String.valueOf(number));
 
         switch (filter.toLowerCase()) {

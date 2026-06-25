@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Preflight is disabled (to protect MUI), so re-add only the harmless native
+   <button> border reset that otherwise leaves an ugly default border on
+   Tailwind/21st.dev buttons. MUI's class-level borders out-specify this. */
+@layer base {
+  button,
+  [type='button'],
+  [type='reset'],
+  [type='submit'] {
+    border-width: 0;
+  }
+}

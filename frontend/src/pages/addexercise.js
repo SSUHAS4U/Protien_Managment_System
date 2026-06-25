@@ -29,6 +29,7 @@ export default function Addexercise() {
   const [duration, setDuration] = useState(30);
   const [saving, setSaving] = useState(false);
   const [snack, setSnack] = useState({ open: false, severity: 'success', message: '' });
+  const [brokenGifs, setBrokenGifs] = useState({});
 
   useEffect(() => {
     const email = sessionStorage.getItem('email');
@@ -67,9 +68,11 @@ export default function Addexercise() {
         });
         calories = Math.round(cal.data?.[0]?.total_calories || 0);
       } catch { calories = Math.round(5 * mins); }
+      const today = new Date();
+      const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split('T')[0];
       await axios.post(`${API_BASE}/exercisediary/add`, {
         name: dialogItem.name, energy: calories, protein: 0, fat: 0, netCarbs: 0,
-        category: titleCase(dialogItem.bodyPart), duration: mins,
+        category: titleCase(dialogItem.bodyPart), duration: mins, date: localDate,
       }, { headers: { email } });
       setSnack({ open: true, severity: 'success', message: `Logged ${dialogItem.name} — ~${calories} kcal burned.` });
       setDialogItem(null); setDuration(30);
@@ -108,8 +111,12 @@ export default function Addexercise() {
           : items.map((ex, i) => (
               <Grid item xs={12} sm={6} md={4} key={`${ex.name}-${i}`}>
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', animation: 'pp-fade-up .5s ease both', animationDelay: `${Math.min(i, 8) * 0.05}s`, transition: 'transform .25s', '&:hover': { transform: 'translateY(-4px)' } }}>
-                  {ex.gifUrl ? (
-                    <CardMedia component="img" height="190" image={ex.gifUrl} alt={ex.name} sx={{ objectFit: 'contain', bgcolor: '#f7fdf6' }} />
+                  {ex.gifUrl && !brokenGifs[i] ? (
+                    <CardMedia
+                      component="img" height="190" image={ex.gifUrl} alt={ex.name} loading="lazy"
+                      onError={() => setBrokenGifs((b) => ({ ...b, [i]: true }))}
+                      sx={{ objectFit: 'contain', bgcolor: '#f7fdf6' }}
+                    />
                   ) : (
                     <Box sx={{ height: 190, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg,#eafce9,#dbeafe)' }}>
                       <Avatar sx={{ width: 64, height: 64, bgcolor: '#16a34a1a', color: '#16a34a' }}><FitnessCenterRoundedIcon sx={{ fontSize: 34 }} /></Avatar>

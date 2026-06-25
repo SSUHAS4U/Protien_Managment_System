@@ -53,6 +53,8 @@ export default function RecipeModal({ recipe, open, onClose }) {
     }
     const q = Math.max(1, Number(quantity) || 1);
     try {
+      const today = new Date();
+      const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split('T')[0];
       await axios.post(
         `${API_BASE}/fooddiary/add`,
         {
@@ -63,6 +65,7 @@ export default function RecipeModal({ recipe, open, onClose }) {
           netCarbs: (macros.carbs || 0) * q,
           category,
           quantity: q,
+          date: localDate,
         },
         { headers: { email } }
       );

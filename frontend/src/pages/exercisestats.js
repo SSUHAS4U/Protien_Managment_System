@@ -52,6 +52,11 @@ export default function ExerciseStatistics() {
 
   return (
     <AppLayout title="Exercise Stats">
+      <Box sx={{ borderRadius: 5, p: { xs: 3, sm: 4 }, mb: 3, color: '#fff', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg,#2563eb,#22d3ee)', boxShadow: '0 24px 50px -22px rgba(37,99,235,.5)' }}>
+        <FitnessCenterRoundedIcon sx={{ position: 'absolute', right: -10, top: -10, fontSize: 150, opacity: 0.16 }} />
+        <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: { xs: 28, sm: 38 }, lineHeight: 1 }}>Your workout log</Typography>
+        <Typography sx={{ opacity: 0.95, mt: 1, maxWidth: 560 }}>Pick a day to see the calories you burned. Log workouts from Log Exercise and they appear here right away.</Typography>
+      </Box>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ p: 2.5 }}>

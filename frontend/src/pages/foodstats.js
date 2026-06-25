@@ -70,6 +70,11 @@ export default function FoodStatistics() {
 
   return (
     <AppLayout title="Food Stats">
+      <Box sx={{ borderRadius: 5, p: { xs: 3, sm: 4 }, mb: 3, color: '#fff', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg,#f59e0b,#fb923c)', boxShadow: '0 24px 50px -22px rgba(245,158,11,.5)' }}>
+        <LocalFireDepartmentRoundedIcon sx={{ position: 'absolute', right: -10, top: -10, fontSize: 150, opacity: 0.16 }} />
+        <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: { xs: 28, sm: 38 }, lineHeight: 1 }}>Your food diary</Typography>
+        <Typography sx={{ opacity: 0.95, mt: 1, maxWidth: 560 }}>Pick a day to review your meals and macros. Add foods from Browse Food and they show up here instantly.</Typography>
+      </Box>
       <Grid container spacing={3}>
         {/* Left: calendar */}
         <Grid item xs={12} md={4}>

@@ -101,7 +101,7 @@ export default function Hero() {
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/signup')}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-xl shadow-emerald-500/30 px-8 py-4 text-lg rounded-full font-bold transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center gap-2 border-0 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-xl shadow-emerald-500/30 px-8 py-4 text-lg rounded-full font-bold transition-all duration-300 cursor-pointer"
             >
               <Sparkles className="w-5 h-5" /> Get started — it's free <ArrowRight className="w-5 h-5" />
             </motion.button>
