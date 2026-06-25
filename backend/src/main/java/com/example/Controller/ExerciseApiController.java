@@ -1,13 +1,10 @@
 package com.example.Controller;
 
 import com.example.external.ExerciseApiClient;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
+import com.example.external.ExerciseDbClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,51 +12,40 @@ import java.util.Map;
 /**
  * Exercise catalogue + calorie estimation.
  *
- * The catalogue is served from a curated local dataset (exercises.json) so it is
- * always available and free — API Ninjas moved its /exercises endpoint behind a
- * paywall. Calorie estimates still use API Ninjas' (free) caloriesburned endpoint.
+ * Catalogue is served by {@link ExerciseDbClient} (animated ExerciseDB exercises
+ * merged with a curated local set), so it is always available with GIFs and
+ * instructions. Calorie estimates use API Ninjas' free caloriesburned endpoint.
  */
 @RestController
 @RequestMapping("/api/exercises")
 public class ExerciseApiController {
 
-    private final ExerciseApiClient client;
-    private final List<Map<String, Object>> catalogue;
+    private final ExerciseApiClient calorieClient;
+    private final ExerciseDbClient catalogClient;
 
-    public ExerciseApiController(ExerciseApiClient client) {
-        this.client = client;
-        this.catalogue = loadCatalogue();
+    public ExerciseApiController(ExerciseApiClient calorieClient, ExerciseDbClient catalogClient) {
+        this.calorieClient = calorieClient;
+        this.catalogClient = catalogClient;
     }
 
-    private List<Map<String, Object>> loadCatalogue() {
-        try (InputStream in = new ClassPathResource("exercises.json").getInputStream()) {
-            return new ObjectMapper().readValue(in, new TypeReference<List<Map<String, Object>>>() {});
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-    }
-
-    /** Browse/search the curated catalogue. All params optional (name, muscle, type, difficulty). */
+    /** Browse/search the catalogue. Filter by name (substring) and bodyPart (exact). */
     @GetMapping
     public ResponseEntity<?> catalog(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String muscle,
-            @RequestParam(required = false) String type,
-            @RequestParam(required = false) String difficulty,
-            @RequestParam(required = false) Integer offset) {
+            @RequestParam(required = false) String bodyPart,
+            @RequestParam(required = false) Integer offset,
+            @RequestParam(required = false) Integer limit) {
 
+        List<Map<String, Object>> all = catalogClient.catalogue();
         List<Map<String, Object>> result = new ArrayList<>();
-        for (Map<String, Object> ex : catalogue) {
+        for (Map<String, Object> ex : all) {
             if (!matches(ex.get("name"), name, true)) continue;
-            if (!matches(ex.get("muscle"), muscle, false)) continue;
-            if (!matches(ex.get("type"), type, false)) continue;
-            if (!matches(ex.get("difficulty"), difficulty, false)) continue;
+            if (!matches(ex.get("bodyPart"), bodyPart, false)) continue;
             result.add(ex);
         }
-        if (offset != null && offset > 0 && offset < result.size()) {
-            result = result.subList(offset, result.size());
-        }
-        return ResponseEntity.ok(result);
+        int from = (offset != null && offset > 0) ? Math.min(offset, result.size()) : 0;
+        int to = (limit != null && limit > 0) ? Math.min(from + limit, result.size()) : result.size();
+        return ResponseEntity.ok(result.subList(from, to));
     }
 
     /** Calories burned for an activity (weight in lb, duration in minutes) via API Ninjas. */
@@ -69,19 +55,18 @@ public class ExerciseApiController {
             @RequestParam(required = false) String weight,
             @RequestParam(required = false) String duration) {
 
-        if (!client.isConfigured()) {
+        if (!calorieClient.isConfigured()) {
             return ResponseEntity.status(503).body(Map.of(
                     "error", "Exercise calories API key not configured",
                     "hint", "Set EXERCISE_API_KEY in the backend environment."));
         }
         try {
-            return ResponseEntity.ok(client.caloriesBurned(activity, weight, duration));
+            return ResponseEntity.ok(calorieClient.caloriesBurned(activity, weight, duration));
         } catch (Exception e) {
             return ResponseEntity.status(502).body(Map.of("error", "Calories API request failed: " + e.getMessage()));
         }
     }
 
-    /** Case-insensitive match; {@code contains} = substring match, otherwise exact. */
     private boolean matches(Object field, String filter, boolean contains) {
         if (filter == null || filter.isBlank()) return true;
         if (field == null) return false;

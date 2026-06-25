@@ -3,7 +3,7 @@ import { Card, CardMedia, CardContent, Typography, Box, Chip, Button, Stack } fr
 import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
 import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
-import { getMacros, MACRO_META } from '../utils/spoonacular';
+import { getMacros, MACRO_META, hiResImage } from '../utils/spoonacular';
 
 function MacroPill({ k, value }) {
   const meta = MACRO_META[k];
@@ -51,7 +51,7 @@ export default function FoodCard({ recipe, onView, index = 0 }) {
         <CardMedia
           component="img"
           height="180"
-          image={recipe.image || 'https://placehold.co/480x320?text=Recipe'}
+          image={hiResImage(recipe.image)}
           alt={recipe.title}
           sx={{ objectFit: 'cover' }}
         />

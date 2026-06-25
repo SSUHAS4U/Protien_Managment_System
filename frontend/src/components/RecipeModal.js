@@ -11,7 +11,7 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import axios from 'axios';
 import { API_BASE } from '../config/api';
-import { getMacros, getSteps, getIngredients, stripHtml, MACRO_META } from '../utils/spoonacular';
+import { getMacros, getSteps, getIngredients, stripHtml, MACRO_META, hiResImage } from '../utils/spoonacular';
 
 export default function RecipeModal({ recipe, open, onClose }) {
   const [full, setFull] = useState(recipe);
@@ -78,7 +78,7 @@ export default function RecipeModal({ recipe, open, onClose }) {
       <Box sx={{ position: 'relative', height: 240 }}>
         <Box
           component="img"
-          src={full.image || 'https://placehold.co/800x400?text=Recipe'}
+          src={hiResImage(full.image)}
           alt={full.title}
           sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />

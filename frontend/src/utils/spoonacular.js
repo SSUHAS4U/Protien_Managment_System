@@ -45,6 +45,15 @@ export function stripHtml(html) {
   return (html || '').replace(/<[^>]+>/g, '').trim();
 }
 
+/**
+ * Upgrade a Spoonacular image URL to a higher resolution. Their CDN serves
+ * sized variants like `<id>-312x231.jpg`; swap to a crisp 636x393.
+ */
+export function hiResImage(url) {
+  if (!url) return 'https://placehold.co/636x393/eafce9/15803d?text=ProteinPro';
+  return url.replace(/-(\d+)x(\d+)\.(jpg|png|jpeg)/i, '-636x393.$3');
+}
+
 export const MACRO_META = {
   energy: { label: 'Calories', unit: 'kcal', color: '#f59e0b' },
   protein: { label: 'Protein', unit: 'g', color: '#6366f1' },

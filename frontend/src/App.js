@@ -4,7 +4,6 @@ import React, { Suspense, lazy } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
 import PageLoader from './components/PageLoader';
-import Chatbot from './components/Chatbot';
 
 const Home = lazy(() => import('./pages/Home'));
 const SignIn = lazy(() => import('./pages/signin'));
@@ -45,8 +44,6 @@ function App() {
               <Route path="/Recommendations" element={<Recommendations />} />
             </Routes>
           </Suspense>
-          {/* Global AI food assistant — available on every page */}
-          <Chatbot />
         </div>
       </div>
     </ThemeProvider>
