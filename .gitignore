@@ -8,6 +8,7 @@
 # Frontend ignores
 /frontend/node_modules/
 /frontend/build/
+/frontend/src/tailwind.generated.css
 /frontend/.pnp
 /frontend/.pnp.js
 /frontend/coverage/

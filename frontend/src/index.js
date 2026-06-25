@@ -1,7 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; 
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import axios from 'axios';
+import './tailwind.generated.css';
 import App from './App';
 
 // Automatically rewrite localhost API endpoints to the live Render backend URL when running in production (Vercel)
