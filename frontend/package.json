@@ -42,9 +42,8 @@
   "scripts": {
     "tw": "tailwindcss -i ./src/tailwind.css -o ./src/tailwind.generated.css --minify",
     "prestart": "npm run tw",
-    "prebuild": "npm run tw",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run tw && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
