@@ -114,10 +114,10 @@ export default function Account() {
                     <TextField
                       fullWidth name={f.name} label={f.label} type={f.type || 'text'} select={f.select}
                       value={user[f.name] || ''} onChange={onChange}
-                      InputLabelProps={f.shrink ? { shrink: true } : undefined}
-                      SelectProps={f.select ? { MenuProps: { disableScrollLock: true } } : undefined}
+                      InputLabelProps={f.shrink || f.select ? { shrink: true } : undefined}
+                      SelectProps={f.select ? { displayEmpty: true, MenuProps: { disableScrollLock: true } } : undefined}
                     >
-                      {f.select && f.options.map(([v, l]) => <MenuItem key={v} value={v}>{l}</MenuItem>)}
+                      {f.select && [<MenuItem key="" value="" disabled>{`Select ${f.label.toLowerCase()}`}</MenuItem>, ...f.options.map(([v, l]) => <MenuItem key={v} value={v}>{l}</MenuItem>)]}
                     </TextField>
                   </Grid>
                 ))}

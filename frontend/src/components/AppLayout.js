@@ -145,7 +145,7 @@ export default function AppLayout({ title, children, maxWidth = 'lg' }) {
       </Box>
 
       {/* Main */}
-      <Box component="main" sx={{ flexGrow: 1, width: { md: `calc(100% - ${DRAWER_WIDTH}px)` }, pb: 8 }}>
+      <Box component="main" sx={{ flexGrow: 1, minWidth: 0, overflowX: 'hidden', width: { md: `calc(100% - ${DRAWER_WIDTH}px)` }, pb: 8 }}>
         <Toolbar />
         <Box sx={{ maxWidth: maxWidth === false ? 'none' : { lg: 1200 }, mx: 'auto', px: { xs: 2, sm: 3 }, pt: 3 }}>
           {children}

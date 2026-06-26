@@ -57,20 +57,22 @@ export default function AddFood() {
         <Typography sx={{ opacity: 0.92, mt: 1 }}>
           Real dishes with full macros, images and cooking steps — tap a card to view and add it to your diary.
         </Typography>
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} sx={{ mt: 2.5, maxWidth: 680 }}>
-          <TextField
-            fullWidth placeholder="Search a food or dish…" value={query} onChange={(e) => setQuery(e.target.value)}
-            sx={{ bgcolor: '#fff', borderRadius: 999 }}
-            InputProps={{ startAdornment: (<InputAdornment position="start"><SearchRoundedIcon color="action" /></InputAdornment>), sx: { borderRadius: 999 } }}
-          />
-          <FormControl sx={{ minWidth: 170 }}>
-            <InputLabel sx={{ color: 'rgba(255,255,255,.9)' }}>Cuisine</InputLabel>
-            <Select label="Cuisine" value={cuisine} onChange={(e) => setCuisine(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
-              {CUISINES.map((c) => <MenuItem key={c || 'any'} value={c}>{c || 'Any cuisine'}</MenuItem>)}
-            </Select>
-          </FormControl>
-        </Stack>
       </Box>
+
+      {/* Controls (on the page background so text stays dark/readable) */}
+      <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.5} sx={{ mb: 2 }}>
+        <TextField
+          fullWidth placeholder="Search a food or dish…" value={query} onChange={(e) => setQuery(e.target.value)}
+          sx={{ bgcolor: '#fff', borderRadius: 999 }}
+          InputProps={{ startAdornment: (<InputAdornment position="start"><SearchRoundedIcon color="action" /></InputAdornment>), sx: { borderRadius: 999 } }}
+        />
+        <FormControl sx={{ minWidth: 180 }}>
+          <InputLabel shrink>Cuisine</InputLabel>
+          <Select label="Cuisine" displayEmpty notched value={cuisine} onChange={(e) => setCuisine(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
+            {CUISINES.map((c) => <MenuItem key={c || 'any'} value={c}>{c || 'Any cuisine'}</MenuItem>)}
+          </Select>
+        </FormControl>
+      </Stack>
 
       <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mb: 3 }}>
         {QUICK.map((q) => (

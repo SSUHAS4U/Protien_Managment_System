@@ -94,8 +94,8 @@ export default function Addexercise() {
         <TextField fullWidth placeholder="Search an exercise…" value={query} onChange={(e) => setQuery(e.target.value)}
           InputProps={{ startAdornment: (<InputAdornment position="start"><SearchRoundedIcon color="action" /></InputAdornment>), sx: { bgcolor: '#fff', borderRadius: 999 } }} />
         <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Body part</InputLabel>
-          <Select label="Body part" value={bodyPart} onChange={(e) => setBodyPart(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
+          <InputLabel shrink>Body part</InputLabel>
+          <Select label="Body part" displayEmpty notched value={bodyPart} onChange={(e) => setBodyPart(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
             {BODY_PARTS.map((b) => <MenuItem key={b || 'any'} value={b}>{b ? titleCase(b) : 'All body parts'}</MenuItem>)}
           </Select>
         </FormControl>

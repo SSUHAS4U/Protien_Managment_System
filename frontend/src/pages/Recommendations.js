@@ -76,14 +76,14 @@ export default function Recommendations() {
           InputProps={{ startAdornment: (<InputAdornment position="start"><SearchRoundedIcon color="action" /></InputAdornment>), sx: { bgcolor: '#fff', borderRadius: 999 } }}
         />
         <FormControl sx={{ minWidth: 160 }}>
-          <InputLabel>Diet</InputLabel>
-          <Select label="Diet" value={diet} onChange={(e) => setDiet(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
+          <InputLabel shrink>Diet</InputLabel>
+          <Select label="Diet" displayEmpty notched value={diet} onChange={(e) => setDiet(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
             {DIETS.map((d) => <MenuItem key={d || 'any'} value={d}>{d ? d.replace(/^\w/, (c) => c.toUpperCase()) : 'Any diet'}</MenuItem>)}
           </Select>
         </FormControl>
         <FormControl sx={{ minWidth: 160 }}>
-          <InputLabel>Cuisine</InputLabel>
-          <Select label="Cuisine" value={cuisine} onChange={(e) => setCuisine(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
+          <InputLabel shrink>Cuisine</InputLabel>
+          <Select label="Cuisine" displayEmpty notched value={cuisine} onChange={(e) => setCuisine(e.target.value)} sx={{ bgcolor: '#fff', borderRadius: 999 }}>
             {CUISINES.map((c) => <MenuItem key={c || 'any'} value={c}>{c || 'Any cuisine'}</MenuItem>)}
           </Select>
         </FormControl>

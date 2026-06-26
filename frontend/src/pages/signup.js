@@ -145,7 +145,7 @@ export default function SignUp() {
                 <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 700, fontSize: 20, color: 'primary.dark', mb: 0.5 }}>Personal details</Typography>
                 <FormControl fullWidth margin="normal">
                   <TextField select label="Gender" name="gender" value={formData.gender} onChange={handleChange} error={!!errors.gender} helperText={errors.gender} required
-                    SelectProps={{ MenuProps: { disableScrollLock: true } }}>
+                    InputLabelProps={{ shrink: true }} SelectProps={{ displayEmpty: true, MenuProps: { disableScrollLock: true } }}>
                     <MenuItem value="">Select Gender</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
                     <MenuItem value="male">Male</MenuItem>
