@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  Box, Grid, Card, Typography, Button, Stack, Divider,
-  Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Snackbar, Alert,
+  Box, Grid, Card, Typography, Button, Stack, Divider, Chip, IconButton, Snackbar, Alert,
 } from '@mui/material';
 import Calendar from 'react-calendar';
 import '../Styles/Enhanced.css';
-import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded';
-import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import { Flame, Dumbbell, Timer } from 'lucide-react';
+import { Flame, Dumbbell, Timer, Trash2 } from 'lucide-react';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import axios from 'axios';
 import { API_BASE } from '../config/api';
 import AppLayout from '../components/AppLayout';
@@ -53,11 +51,20 @@ export default function ExerciseStatistics() {
   return (
     <AppLayout title="Exercise Stats">
       <Box sx={{ borderRadius: 5, p: { xs: 3, sm: 4 }, mb: 3, color: '#fff', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg,#2563eb,#22d3ee)', boxShadow: '0 24px 50px -22px rgba(37,99,235,.5)' }}>
-        <FitnessCenterRoundedIcon sx={{ position: 'absolute', right: -10, top: -10, fontSize: 150, opacity: 0.16 }} />
+        <Dumbbell style={{ position: 'absolute', right: -12, top: -12, width: 140, height: 140, opacity: 0.16 }} />
         <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 800, fontSize: { xs: 28, sm: 38 }, lineHeight: 1 }}>Your workout log</Typography>
-        <Typography sx={{ opacity: 0.95, mt: 1, maxWidth: 560 }}>Pick a day to see the calories you burned. Log workouts from Log Exercise and they appear here right away.</Typography>
+        <Typography sx={{ opacity: 0.95, mt: 1, maxWidth: 560 }}>Pick a day to see the calories you burned. Workouts you log show up here right away.</Typography>
       </Box>
-      <Grid container spacing={3}>
+
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {CARDS.map((c, i) => (
+          <Grid item xs={12} sm={4} key={c.label}>
+            <StatCard label={c.label} value={c.value} unit={c.unit} color={c.color} Icon={c.Icon} progress={c.progress} delay={i * 0.06} />
+          </Grid>
+        ))}
+      </Grid>
+
+      <Grid container spacing={2.5}>
         <Grid item xs={12} md={4}>
           <Card sx={{ p: 2.5 }}>
             <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 700, fontSize: 22, mb: 1.5 }}>Pick a day</Typography>
@@ -67,52 +74,35 @@ export default function ExerciseStatistics() {
         </Grid>
 
         <Grid item xs={12} md={8}>
-          <Grid container spacing={2} sx={{ mb: 1 }}>
-            {CARDS.map((c, i) => (
-              <Grid item xs={12} sm={4} key={c.label}>
-                <StatCard label={c.label} value={c.value} unit={c.unit} color={c.color} Icon={c.Icon} progress={c.progress} delay={i * 0.06} />
-              </Grid>
-            ))}
-          </Grid>
-
-          <Card sx={{ p: 2.5, mt: 2 }}>
+          <Card sx={{ p: 3, height: '100%' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
               <Typography sx={{ fontFamily: "'Barlow Condensed'", fontWeight: 700, fontSize: 22 }}>Logged workouts</Typography>
-              <Button size="small" variant="contained" onClick={() => (window.location.href = '/addexercise')}>+ Log workout</Button>
+              <Button size="small" variant="contained" startIcon={<AddRoundedIcon />} onClick={() => (window.location.href = '/addexercise')}>Log</Button>
             </Stack>
-            <Divider sx={{ mb: 1 }} />
+            <Divider sx={{ mb: 1.5 }} />
             {items.length === 0 ? (
-              <Box sx={{ textAlign: 'center', py: 5, color: 'text.secondary' }}>
-                <Typography sx={{ fontSize: 36 }}>🏋️</Typography>
+              <Box sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+                <Typography sx={{ fontSize: 40 }}>🏋️</Typography>
                 <Typography>No workouts logged for this day.</Typography>
               </Box>
             ) : (
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ fontWeight: 700 }}>Exercise</TableCell>
-                      <TableCell sx={{ fontWeight: 700 }}>Body part</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 700 }}>Duration</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 700 }}>Burned</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 700 }}>Remove</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {items.map((it) => (
-                      <TableRow key={it.id} hover>
-                        <TableCell sx={{ fontWeight: 600, textTransform: 'capitalize' }}>{it.name}</TableCell>
-                        <TableCell sx={{ textTransform: 'capitalize' }}>{it.category || '—'}</TableCell>
-                        <TableCell align="right">{Math.round(it.duration || 0)} min</TableCell>
-                        <TableCell align="right">{Math.round(it.energy || 0)} kcal</TableCell>
-                        <TableCell align="right">
-                          <Button size="small" color="error" onClick={() => del(it.id)} sx={{ minWidth: 0 }}><DeleteOutlineRoundedIcon fontSize="small" /></Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <Grid container spacing={1.5}>
+                {items.map((it) => (
+                  <Grid item xs={12} sm={6} key={it.id}>
+                    <Box sx={{ p: 1.75, borderRadius: 3, bgcolor: '#f8fafc', border: '1px solid #eef2f1', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ width: 38, height: 38, borderRadius: 2, display: 'grid', placeItems: 'center', bgcolor: '#16a34a1a', color: '#16a34a', flexShrink: 0 }}><Flame size={18} /></Box>
+                      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                        <Typography sx={{ fontWeight: 700, fontSize: 14.5, textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.name}</Typography>
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.3 }}>
+                          {it.category && <Chip size="small" label={it.category} sx={{ height: 20, fontSize: 11, bgcolor: '#eff6ff', color: '#2563eb', fontWeight: 700, textTransform: 'capitalize' }} />}
+                          <Typography sx={{ fontSize: 12.5, color: 'text.secondary' }}>{Math.round(it.duration || 0)} min · {Math.round(it.energy || 0)} kcal</Typography>
+                        </Stack>
+                      </Box>
+                      <IconButton size="small" color="error" onClick={() => del(it.id)}><Trash2 size={16} /></IconButton>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
             )}
           </Card>
         </Grid>
